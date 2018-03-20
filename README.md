@@ -48,3 +48,13 @@ In source code include header file for example with
     #include <alkimia/alkvalue.h>
 
     ...
+
+Normally, adding the Alkimia library to a CMake target is enough to add all the required includes
+for compilation. In cases where libraries are defined without library dependencies, such as when
+creating static libraries, by default the location of the Alkimia include files is not added for
+compilation, resulting in compile errors. This can be fixed by adding the following line:
+
+    include_directories(${LibAlkimia[5]_INCLUDE_DIR})
+
+For compatibility with older alkimia releases the related cmake variable LIBALKIMIA_INCLUDE_DIR
+is also available. Please note that this variable is deprecated and may be removed in future.
