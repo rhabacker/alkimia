@@ -28,11 +28,13 @@
 
 AlkOnlineQuotesProfileManager manager;
 
-class MainWindow::Private
+class MainWindow::Private : public Ui::MainWindow
 {
 public:
-    QWebView *view;
-    QLineEdit *urlLine;
+    Private(QMainWindow *parent)
+    {
+        setupUi(parent);
+    }
 };
 
 void MainWindow::slotUrlChanged(const QUrl &url)
@@ -42,49 +44,36 @@ void MainWindow::slotUrlChanged(const QUrl &url)
 
 void MainWindow::slotEditingFinished()
 {
-    d->view->setUrl(QUrl(d->urlLine->text()));
+    d->webView->setUrl(QUrl(d->urlLine->text()));
 }
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    d(new Private)
+    d(new Private(this))
 {
     manager.addProfile(new AlkOnlineQuotesProfile("onlinequoteseditor", AlkOnlineQuotesProfile::Type::GHNS, "skrooge_unit.knsrc"));
     //manager.addProfile(new AlkOnlineQuotesProfile("local", AlkOnlineQuotesProfile::Type::GHNS, "skrooge_unit_local.knsrc"));
     //manager.addProfile(new AlkOnlineQuotesProfile("skrooge", AlkOnlineQuotesProfile::Type::GHNS, "skrooge_unit.knsrc"));
     //manager.addProfile(new AlkOnlineQuotesProfile("kmymoney", AlkOnlineQuotesProfile::Type::KMymoney));
     AlkOnlineQuoteSource::setProfile(manager.profiles().first());
-    ui->setupUi(this);
-
-    QDockWidget *dockWidget = new QDockWidget(tr("Browser"), this);
-    d->view = new QWebView;
-    connect(d->view, SIGNAL(urlChanged(QUrl)), this, SLOT(slotUrlChanged(QUrl)));
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    d->urlLine = new QLineEdit;
+    d->quotesWidget->init();
+    d->progressBar->setVisible(true);
+    connect(d->webView, SIGNAL(urlChanged(QUrl)), this, SLOT(slotUrlChanged(QUrl)));
+    connect(d->webView, SIGNAL(loadProgress(int)), d->progressBar, SLOT(setValue(int)));
     connect(d->urlLine, SIGNAL(editingFinished()), this, SLOT(slotEditingFinished()));
-    layout->addWidget(d->urlLine);
-    layout->addWidget(d->view);
-    QWidget *group = new QWidget;
-    group->setLayout(layout);
     QUrl url("https://support.cegit.sag.de");
-    d->view->setUrl(url);
-    dockWidget->setWidget(group);
-    addDockWidget(Qt::RightDockWidgetArea, dockWidget);
+    d->webView->setUrl(url);
 
     // setup inspector
-    d->view->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    d->webView->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     QWebInspector *inspector = new QWebInspector;
-    inspector->setPage(d->view->page());
+    inspector->setPage(d->webView->page());
 
-    AlkOnlineQuotesWidget *quotesWidget = new AlkOnlineQuotesWidget;
-    quotesWidget->setView(d->view);
-    setCentralWidget(quotesWidget);
+    d->quotesWidget->setView(d->webView);
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete d;
 }
 
