@@ -44,6 +44,7 @@ class ALK_EXPORT AlkOnlineQuotesWidget : public AlkOnlineQuotesWidgetDecl
 public:
   AlkOnlineQuotesWidget(QWidget* parent = 0);
   virtual ~AlkOnlineQuotesWidget();
+  void init();
 
   void writeConfig() {}
   void readConfig() {}
@@ -58,7 +59,7 @@ protected slots:
   void slotLoadProfile();
 
   void slotDeleteEntry();
-  void slotUpdateEntry();
+  void slotAcceptEntry();
   void slotLoadWidgets();
   void slotEntryChanged();
   void slotNewEntry();
@@ -70,6 +71,7 @@ protected slots:
   void slotEntryRenamed(QListWidgetItem* item);
   void slotStartRename(QListWidgetItem* item);
   void slotInstallEntries();
+  void slotUpdateEntries();
 
 protected:
   void loadProfiles();

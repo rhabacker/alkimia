@@ -28,8 +28,10 @@
 
 class AlkOnlineQuotesProfileManager;
 
-class ALK_EXPORT AlkOnlineQuotesProfile
+class ALK_EXPORT AlkOnlineQuotesProfile : public QObject
 {
+    Q_OBJECT
+
 public:
     enum class Type { GHNS, KMymoney, Skrooge};
     AlkOnlineQuotesProfile(const QString &name=QString(), Type type=Type::KMymoney, const QString &configFile = QString());
@@ -44,6 +46,11 @@ public:
     void setManager(AlkOnlineQuotesProfileManager *manager);
     AlkOnlineQuotesProfileManager *manager();
     KConfig *kConfig() const;
+    void checkUpdates();
+
+signals:
+    void status(const QString &s);
+
 private:
     class Private;
     Private *d;

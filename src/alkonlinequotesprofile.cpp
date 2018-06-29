@@ -69,6 +69,7 @@ public Q_SLOTS:
   {
     foreach (const KNS3::Entry& entry, updates) {
       qDebug() << entry.name();
+      emit m_p->status(entry.summary());
     }
   }
 
@@ -76,6 +77,7 @@ public Q_SLOTS:
   void entryStatusChanged(const KNS3::Entry &entry)
   {
     qDebug() << entry.summary();
+    emit m_p->status(entry.summary());
   }
 };
 
@@ -90,7 +92,6 @@ AlkOnlineQuotesProfile::AlkOnlineQuotesProfile(const QString &name, Type type, c
   }
   d->m_kconfigFile = name + "rc";
   d->m_config = new KConfig(d->m_kconfigFile);
-  d->checkUpdates();
 }
 
 AlkOnlineQuotesProfile::~AlkOnlineQuotesProfile()
@@ -135,6 +136,11 @@ QString AlkOnlineQuotesProfile::kConfigFile() const
 KConfig *AlkOnlineQuotesProfile::kConfig() const
 {
     return d->m_config;
+}
+
+void AlkOnlineQuotesProfile::checkUpdates()
+{
+    d->checkUpdates();
 }
 
 void AlkOnlineQuotesProfile::setManager(AlkOnlineQuotesProfileManager *manager)

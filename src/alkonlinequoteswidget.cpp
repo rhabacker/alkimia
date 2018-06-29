@@ -48,19 +48,23 @@ AlkOnlineQuotesWidget::AlkOnlineQuotesWidget(QWidget *parent)
    d(new Private),
    m_quoteInEditing(false)
 {
+}
+
+void AlkOnlineQuotesWidget::init()
+{
   QStringList groups = AlkOnlineQuote::quoteSources();
 
   loadProfiles();
   loadQuotesList(true /*updateResetList*/);
 
-  m_updateButton->setEnabled(false);
+  m_acceptButton->setEnabled(false);
 
   // TODO move to ui file
-  KGuiItem updateButtenItem(i18nc("Accepts the entered data and stores it", "&Accept"),
+  KGuiItem acceptButtenItem(i18nc("Accepts the entered data and stores it", "&Accept"),
                             KIcon("dialog-ok"),
                             i18n("Accepts the entered data and stores it"),
                             i18n("Use this to accept the modified data."));
-  m_updateButton->setGuiItem(updateButtenItem);
+  m_acceptButton->setGuiItem(acceptButtenItem);
 
   KGuiItem deleteButtenItem(i18n("&Delete"),
                             KIcon("edit-delete"),
@@ -91,12 +95,12 @@ AlkOnlineQuotesWidget::AlkOnlineQuotesWidget(QWidget *parent)
   connect(m_selectProfile, SIGNAL(clicked()), this, SLOT(slotSelectProfile()));
   connect(m_profileList, SIGNAL(itemSelectionChanged()), this, SLOT(slotLoadProfile()));
 
-  connect(m_updateButton, SIGNAL(clicked()), this, SLOT(slotUpdateEntry()));
+  connect(m_acceptButton, SIGNAL(clicked()), this, SLOT(slotAcceptEntry()));
   connect(m_newButton, SIGNAL(clicked()), this, SLOT(slotNewEntry()));
   connect(m_checkButton, SIGNAL(clicked()), this, SLOT(slotCheckEntry()));
   connect(m_deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteEntry()));
-  connect(m_showButton, SIGNAL(clicked()), this, SLOT(slotShowEntry()));
   connect(m_installButton, SIGNAL(clicked()), this, SLOT(slotInstallEntries()));
+  connect(m_updateButton, SIGNAL(clicked()), this, SLOT(slotUpdateEntries()));
 
   connect(m_quoteSourceList, SIGNAL(itemSelectionChanged()), this, SLOT(slotLoadWidgets()));
   connect(m_quoteSourceList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(slotEntryRenamed(QListWidgetItem*)));
@@ -247,8 +251,7 @@ void AlkOnlineQuotesWidget::slotLoadWidgets()
     m_skipStripping->setEnabled(false);
   }
 
-  m_updateButton->setEnabled(false);
-
+  m_acceptButton->setEnabled(false);
 }
 
 void AlkOnlineQuotesWidget::slotEntryChanged()
@@ -261,7 +264,7 @@ void AlkOnlineQuotesWidget::slotEntryChanged()
                   || m_editPrice->text() != m_currentItem.price()
                   || m_skipStripping->isChecked() != m_currentItem.skipStripping();
 
-  m_updateButton->setEnabled(modified);
+  m_acceptButton->setEnabled(modified);
   m_checkButton->setEnabled(!modified);
   m_checkSymbol->setEnabled(!m_currentItem.url().contains("%2"));
   m_checkSymbol2->setEnabled(m_currentItem.url().contains("%2"));
@@ -291,7 +294,7 @@ void AlkOnlineQuotesWidget::slotDeleteEntry()
   slotEntryChanged();
 }
 
-void AlkOnlineQuotesWidget::slotUpdateEntry()
+void AlkOnlineQuotesWidget::slotAcceptEntry()
 {
   m_currentItem.setUrl(m_editURL->text());
   m_currentItem.setSym(m_editSymbol->text());
@@ -418,11 +421,18 @@ void AlkOnlineQuotesWidget::slotEntryRenamed(QListWidgetItem* item)
 void AlkOnlineQuotesWidget::slotInstallEntries()
 {
   QString configFile = AlkOnlineQuoteSource::profile()->hotNewStuffConfigFile();
+  connect(AlkOnlineQuoteSource::profile(), SIGNAL(status(QString)), this, SLOT(slotLogStatus(QString)));
 
   QPointer<KNS3::DownloadDialog> dialog = new KNS3::DownloadDialog(configFile, this);
   dialog->exec();
   delete dialog;
   loadQuotesList();
+}
+
+void AlkOnlineQuotesWidget::slotUpdateEntries()
+{
+    connect(AlkOnlineQuoteSource::profile(), SIGNAL(status(QString)), this, SLOT(slotLogStatus(QString)));
+    AlkOnlineQuoteSource::profile()->checkUpdates();
 }
 
 QString AlkOnlineQuotesWidget::expandedUrl() const

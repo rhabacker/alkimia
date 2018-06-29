@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>523</width>
-    <height>815</height>
+    <height>862</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -126,6 +126,13 @@
              <widget class="KPushButton" name="m_installButton">
               <property name="text">
                <string>Install</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KPushButton" name="m_updateButton">
+              <property name="text">
+               <string>Update</string>
               </property>
              </widget>
             </item>
@@ -313,7 +320,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="KPushButton" name="m_updateButton">
+               <widget class="KPushButton" name="m_acceptButton">
                 <property name="text">
                  <string comment="@action update quotes from online quote source">Accept</string>
                 </property>
@@ -430,9 +437,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>KListWidget</class>
-   <extends>QListWidget</extends>
-   <header>klistwidget.h</header>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
   </customwidget>
   <customwidget>
    <class>KPushButton</class>
@@ -445,9 +452,9 @@
    <header>ktextedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
+   <class>KListWidget</class>
+   <extends>QListWidget</extends>
+   <header>klistwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
