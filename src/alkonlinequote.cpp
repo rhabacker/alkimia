@@ -211,14 +211,14 @@ bool AlkOnlineQuote::launchWebKitCssSelector(const QString& _symbol, const QStri
 {
   if (!initLaunch(_symbol, _id, _source))
     return false;
-  connect(d->m_webView, SIGNAL(loadStarted(bool)), this, SLOT(slotLoadStarted(bool)));
+  connect(d->m_webView, SIGNAL(loadStarted()), this, SLOT(slotLoadStarted()));
   connect(d->m_webView, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadFinishedCssSelector(bool)));
   d->m_webView->setUrl(d->m_url);
   d->m_eventLoop = new QEventLoop;
   d->m_eventLoop->exec();
   delete d->m_eventLoop;
   delete d->m_webView;
-  disconnect(d->m_webView, SIGNAL(loadStarted(bool)), this, SLOT(slotLoadStarted(bool)));
+  disconnect(d->m_webView, SIGNAL(loadStarted()), this, SLOT(slotLoadStarted()));
   disconnect(d->m_webView, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadFinishedCssSelector(bool)));
 
   return !(d->m_errors & Errors::URL || d->m_errors & Errors::Price || d->m_errors & Errors::Date || d->m_errors & Errors::Data);
@@ -234,7 +234,7 @@ bool AlkOnlineQuote::launchWebKitHtmlParser(const QString& _symbol, const QStrin
   d->m_eventLoop = new QEventLoop;
   d->m_eventLoop->exec();
   delete d->m_eventLoop;
-  disconnect(d->m_webView, SIGNAL(loadStarted(bool)), this, SLOT(slotLoadStarted(bool)));
+  disconnect(d->m_webView, SIGNAL(loadStarted()), this, SLOT(slotLoadStarted()));
   disconnect(d->m_webView, SIGNAL(loadFinished(bool)), this, SLOT(slotLoadFinishedHtmlParser(bool)));
 
   return !(d->m_errors & Errors::URL || d->m_errors & Errors::Price || d->m_errors & Errors::Date || d->m_errors & Errors::Data);
