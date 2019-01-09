@@ -1,0 +1,8 @@
+[Online-Quote-Source]
+DateFormatRegex=%y %m %d
+DateRegex=(\\d{4}-\\d{2}-\\d{2}) \\d{2}:\\d{2}:\\d{2}
+Mode=HTML
+Name=Puls Biznesu
+PriceRegex=(\\d+,\\d{2})\\D+\\d+,\\d{2}%
+SymbolRegex=
+URL=http://notowania.pb.pl/instrument/%1

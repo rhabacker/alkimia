@@ -135,6 +135,7 @@ include_directories(
     ${CMAKE_BINARY_DIR}/src
 )
 
+add_subdirectory(data)
 add_subdirectory(src)
 add_subdirectory(autotests)
 add_subdirectory(qml)

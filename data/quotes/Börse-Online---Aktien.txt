@@ -1,0 +1,8 @@
+[Online-Quote-Source]
+DateFormatRegex=%d.%m.%y
+DateRegex=Datum (\\d{2}\\.\\d{2}\\.\\d{4})
+Mode=HTML
+Name=Börse Online - Aktien
+PriceRegex=Aktienkurs\\D+(\\d+,\\d{2})
+SymbolRegex=
+URL=http://www.boerse-online.de/aktie/%1-Aktie

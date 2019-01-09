@@ -52,7 +52,7 @@ public:
     bool isValid();
 
     bool read();
-    bool write();
+    bool write(const QString &filename = QString());
     void rename(const QString &name);
     void remove();
 

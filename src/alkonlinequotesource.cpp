@@ -95,6 +95,28 @@ public:
         return true;
     }
 
+    bool write(const QString fileName)
+    {
+        KConfig config(fileName);
+        if (!config.isConfigWritable(false))
+            return false;
+        KConfigGroup grp = config.group(QString("Online-Quote-Source"));
+        grp.writeEntry("Name", m_name);
+        grp.writeEntry("URL", m_url);
+        grp.writeEntry("Mode", "HTML");
+        grp.writeEntry("PriceRegex", m_price);
+        grp.writeEntry("DateRegex", m_date);
+        grp.writeEntry("DateFormatRegex", m_dateformat);
+        grp.writeEntry("SymbolRegex", m_sym);
+        if (m_skipStripping) {
+            grp.writeEntry("SkipStripping", m_skipStripping);
+        } else {
+            grp.deleteEntry("SkipStripping");
+        }
+        config.sync();
+        return true;
+    }
+
     bool remove()
     {
         KConfig *kconfig = m_profile->kConfig();
@@ -359,8 +381,11 @@ bool AlkOnlineQuoteSource::read()
     return d->read();
 }
 
-bool AlkOnlineQuoteSource::write()
+bool AlkOnlineQuoteSource::write(const QString &filename)
 {
+    if (!filename.isEmpty())
+        return d->write(filename);
+
     bool result = false;
     // check if type has been changedd->isGHNS
     if (d->m_profile->hasGHNSSupport() && d->m_isGHNSSource) {

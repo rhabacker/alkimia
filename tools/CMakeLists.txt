@@ -1,1 +1,2 @@
 add_subdirectory(onlinequoteseditor)
+add_subdirectory(onlinequotesimporter)

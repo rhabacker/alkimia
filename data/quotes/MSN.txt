@@ -1,0 +1,8 @@
+[Online-Quote-Source]
+DateFormatRegex=%y %m %d
+DateRegex=(\\d+/\\d+/\\d+)
+Mode=HTML
+Name=MSN
+PriceRegex=(\\d+\\.\\d+) [+-]\\d+.\\d+
+SymbolRegex=
+URL=http://www.msn.com/en-us/money/stockdetails/%1

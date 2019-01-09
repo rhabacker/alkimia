@@ -1,0 +1,9 @@
+[Online-Quote-Source]
+DateFormatRegex=%m %d %y
+DateRegex=Data delayed at least 15 minutes, as of\\ (.*)\\.
+Mode=HTML
+Name=Financial Times
+PriceRegex=Price\\D+([\\d,]*\\d+\\.\\d+)
+SkipStripping=true
+SymbolRegex=
+URL=http://funds.ft.com/uk/Tearsheet/Summary?s=%1
