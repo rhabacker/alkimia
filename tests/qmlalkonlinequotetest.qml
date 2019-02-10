@@ -20,8 +20,8 @@ ApplicationWindow {
         }
         onQuote: {
             statusLabel.text = ""
-            dateLabel.text = "Date: " + date
-            priceLabel.text = "Price: " + price
+            dateLabel.text = i18n("Date: %1", date)
+            priceLabel.text = i18n("Price: %1", price)
         }
     }
 
@@ -29,7 +29,7 @@ ApplicationWindow {
         id: symbolLabel
         y: 56
         x: 0
-        text: "Enter symbol:"
+        text: i18n("Enter symbol:")
     }
 
     TextField {
@@ -37,14 +37,14 @@ ApplicationWindow {
         x: 100
         id: symbol
         text: "CAD EUR"
-        placeholderText: qsTr("Symbol")
+        placeholderText: i18n("Symbol")
     }
 
     Label {
         id: quoteLabel
         y: 86
         x: 0
-        text: "Enter quote:"
+        text: i18n("Enter quote:")
     }
 
     TextField {
@@ -52,7 +52,7 @@ ApplicationWindow {
         x: 100
         id: source
         text: "Alkimia Currency"
-        placeholderText: qsTr("Source")
+        placeholderText: i18n("Source")
     }
 
     Button {
@@ -60,7 +60,7 @@ ApplicationWindow {
         height: 30
         y: 122
         x: 100
-        text: "Fetch"
+        text: i18n("Fetch")
 
         onClicked: {
             dateLabel.text = ""

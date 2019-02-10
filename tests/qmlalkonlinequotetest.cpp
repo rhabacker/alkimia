@@ -22,6 +22,7 @@
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <KDeclarative/KDeclarative>
 #else
 #include <QApplication>
 class QGuiApplication : public QApplication
@@ -29,6 +30,8 @@ class QGuiApplication : public QApplication
 public:
     QGuiApplication(int &argc, char **argv) : QApplication(argc, argv) {}
 };
+
+#include <kdeclarative.h>
 
 #include <QDeclarativeEngine>
 #include <QDeclarativeView>
@@ -52,8 +55,18 @@ public:
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-
     QQmlApplicationEngine engine;
+
+#if QT_VERSION > QT_VERSION_CHECK(5,0,0)
+    KDeclarative::KDeclarative decl;
+    decl.setDeclarativeEngine(&engine);
+    decl.setTranslationDomain("alkimia");
+#else
+    KDeclarative decl;
+    decl.setDeclarativeEngine(engine.view.engine());
+    decl.initialize();
+#endif
+    decl.setupBindings();
     engine.load(CMAKE_CURRENT_SOURCE_DIR "/qmlalkonlinequotetest.qml");
 
     return app.exec();

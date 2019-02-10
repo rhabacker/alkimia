@@ -17,37 +17,37 @@ Item {
         }
         onQuote: {
             statusLabel.text = ""
-            dateLabel.text = "Date: " + date
-            priceLabel.text = "Price: " + price
+            dateLabel.text = i18n("Date: %1", date)
+            priceLabel.text = i18n("Price: %1", price)
         }
     }
 
     Text {
         id: symbolLabel
         y: 50
-        x: 0
-        text: "Enter Symbol:"
+        x: 8
+        text: i18n("Enter symbol:")
     }
     TextInput {
         y: 50
         x: 100
         id: symbol
         text: "CAD EUR"
-        //placeholderText: qsTr("Symbol")
+        //placeholderText: i18n("Symbol")
     }
 
     Text {
         id: quoteLabel
         y: 80
-        x: 0
-        text: "Enter Quote:"
+        x: 8
+        text: i18n("Enter quote:")
     }
     TextInput {
         y: 80
         x: 100
         id: source
         text: "Alkimia Currency"
-        //placeholderText: qsTr("Source")
+        //placeholderText: i18n("Source")
     }
 
     Rectangle {
@@ -74,7 +74,7 @@ Item {
         id: fetchLabel
         y: 128
         x: 170
-        text: "Fetch"
+        text: i18n("Fetch")
     }
 
     Text {

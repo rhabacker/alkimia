@@ -69,6 +69,7 @@ else()
         Package
         Plasma
         NewStuff
+        Declarative
     )
 
     set(QT_USE_LIBSPREFIX Qt5::)

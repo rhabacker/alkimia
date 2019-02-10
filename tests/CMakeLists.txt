@@ -10,11 +10,14 @@ if(BUILD_QT4)
     list(APPEND TEST_LIB
         ${QT_USE_LIBSPREFIX}Declarative
         ${KDE_LIBRARIES}
+        kdeclarative
     )
 else()
     list(APPEND TEST_LIB
         ${QT_USE_LIBSPREFIX}Qml
         ${QT_USE_LIBSPREFIX}WebKitWidgets
+        KF5::KDELibs4Support
+        KF5::Declarative
      )
 endif()
 add_executable(qmlalkonlinequotetest
