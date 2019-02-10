@@ -30,7 +30,7 @@ Item {
     }
     TextInput {
         y: 50
-        x: 100
+        x: 150
         id: symbol
         text: "CAD EUR"
         //placeholderText: i18n("Symbol")
@@ -44,7 +44,7 @@ Item {
     }
     TextInput {
         y: 80
-        x: 100
+        x: 150
         id: source
         text: "Alkimia Currency"
         //placeholderText: i18n("Source")
@@ -54,7 +54,7 @@ Item {
         width: 200
         height: 30
         y: 122
-        x: 100
+        x: 150
         color: "lightgray"
         MouseArea {
             id: mouseArea;
@@ -80,24 +80,24 @@ Item {
     Text {
         id: statusLabel
         y: 150
-        x: 100
+        x: 150
     }
 
     Text {
         id: priceLabel
         y: 180
-        x: 100
+        x: 150
     }
 
     Text {
         id: dateLabel
         y: 210
-        x: 100
+        x: 150
     }
 
     Text {
         id: errorLabel
         y: 240
-        x: 100
+        x: 150
     }
 }

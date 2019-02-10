@@ -28,13 +28,13 @@ ApplicationWindow {
     Label {
         id: symbolLabel
         y: 56
-        x: 0
+        x: 8
         text: i18n("Enter symbol:")
     }
 
     TextField {
-        y: 50
-        x: 100
+        y: 47
+        x: 150
         id: symbol
         text: "CAD EUR"
         placeholderText: i18n("Symbol")
@@ -43,13 +43,13 @@ ApplicationWindow {
     Label {
         id: quoteLabel
         y: 86
-        x: 0
+        x: 8
         text: i18n("Enter quote:")
     }
 
     TextField {
-        y: 80
-        x: 100
+        y: 74
+        x: 150
         id: source
         text: "Alkimia Currency"
         placeholderText: i18n("Source")
@@ -59,7 +59,7 @@ ApplicationWindow {
         width: 200
         height: 30
         y: 122
-        x: 100
+        x: 150
         text: i18n("Fetch")
 
         onClicked: {
@@ -74,24 +74,24 @@ ApplicationWindow {
     Label {
         id: statusLabel
         y: 150
-        x: 100
+        x: 150
     }
 
     Label {
         id: priceLabel
         y: 180
-        x: 100
+        x: 150
     }
 
     Label {
         id: dateLabel
         y: 210
-        x: 100
+        x: 150
     }
 
     Label {
         id: errorLabel
         y: 240
-        x: 100
+        x: 150
     }
 }
