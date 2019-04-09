@@ -1,6 +1,6 @@
 if(BUILD_QT4)
-    set(QUOTES_INSTALL_DIR ${KDE4_DATA_INSTALL_DIR}/alkimia/quotes)
+    set(QUOTES_INSTALL_DIR ${KDE4_DATA_INSTALL_DIR}/alkimia/localquotes)
 else()
-    set(QUOTES_INSTALL_DIR ${DATA_INSTALL_DIR}/alkimia/quotes)
+    set(QUOTES_INSTALL_DIR ${DATA_INSTALL_DIR}/alkimia/localquotes)
 endif()
 add_subdirectory(quotes)

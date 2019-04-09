@@ -39,22 +39,27 @@ public:
         Undefined, None, Alkimia4, Alkimia5, KMyMoney4, KMyMoney5, Skrooge4, Skrooge5, Script
     };
     AlkOnlineQuotesProfile(const QString &name = "alkimia", Type type = Type::None,
-        const QString &ghnsConfigFile = QString());
+        const QString &ghnsConfigFile = QString(), const QString relativeQuotesFilePath = QString());
     ~AlkOnlineQuotesProfile();
 
     QString name() const;
+    Type type();
+
+    bool hasQuotesInFilePath();
+    QString dataReadPath() const;
+    QString dataWritePath() const;
+
+    bool hasGHNSSupport();
     QString hotNewStuffConfigFile() const;
     QString hotNewStuffRelPath() const;
-    QStringList hotNewStuffReadPath() const;
-    QString hotNewStuffWriteDir() const;
-    QString hotNewStuffReadFilePath(const QString &fileName) const;
+    QString hotNewStuffWritePath() const;
     QString hotNewStuffWriteFilePath(const QString &fileName) const;
+
     QString kConfigFile() const;
+    KConfig *kConfig() const;
+
     void setManager(AlkOnlineQuotesProfileManager *manager);
     AlkOnlineQuotesProfileManager *manager();
-    KConfig *kConfig() const;
-    Type type();
-    bool hasGHNSSupport();
 
     /**
      * return available default sources of this profile
@@ -65,6 +70,12 @@ public:
      * return available sources of this profile
      */
     const QStringList quoteSources();
+
+    QString localQuotesReadPath() const;
+    QString localQuotesWritePath() const;
+    QString localQuotesReadFilePath(const QString &fileName) const;
+    QString localQuotesWriteFilePath(const QString &fileName) const;
+
 
 private:
     class Private;

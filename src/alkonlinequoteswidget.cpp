@@ -304,7 +304,8 @@ void AlkOnlineQuotesWidget::Private::slotLoadProfile()
         }
     }
 
-    bool visible = m_profile->type() != AlkOnlineQuotesProfile::Type::None;
+    bool visible = m_profile->type() != AlkOnlineQuotesProfile::Type::None
+            && !m_profile->hasQuotesInFilePath() && !m_profile->kConfigFile().isEmpty();
     m_configFilePath->setText(m_profile->kConfigFile());
     m_configFilePath->setVisible(visible);
     m_configLabel->setEnabled(visible);
@@ -314,9 +315,18 @@ void AlkOnlineQuotesWidget::Private::slotLoadProfile()
     m_GHNSConfigFilePath->setVisible(visible);
     m_GHNSConfigLabel->setEnabled(visible);
 
-    m_GHNSDataPath->setText(m_profile->hotNewStuffReadPath().join(" "));
+    m_GHNSDataPath->setText(m_profile->hotNewStuffWritePath());
     m_GHNSDataPath->setVisible(visible);
     m_GHNSDataLabel->setEnabled(visible);
+
+    visible = m_profile->hasQuotesInFilePath();
+    m_readDataPath->setText(m_profile->dataReadPath());
+    m_readDataPath->setVisible(visible);
+    m_readDataLabel->setEnabled(visible);
+
+    m_writeDataPath->setText(m_profile->dataWritePath());
+    m_writeDataPath->setVisible(visible);
+    m_writeDataLabel->setEnabled(visible);
 }
 
 void AlkOnlineQuotesWidget::Private::slotLoadWidgets()

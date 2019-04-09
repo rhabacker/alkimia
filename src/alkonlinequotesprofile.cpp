@@ -50,6 +50,7 @@ public:
     QString m_name;
     QString m_GHNSFile;
     QString m_GHNSFilePath;
+    QString m_relativeQuotesFilePath;
     QString m_kconfigFile;
     AlkOnlineQuotesProfileManager *m_profileManager;
     KNS3::DownloadManager *m_manager;
@@ -71,8 +72,9 @@ public:
         return !m_financeQuoteScriptPath.isEmpty();
     }
 
-    Private(AlkOnlineQuotesProfile *p)
+    Private(AlkOnlineQuotesProfile *p, const QString relativeQuotesFilePath)
         : m_p(p)
+        , m_relativeQuotesFilePath(relativeQuotesFilePath)
         , m_profileManager(0)
         , m_manager(0)
         , m_config(0)
@@ -114,7 +116,7 @@ public Q_SLOTS:
         qDebug() << entry.summary();
     }
 
-    const QStringList quoteSourcesNative()
+    const QStringList quoteSourcesFromConfigFile()
     {
         //KSharedConfigPtr kconfig = KGlobal::config();
         KConfig config(m_kconfigFile);
@@ -169,13 +171,13 @@ public Q_SLOTS:
 
     const QStringList quoteSourcesSkrooge()
     {
-        return quoteSourcesGHNS();
+        return quoteSourcesFromFilePath(m_GHNSFilePath);
     }
 
-    const QStringList quoteSourcesGHNS()
+    const QStringList quoteSourcesFromFilePath(const QString &filePath)
     {
         QStringList sources;
-        const QString filename = QString("%1/*.txt").arg(m_GHNSFilePath);
+        const QString filename = QString("%1/*.txt").arg(filePath);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
         const auto resources = QStandardPaths::locateAll(QStandardPaths::DataLocation, filename);
@@ -270,8 +272,9 @@ QStringList AlkOnlineQuotesProfile::Private::m_financeQuoteSources;
 
 
 AlkOnlineQuotesProfile::AlkOnlineQuotesProfile(const QString &name, Type type,
-                                               const QString &ghnsConfigFile)
-    : d(new Private(this))
+                                               const QString &ghnsConfigFile,
+                                               const QString relativeQuotesFilePath)
+    : d(new Private(this, relativeQuotesFilePath))
 {
     d->m_name = name;
     d->m_GHNSFile = ghnsConfigFile;
@@ -304,6 +307,31 @@ QString AlkOnlineQuotesProfile::name() const
     return d->m_name;
 }
 
+AlkOnlineQuotesProfile::Type AlkOnlineQuotesProfile::type()
+{
+    return d->m_type;
+}
+
+bool AlkOnlineQuotesProfile::hasQuotesInFilePath()
+{
+    return !d->m_relativeQuotesFilePath.isEmpty();
+}
+
+QString AlkOnlineQuotesProfile::dataReadPath() const
+{
+    return QString("%1/%2/").arg(d->dataReadPath(), d->m_relativeQuotesFilePath);
+}
+
+QString AlkOnlineQuotesProfile::dataWritePath() const
+{
+    return QString("%1/%2/").arg(d->dataWritePath(), d->m_relativeQuotesFilePath);
+}
+
+bool AlkOnlineQuotesProfile::hasGHNSSupport()
+{
+    return !d->m_GHNSFile.isEmpty();
+}
+
 QString AlkOnlineQuotesProfile::hotNewStuffConfigFile() const
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -318,36 +346,34 @@ QString AlkOnlineQuotesProfile::hotNewStuffConfigFile() const
     return configFile;
 }
 
-QString AlkOnlineQuotesProfile::hotNewStuffReadFilePath(const QString &fileName) const
-{
-    foreach(const QString &path, hotNewStuffReadPath()) {
-        QFileInfo f(path + fileName);
-        if (f.exists())
-            return f.absoluteFilePath();
-    }
-    return QString();
-}
-
 QString AlkOnlineQuotesProfile::hotNewStuffWriteFilePath(const QString &fileName) const
 {
-    return QString("%1%2").arg(hotNewStuffWriteDir(), fileName);
+    return QString("%1%2").arg(hotNewStuffWritePath(), fileName);
 }
 
-QStringList AlkOnlineQuotesProfile::hotNewStuffReadPath() const
-{
-    return QStringList()
-        << QString("%1/%2/").arg(d->dataReadPath(), d->m_GHNSFilePath)
-        << hotNewStuffWriteDir();
-}
-
-QString AlkOnlineQuotesProfile::hotNewStuffWriteDir() const
+QString AlkOnlineQuotesProfile::hotNewStuffWritePath() const
 {
     return QString("%1/%2/").arg(d->dataWritePath(), d->m_GHNSFilePath);
 }
 
-QString AlkOnlineQuotesProfile::hotNewStuffRelPath() const
+QString AlkOnlineQuotesProfile::localQuotesReadPath() const
 {
-    return d->m_GHNSFilePath;
+    return QString("%1/%2/").arg(d->dataReadPath(), d->m_relativeQuotesFilePath);
+}
+
+QString AlkOnlineQuotesProfile::localQuotesWritePath() const
+{
+    return QString("%1/%2/").arg(d->dataWritePath(), d->m_relativeQuotesFilePath);
+}
+
+QString AlkOnlineQuotesProfile::localQuotesReadFilePath(const QString &fileName) const
+{
+    return QString("%1%2").arg(localQuotesReadPath(), fileName);
+}
+
+QString AlkOnlineQuotesProfile::localQuotesWriteFilePath(const QString &fileName) const
+{
+    return QString("%1%2").arg(localQuotesWritePath(), fileName);
 }
 
 QString AlkOnlineQuotesProfile::kConfigFile() const
@@ -358,16 +384,6 @@ QString AlkOnlineQuotesProfile::kConfigFile() const
 KConfig *AlkOnlineQuotesProfile::kConfig() const
 {
     return d->m_config;
-}
-
-AlkOnlineQuotesProfile::Type AlkOnlineQuotesProfile::type()
-{
-    return d->m_type;
-}
-
-bool AlkOnlineQuotesProfile::hasGHNSSupport()
-{
-    return !d->m_GHNSFile.isEmpty();
 }
 
 const AlkOnlineQuotesProfile::Map AlkOnlineQuotesProfile::defaultQuoteSources()
@@ -383,7 +399,10 @@ const QStringList AlkOnlineQuotesProfile::quoteSources()
     case AlkOnlineQuotesProfile::Type::Alkimia5:
     case AlkOnlineQuotesProfile::Type::KMyMoney4:
     case AlkOnlineQuotesProfile::Type::KMyMoney5:
-        result << d->quoteSourcesNative();
+        if (!d->m_relativeQuotesFilePath.isEmpty())
+            result << d->quoteSourcesFromFilePath(d->m_relativeQuotesFilePath);
+        else
+            result << d->quoteSourcesFromConfigFile();
         break;
     case AlkOnlineQuotesProfile::Type::Script:
         result << d->quoteSourcesFinanceQuote();
@@ -395,7 +414,7 @@ const QStringList AlkOnlineQuotesProfile::quoteSources()
         break;
     }
     if (hasGHNSSupport())
-        result << d->quoteSourcesGHNS();
+        result << d->quoteSourcesFromFilePath(d->m_GHNSFilePath);
     return result;
 }
 

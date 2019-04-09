@@ -54,7 +54,22 @@ public:
     {
     }
 
-    bool read()
+    QString ghnsWriteFilePath()
+    {
+        return m_profile->hotNewStuffWriteFilePath(m_name + QLatin1String(".txt"));
+    }
+
+    QString localQuotesReadFilePath()
+    {
+        return m_profile->localQuotesReadFilePath(m_name + QLatin1String(".txt"));
+    }
+
+    QString localQuotesWriteFilePath()
+    {
+        return m_profile->localQuotesWriteFilePath(m_name + QLatin1String(".txt"));
+    }
+
+    bool readFromConfigFile()
     {
         KConfig *kconfig = m_profile->kConfig();
         if (!kconfig)
@@ -75,7 +90,7 @@ public:
         return true;
     }
 
-    bool write()
+    bool writeToConfigFile()
     {
         KConfig *kconfig = m_profile->kConfig();
         if (!kconfig)
@@ -95,11 +110,47 @@ public:
         return true;
     }
 
-    bool write(const QString fileName)
+    bool removeFromConfigFile()
+    {
+        KConfig *kconfig = m_profile->kConfig();
+        if (!kconfig)
+            return false;
+        kconfig->deleteGroup(QString("Online-Quote-Source-%1").arg(m_name));
+        kconfig->sync();
+        return true;
+    }
+
+    bool readFromFile(const QString &fileName)
+    {
+        QFileInfo f(fileName);
+        if (!f.exists())
+            return false;
+        KConfig config(fileName);
+        const QString &group = QString("Online-Quote-Source");
+        if (!config.hasGroup(group)) {
+            return false;
+        }
+        KConfigGroup grp = config.group(group);
+        m_sym = grp.readEntry("SymbolRegex");
+        m_date = grp.readEntry("DateRegex");
+        m_dateformat = grp.readEntry("DateFormatRegex", "%m %d %y");
+        m_price = grp.readEntry("PriceRegex");
+        m_url = grp.readEntry("URL");
+        m_skipStripping = grp.readEntry("SkipStripping", false);
+        m_isGHNSSource = false;
+        m_readOnly = false;
+        return true;
+    }
+
+    bool writeToFile()
+    {
+        QString fileName = localQuotesWriteFilePath();
+        return writeToFile(fileName);
+    }
+
+    bool writeToFile(const QString &fileName)
     {
         KConfig config(fileName);
-        if (!config.isConfigWritable(false))
-            return false;
         KConfigGroup grp = config.group(QString("Online-Quote-Source"));
         grp.writeEntry("Name", m_name);
         grp.writeEntry("URL", m_url);
@@ -117,33 +168,19 @@ public:
         return true;
     }
 
-    bool remove()
+    bool removeFile()
     {
-        KConfig *kconfig = m_profile->kConfig();
-        if (!kconfig)
-            return false;
-        kconfig->deleteGroup(QString("Online-Quote-Source-%1").arg(m_name));
-        kconfig->sync();
+        QFile::remove(localQuotesWriteFilePath());
         return true;
-    }
-
-    QString ghnsReadFilePath()
-    {
-        return m_profile->hotNewStuffReadFilePath(m_name + QLatin1String(".txt"));
-    }
-
-    QString ghnsWriteFilePath()
-    {
-        return m_profile->hotNewStuffWriteFilePath(m_name + QLatin1String(".txt"));
     }
 
     // This is currently in skrooge format
     bool readFromGHNSFile()
     {
-        QFileInfo f(ghnsReadFilePath());
+        QFileInfo f(ghnsWriteFilePath());
         if (!f.exists())
-            f.setFile(ghnsWriteFilePath());
-        m_readOnly = !f.isWritable();
+            return false;
+        m_readOnly = true;
 
         QFile file(f.absoluteFilePath());
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -192,6 +229,7 @@ public:
 
     bool removeGHNSFile()
     {
+        // TODO use newstuff api to uninstall
         qDebug() << "delete" << ghnsWriteFilePath();
         return true;
     }
@@ -378,24 +416,37 @@ bool AlkOnlineQuoteSource::read()
         if (result)
             return true;
     }
-    return d->read();
+    if (d->m_profile->hasQuotesInFilePath()) {
+        result = d->readFromFile(d->localQuotesWriteFilePath());
+        if (result)
+            return true;
+        return d->readFromFile(d->localQuotesReadFilePath());
+    } else {
+        return d->readFromConfigFile();
+    }
 }
 
 bool AlkOnlineQuoteSource::write(const QString &filename)
 {
     if (!filename.isEmpty())
-        return d->write(filename);
+        return d->writeToFile(filename);
 
     bool result = false;
-    // check if type has been changedd->isGHNS
+    // check if type has been changed->isGHNS
     if (d->m_profile->hasGHNSSupport() && d->m_isGHNSSource) {
         result = d->writeToGHNSFile();
-        if (d->m_storageChanged)
-            d->remove();
-        return result;
+    } else if (d->m_profile->hasQuotesInFilePath()) {
+        result = d->writeToFile(d->localQuotesWriteFilePath());
     } else {
-        result = d->write();
-        if (d->m_profile->hasGHNSSupport() && d->m_storageChanged) {
+        result = d->writeToConfigFile();
+    }
+    if (d->m_storageChanged) {
+        if (d->m_isGHNSSource) {
+            if (d->m_profile->hasQuotesInFilePath())
+                d->removeFile();
+            else
+                d->removeFromConfigFile();
+        } else {
             d->removeGHNSFile();
         }
     }
@@ -418,6 +469,6 @@ void AlkOnlineQuoteSource::remove()
     if (d->m_profile->hasGHNSSupport() && d->m_isGHNSSource) {
         d->removeGHNSFile();
     } else if (d->m_profile->type() != AlkOnlineQuotesProfile::Type::None) {
-        d->remove();
+        d->removeFromConfigFile();
     }
 }
