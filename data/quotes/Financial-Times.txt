@@ -1,8 +1,8 @@
 [Online-Quote-Source]
 DateFormatRegex=%m %d %y
-DateRegex=Data delayed at least 15 minutes, as of\\ (.*)\\.
+DateRegex=Data delayed at least 15 minutes, as of (\\w+\\s\\w+\\s\\w+)
 Mode=HTML
-Name=Financial Times
+Name=Financial-Times
 PriceRegex=Price\\D+([\\d,]*\\d+\\.\\d+)
 SkipStripping=true
 SymbolRegex=
