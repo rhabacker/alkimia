@@ -21,11 +21,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "applicationsettings.h"
+#include <KXmlGuiWindow>
 
 class QUrl;
 
-class MainWindow : public QMainWindow, public ApplicationSettings
+class MainWindow : public KXmlGuiWindow
 {
     Q_OBJECT
 
@@ -40,7 +40,7 @@ protected slots:
     void slotLanguageChanged(const QString &);
 
 protected:
-    void closeEvent(QCloseEvent *event) override;
+    void setupActions();
 
 private:
     class Private;

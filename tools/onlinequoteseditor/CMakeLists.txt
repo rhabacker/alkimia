@@ -6,18 +6,15 @@ include_directories(
 )
 
 set(SOURCES
-  applicationsettings.cpp
   main.cpp
   mainwindow.cpp
 )
 
 set(HEADERS
-  applicationsettings.h
   mainwindow.h
 )
 
 set(UI
- mainwindow.ui
 )
 
 ki18n_wrap_ui(SOURCES ${UI} )

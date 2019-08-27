@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright 2018 Ralf Habacker <ralf.habacker@freenet.de>               *
+ *   Copyright 2018-2019 Ralf Habacker <ralf.habacker@freenet.de>          *
  *                                                                         *
  *   This file is part of libalkimia.                                      *
  *                                                                         *
@@ -18,17 +18,22 @@
  ***************************************************************************/
 
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
 #include "alkonlinequotesprofile.h"
 #include "alkonlinequotesprofilemanager.h"
 #include "alkonlinequoteswidget.h"
 #include "alkwebpage.h"
 
+#include <QApplication>
 #include <QComboBox>
 #include <QDockWidget>
+#include <QHBoxLayout>
 #include <QLineEdit>
 #include <QNetworkRequest>
+
+#include <KActionCollection>
+#include <KLocalizedString>
+#include <KStandardAction>
 
 class MainWindow::Private
 {
@@ -45,7 +50,6 @@ public:
     }
     QLineEdit *urlLine;
     AlkOnlineQuotesWidget *quotesWidget;
-    Ui::MainWindow ui;
 };
 
 void MainWindow::slotUrlChanged(const QUrl &url)
@@ -66,8 +70,7 @@ void MainWindow::slotLanguageChanged(const QString &text)
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ApplicationSettings(this, false)
+    : KXmlGuiWindow(parent)
     , d(new Private)
 {
     AlkOnlineQuotesProfileManager &manager = AlkOnlineQuotesProfileManager::instance();
@@ -85,7 +88,6 @@ MainWindow::MainWindow(QWidget *parent)
 #ifdef ENABLE_FINANCEQUOTE
     manager.addProfile(new AlkOnlineQuotesProfile("Finance::Quote", AlkOnlineQuotesProfile::Type::Script));
 #endif
-    d->ui.setupUi(this);
 
     d->quotesWidget = new AlkOnlineQuotesWidget(true, true);
 
@@ -160,7 +162,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     setCentralWidget(nullptr);
 
-    readPositionSettings();
+    webPage->setWebInspectorEnabled(true);
+    setupActions();
 }
 
 MainWindow::~MainWindow()
@@ -177,8 +180,8 @@ void MainWindow::slotUpdateAvailable(const QString &profile, const QString &name
     statusBar()->showMessage(s);
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::setupActions()
 {
-    writePositionSettings();
-    QMainWindow::closeEvent(event);
+    KStandardAction::quit(qApp, SLOT(quit()), actionCollection());
+    setupGUI();
 }
