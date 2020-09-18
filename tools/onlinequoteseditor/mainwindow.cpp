@@ -184,5 +184,5 @@ void MainWindow::slotUpdateAvailable(const QString &profile, const QString &name
 void MainWindow::setupActions()
 {
     KStandardAction::quit(qApp, SLOT(quit()), actionCollection());
-    setupGUI();
+    //setupGUI(Default, "onlinequoteseditorui.rc");
 }
