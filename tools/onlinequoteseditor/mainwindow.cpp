@@ -34,6 +34,7 @@
 #include <KActionCollection>
 #include <KLocalizedString>
 #include <KStandardAction>
+#include <KStatusBar>
 
 class MainWindow::Private
 {
