@@ -23,10 +23,9 @@
 #include "alkonlinequotesprofile.h"
 #include "alkquotereceiver.h"
 #include "alkwebpage.h"
+#include "test.h"
 
-#include <QtTest/QtTest>
-
-QTEST_MAIN(AlkOnlineQuoteTest)
+QTEST_GUILESS_MAIN(AlkOnlineQuoteTest)
 
 void AlkOnlineQuoteTest::init()
 {
