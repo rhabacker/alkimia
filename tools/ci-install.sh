@@ -31,6 +31,10 @@ set -x
 # Typical values: opensuse ubuntu
 : "${ci_distro:=opensuse}"
 
+# ci_host:
+# host to build for
+: "${ci_host:=native}"
+
 # ci_variant:
 # One of kf5, kde4
 : "${ci_variant:=kf5}"
@@ -80,19 +84,50 @@ case "$ci_distro" in
                 ;;
 
             (kde4)
-                # for libQtWebKit-devel
                 $zypper ar --refresh --no-gpgcheck \
                     https://download.opensuse.org/repositories/windows:/mingw/$repo/windows:mingw.repo || true
-                packages=(
-                    "${packages[@]}"
-                    gcc-c++
-                    extra-cmake-modules
-                    libkde4-devel
-                    libQtWebKit-devel
-                    kdebase4-runtime
-                    gmp-devel
-                )
-                ;;
+                case "$ci_host" in
+                    (i686-w64-mingw32)
+                        $zypper ar --refresh --no-gpgcheck \
+                            https://download.opensuse.org/repositories/windows:/mingw:/win32/$repo/windows:mingw:win32.repo || true
+                        packages=(
+                            "${packages[@]}"
+                            mingw32-cross-gcc-c++
+                            mingw32-extra-cmake-modules
+                            mingw32-gmp-devel
+                            mingw32-libkde4-devel
+                            mingw32-kdebase4-runtime
+                            wine-binfmt-standalone
+                        )
+                        ;;
+                    (x86_64-w64-mingw32)
+                        $zypper ar --refresh --no-gpgcheck \
+                            https://download.opensuse.org/repositories/windows:/mingw:/win64/$repo/windows:mingw:win64.repo || true
+                        packages=(
+                            "${packages[@]}"
+                            mingw64-cross-gcc-c++
+                            mingw64-extra-cmake-modules
+                            mingw64-gmp-devel
+                            mingw64-libkde4-devel
+                            mingw64-kdebase4-runtime
+                            wine-binfmt-standalone
+                        )
+                        ;;
+                    (native)
+                        # for libQtWebKit-devel
+                        $zypper ar --refresh --no-gpgcheck \
+                            https://download.opensuse.org/repositories/windows:/mingw/$repo/windows:mingw.repo || true
+                        packages=(
+                            "${packages[@]}"
+                            gcc-c++
+                            extra-cmake-modules
+                            libkde4-devel
+                            libQtWebKit-devel
+                            kdebase4-runtime
+                            gmp-devel
+                        )
+                        ;;
+                esac
         esac
 
         # update package repos
