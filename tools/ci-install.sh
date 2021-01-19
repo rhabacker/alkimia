@@ -90,31 +90,31 @@ case "$ci_distro" in
                     (i686-w64-mingw32)
                         $zypper ar --refresh --no-gpgcheck \
                             https://download.opensuse.org/repositories/windows:/mingw:/win32/$repo/windows:mingw:win32.repo || true
+                        source_packages=(
+                            "${source_packages[@]}"
+                            mingw32-libalkimia
+                        )
                         packages=(
                             "${packages[@]}"
-                            mingw32-cross-gcc-c++
-                            mingw32-extra-cmake-modules
-                            mingw32-gmp-devel
+                            mingw32-cross-wine
                             # fixed with package date >= 2021-*-*
                             mingw32-libgmp10
-                            mingw32-libkde4-devel
                             mingw32-kdebase4-runtime
-                            wine-binfmt-standalone
                         )
                         ;;
                     (x86_64-w64-mingw32)
                         $zypper ar --refresh --no-gpgcheck \
                             https://download.opensuse.org/repositories/windows:/mingw:/win64/$repo/windows:mingw:win64.repo || true
+                        source_packages=(
+                            "${source_packages[@]}"
+                            mingw64-libalkimia
+                        )
                         packages=(
                             "${packages[@]}"
-                            mingw64-cross-gcc-c++
-                            mingw64-extra-cmake-modules
-                            mingw64-gmp-devel
+                            mingw64-cross-wine
                             # fixed with package date >= 2021-*-*
-                            mingw32-libgmp10
-                            mingw64-libkde4-devel
+                            mingw64-libgmp10
                             mingw64-kdebase4-runtime
-                            wine-binfmt-standalone
                         )
                         ;;
                     (native)
