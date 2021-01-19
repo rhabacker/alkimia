@@ -138,7 +138,7 @@ case "$ci_distro" in
         $zypper refresh
         # install source packages
         if test -v "source_packages"; then
-            $zypper source-install "${source_packages[@]}"
+            $zypper source-install -d "${source_packages[@]}"
         fi
         # install remaining packages
         $zypper install "${packages[@]}"
