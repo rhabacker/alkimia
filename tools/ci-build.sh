@@ -26,6 +26,64 @@
 set -euo pipefail
 set -x
 
+# kill kde and x session
+function cleanup() {
+    touch finished
+    if test "$ci_host" = native; then
+        ${start_kde_session}_shutdown
+        kill -s 9 $DBUS_SESSION_BUS_PID
+    else
+        $wrapper $start_kde_session --terminate
+    fi
+    killall -s 9 xvfb-run
+    sleep 1
+    killall -s 9 Xvfb
+}
+
+# start xvfb session - will restart in case of crashes
+function start_x_session() {
+    rm -f ./finished
+    (
+        while ! test -f ./finished; do
+            xvfb-run -s "+extension GLX +render" -a -n 99 openbox 2>&1 >/dev/null
+        done
+    ) &
+    export DISPLAY=:99
+    sleep 2
+}
+
+# start dbus-daemon and kde background processes
+function start_kde_session() {
+    if test "$ci_host" = native; then
+        # avoid D-Bus library appears to be incorrectly set up
+        if ! test -f /var/lib/dbus/machine-id; then
+            dbus-uuidgen > /var/lib/dbus/machine-id
+        fi
+        # start new dbus session, which is required by kio
+        # and identified by $DBUS_SESSION_BUS_PID
+        eval `dbus-launch --sh-syntax`
+    fi
+    $wrapper $start_kde_session --verbose
+}
+
+# missing wrapper for associated rpm macro
+function cmake-kde4() {
+    NAME="cmake_kde4"
+    ${RPM_OPT_FLAGS:=}
+    ${LDFLAGS:=}
+    ${icerun:=}
+    eval "`rpm --eval "%${NAME} $(printf " %q" "${@}")"`"
+}
+
+# missing wrapper for associated rpm macro
+function cmake-kf5() {
+    NAME="cmake_kf5"
+    ${RPM_OPT_FLAGS:=}
+    ${LDFLAGS:=}
+    ${icerun:=}
+    eval "`rpm --eval "%${NAME} $(printf " %q" "${@}")"`"
+}
+
 ##
 ## initialize support to run cross compiled executables
 ##
@@ -109,6 +167,14 @@ init_cross_runtime() {
     fi
 }
 
+# ci_build:
+# used for debugging
+: "${ci_build:=yes}"
+
+# ci_clean:
+# used for debugging
+: "${ci_clean:=yes}"
+
 # ci_host:
 # See ci-install.sh
 : "${ci_host:=native}"
@@ -131,13 +197,9 @@ init_cross_runtime() {
 
 
 # specify build dir
-builddir=ci-build-${ci_variant}-${ci_host}
 srcdir="$(pwd)"
+builddir=${srcdir}/ci-build-${ci_variant}-${ci_host}
 
-# start dbus session, which is required by kio
-if ! test -v DBUS_SESSION_BUS_PID || test -z "$DBUS_SESSION_BUS_PID"; then
-    eval `dbus-launch --sh-syntax`
-fi
 
 # settings for build variants
 case "$ci_variant" in
@@ -160,48 +222,50 @@ case "$ci_host" in
     (i686-w64-mingw32)
         cmake="mingw32-cmake-$cmake_suffix"
         init_cross_runtime $builddir/bin
-        start_kde_session="wine $start_kde_session"
-
+        wrapper=/usr/bin/wine
         ;;
     (x86_64-w64-mingw32)
         cmake="mingw64-cmake-$cmake_suffix"
         init_cross_runtime $builddir/bin
-        start_kde_session="wine $start_kde_session"
+        wrapper=/usr/bin/wine
         ;;
     (*)
         cmake="cmake-$cmake_suffix"
+        export LD_LIBRARY_PATH=${builddir}/bin
+        wrapper=
         ;;
 esac
 
 # create subdirs
-rm -rf ${builddir}
-mkdir -p ${builddir}
+if test "$ci_clean" = yes; then
+    rm -rf ${builddir}
+    mkdir -p ${builddir}
+fi
+
 cd ${builddir}
 
-# configure project
-$cmake -- $cmake_options ..
-make -j$ci_jobs
-
-# start xvfb session - will restart in case of crashes
-(while ! test -f ./finished; do xvfb-run -s "+extension GLX +render" -a -n 99 openbox; done) &
-export DISPLAY=:99
-
-# start kde session
-$start_kde_session
+# configure and build
+if test "$ci_build" = yes; then
+    $cmake -- $cmake_options ..
+    make -j$ci_jobs
+fi
 
 # run tests
-ctest --output-on-failure --timeout 60 --jobs $ci_jobs
-#ctest -VV --timeout 60
+if test "$ci_test" = yes; then
+    trap cleanup EXIT
 
-# show screenshot in case of errors
-if test $? -ne 0; then
-    xwd -root -silent | convert xwd:- png:/tmp/screenshot.png
-    cat /tmp/screenshot.png | uuencode screenshot
+    start_x_session
+
+    start_kde_session
+
+    ctest --output-on-failure --timeout 60 --jobs $ci_jobs
+
+    # show screenshot in case of errors
+    if test $? -ne 0; then
+        xwd -root -silent | convert xwd:- png:/tmp/screenshot.png
+        cat /tmp/screenshot.png | uuencode screenshot
+    fi
 fi
 
 # run install
 make install DESTDIR=$PWD/tmp
-
-# kill x session
-touch finished
-killall -s 9 $start_kde_session openbox dbus-daemon || true
