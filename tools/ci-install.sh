@@ -72,15 +72,55 @@ case "$ci_distro" in
         )
         case "$ci_variant" in
             (kf5)
-                source_packages=(
-                    "${source_packages[@]}"
-                    alkimia
-                )
-                packages=(
-                    "${packages[@]}"
-                    kinit
-                    libQt5WebKitWidgets-devel
-                )
+                case "$ci_host" in
+                    (i686-w64-mingw32)
+                        $zypper ar --refresh --no-gpgcheck \
+                            https://download.opensuse.org/repositories/windows:/mingw:/win32/$repo/windows:mingw:win32.repo || true
+                        source_packages=(
+                            "${source_packages[@]}"
+                            # TODO add mentioned package to avoid the long required package list
+                            # mingw32-libalkimia5
+                        )
+                        packages=(
+                            "${packages[@]}"
+                            #gettext-tools
+                            # kdeinit5
+                            mingw32-kinit
+                            # kded5
+                            mingw32-kded
+                            mingw32-cross-gcc-c++
+                            mingw32-cross-kdewin-tools
+                            mingw32-cross-libqt5-qmake
+                            mingw32-cross-wine
+                            mingw32-extra-cmake-modules
+                            mingw32-gmp-devel
+                            # fixed with package date >= 2021-*-*
+                            mingw32-libgmp10
+                            mingw32-libqt5-qtbase-devel
+                            mingw32-libqt5-qtdeclarative-devel
+                            mingw32-libqt5-qtwebkit-devel
+                            mingw32-kconfig-devel
+                            mingw32-kcoreaddons-devel
+                            mingw32-kdelibs4support-devel
+                            mingw32-ki18n-devel
+                            mingw32-knewstuff-devel
+                            mingw32-kpackage-devel
+                        )
+                        ;;
+                    (x86_64-w64-mingw32)
+                        ;;
+                    (native)
+                        source_packages=(
+                            "${source_packages[@]}"
+                            alkimia
+                        )
+                        packages=(
+                            "${packages[@]}"
+                            kinit
+                            libQt5WebKitWidgets-devel
+                        )
+                    ;;
+                esac
                 ;;
 
             (kde4)
