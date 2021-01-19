@@ -95,6 +95,8 @@ case "$ci_distro" in
                             mingw32-cross-gcc-c++
                             mingw32-extra-cmake-modules
                             mingw32-gmp-devel
+                            # fixed with package date >= 2021-*-*
+                            mingw32-libgmp10
                             mingw32-libkde4-devel
                             mingw32-kdebase4-runtime
                             wine-binfmt-standalone
@@ -108,6 +110,8 @@ case "$ci_distro" in
                             mingw64-cross-gcc-c++
                             mingw64-extra-cmake-modules
                             mingw64-gmp-devel
+                            # fixed with package date >= 2021-*-*
+                            mingw32-libgmp10
                             mingw64-libkde4-devel
                             mingw64-kdebase4-runtime
                             wine-binfmt-standalone
