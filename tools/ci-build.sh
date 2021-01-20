@@ -29,22 +29,24 @@ set -x
 # kill kde and x session
 function cleanup() {
     touch finished
-    if test "$ci_host" = native; then
-        ${start_kde_session}_shutdown
-        kill -s 9 $DBUS_SESSION_BUS_PID
-    else
-        $wrapper $start_kde_session --terminate
+    if test "$ci_in_docker" = yes; then
+        if test "$ci_host" = native; then
+            ${start_kde_session}_shutdown
+            kill -s 9 $DBUS_SESSION_BUS_PID
+        else
+            $wrapper $start_kde_session --terminate
+        fi
+        killall -s 9 xvfb-run
+        sleep 1
+        killall -s 9 Xvfb
     fi
-    killall -s 9 xvfb-run
-    sleep 1
-    killall -s 9 Xvfb
 }
 
 # start xvfb session - will restart in case of crashes
 function start_x_session() {
-    rm -f ./finished
+    rm -f $builddir/finished
     (
-        while ! test -f ./finished; do
+        while ! test -f $builddir/finished; do
             xvfb-run -s "+extension GLX +render" -a -n 99 openbox 2>&1 >/dev/null
         done
     ) &
@@ -64,6 +66,19 @@ function start_kde_session() {
         eval `dbus-launch --sh-syntax`
     fi
     $wrapper $start_kde_session --verbose
+}
+
+function start_session() {
+    if test "$ci_variant" = kf5; then
+        # setup qt5.conf
+        qtconf="$dep_prefix/bin/qt5.conf"
+        sed "s,Prefix.*$,Prefix=$dep_prefix,g" "$dep_prefix/bin/qt5.conf" > "$builddir/bin/qt5.conf"
+    fi
+
+    if test "$ci_in_docker" = yes; then
+        start_x_session
+        start_kde_session
+    fi
 }
 
 # missing wrapper for associated rpm macro
@@ -157,12 +172,14 @@ init_cross_runtime() {
             export WINEARCH=win32
             export WINEPREFIX=${HOME}/.wine32
         fi
+        export WINEDEBUG=fixme-all
         # clean wine prefix
         rm -rf ${WINEPREFIX}
         libgcc_path=
         if [ "$ci_runtime" = "shared" ]; then
             libgcc_path=$(dirname "$("${ci_host}-gcc" -print-libgcc-file-name)")
         fi
+
         init_wine "${dep_prefix}/bin" "$1" ${libgcc_path:+"$libgcc_path"}
     fi
 }
@@ -178,6 +195,10 @@ init_cross_runtime() {
 # ci_host:
 # See ci-install.sh
 : "${ci_host:=native}"
+
+# ci_in_docker:
+# flags to indicate that we are running in docker
+: "${ci_in_docker:=yes}"
 
 # ci_jobs:
 # number of jobs
@@ -206,6 +227,8 @@ case "$ci_variant" in
     (kf5)
         cmake_options="-DBUILD_APPLETS=0 -DBUILD_TESTING=1"
         export QT_LOGGING_RULES="*=true"
+        export QT_FORCE_STDERR_LOGGING=1
+        export QT_ASSUME_STDERR_HAS_CONSOLE=1
         start_kde_session=kdeinit5
         cmake_suffix="kf5"
         ;;
@@ -254,9 +277,7 @@ fi
 if test "$ci_test" = yes; then
     trap cleanup EXIT
 
-    start_x_session
-
-    start_kde_session
+    start_session
 
     ctest --output-on-failure --timeout 60 --jobs $ci_jobs
 
