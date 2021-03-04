@@ -105,11 +105,21 @@ else()
 
     set(QT_BROWSER_LIB ${QT_USE_LIBSPREFIX}${QT_BROWSER_COMPONENT})
 
+    option(BUILD_WITH_KIO "Build with KF5 KIO library" ON)
+    if(BUILD_WITH_KIO)
+        list(APPEND OPT_KF5_COMPONENTS KIO)
+        list(APPEND KF5_OPTIONAL_COMPONENTS KF5::KIOCore KF5::KIOWidgets)
+        add_definitions(-DBUILD_WITH_KIO)
+    else()
+        list(APPEND OPT_QT5_COMPONENTS Network)
+    endif()
+
     find_package(Qt5 REQUIRED COMPONENTS
         Core
         Test
         ${QT_BROWSER_COMPONENT}
         Qml
+        ${OPT_QT5_COMPONENTS}
     )
 
     if(BUILD_APPLETS)
@@ -124,7 +134,6 @@ else()
         I18n
         ${PLASMA_COMPONENT}
         NewStuff
-        KIO
         IconThemes
         TextWidgets
         XmlGui

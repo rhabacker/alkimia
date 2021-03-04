@@ -122,8 +122,7 @@ else()
         KF5::NewStuff
         KF5::IconThemes
         KF5::TextWidgets
-        KF5::KIOCore
-        KF5::KIOWidgets
+        ${KF5_OPTIONAL_COMPONENTS}
     )
 endif()
 

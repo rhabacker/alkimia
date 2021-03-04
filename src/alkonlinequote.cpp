@@ -40,8 +40,13 @@
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     #include <KLocalizedString>
+#ifdef BUILD_WITH_KIO
     #include <KIO/Scheduler>
     #include <KIO/Job>
+#else
+    #include <QNetworkAccessManager>
+    #include <QNetworkReply>
+#endif
     #include <QDebug>
     #include <QTemporaryFile>
     #define kDebug(a) qDebug()
@@ -142,6 +147,7 @@ public:
     bool parseDate(const QString &datestr);
     bool downloadUrl(const KUrl& url);
     bool processDownloadedFile(const KUrl& url, const QString& tmpFile);
+    bool processDownloadedFile(const KUrl& url, QIODevice *device);
 
 public slots:
     void slotLoadStarted();
@@ -150,7 +156,11 @@ public slots:
     bool slotParseQuote(const QString &_quotedata);
 
 private slots:
+#ifdef BUILD_WITH_KIO
     void downloadUrlDone(KJob* job);
+#else
+    void downloadUrlDone(QNetworkReply* reply);
+#endif
 };
 
 bool AlkOnlineQuote::Private::initLaunch(const QString &_symbol, const QString &_id, const QString &_source)
@@ -332,12 +342,25 @@ bool AlkOnlineQuote::Private::launchNative(const QString &_symbol, const QString
 
 bool AlkOnlineQuote::Private::processDownloadedFile(const KUrl& url, const QString& tmpFile)
 {
-  bool result = false;
+    bool result = false;
 
-  QFile f(tmpFile);
-  if (f.open(QIODevice::ReadOnly)) {
+    QFile f(tmpFile);
+    if (!f.open(QIODevice::ReadOnly)) {
+        emit m_p->error(i18n("Failed to open downloaded file"));
+        m_errors |= Errors::URL;
+        result = slotParseQuote(QString());
+        return false;
+    }
+
+    result = processDownloadedFile(url, &f);
+    f.close();
+    return result;
+}
+
+bool AlkOnlineQuote::Private::processDownloadedFile(const KUrl& url, QIODevice *device)
+{
     // Find out the page encoding and convert it to unicode
-    QByteArray page = f.readAll();
+    QByteArray page = device->readAll();
     KEncodingProber prober(KEncodingProber::Universal);
     prober.feed(page);
     QTextCodec *codec = QTextCodec::codecForName(prober.encoding());
@@ -345,20 +368,14 @@ bool AlkOnlineQuote::Private::processDownloadedFile(const KUrl& url, const QStri
       codec = QTextCodec::codecForLocale();
     }
     QString quote = codec->toUnicode(page);
-    f.close();
     emit m_p->status(i18n("URL found: %1...", url.prettyUrl()));
     if (AlkOnlineQuotesProfileManager::instance().webPageEnabled())
       AlkOnlineQuotesProfileManager::instance().webPage()->setContent(quote.toLocal8Bit());
-    result = slotParseQuote(quote);
-  } else {
-    emit m_p->error(i18n("Failed to open downloaded file"));
-    m_errors |= Errors::URL;
-    result = slotParseQuote(QString());
-  }
-  return result;
+    return slotParseQuote(quote);
 }
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#ifdef BUILD_WITH_KIO
 bool AlkOnlineQuote::Private::downloadUrl(const QUrl& url)
 {
     // Create a temporary filename (w/o leaving the file on the filesystem)
@@ -396,7 +413,35 @@ void AlkOnlineQuote::Private::downloadUrlDone(KJob* job)
   }
   m_eventLoop->exit(result);
 }
+#else
+bool AlkOnlineQuote::Private::downloadUrl(const QUrl& url)
+{
+    m_eventLoop = new QEventLoop;
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    connect(manager, SIGNAL(finished(QNetworkReply *)), this, SLOT(downloadUrlDone(QNetworkReply *)));
 
+    manager->get(QNetworkRequest(url));
+    auto result = m_eventLoop->exec(QEventLoop::ExcludeUserInputEvents);
+    delete m_eventLoop;
+    m_eventLoop = nullptr;
+
+    return result;
+}
+
+void AlkOnlineQuote::Private::downloadUrlDone(QNetworkReply *reply)
+{
+    bool result;
+    if (reply->error() != QNetworkReply::NoError) {
+        emit m_p->error(reply->errorString());
+        m_errors |= Errors::URL;
+        result = slotParseQuote(QString());
+    } else {
+        qDebug() << "Downloaded data from" << reply->url();
+        result = processDownloadedFile(reply->url(), reply);
+    }
+    m_eventLoop->exit(result);
+}
+#endif
 #else
 
 // This is simply a placeholder. It is unused but needs to be present
