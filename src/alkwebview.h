@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright 2018 Ralf Habacker <ralf.habacker@freenet.de>               *
+ *   Copyright 2020 Ralf Habacker <ralf.habacker@freenet.de>               *
  *                                                                         *
  *   This file is part of libalkimia.                                      *
  *                                                                         *
@@ -17,35 +17,30 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>  *
  ***************************************************************************/
 
-#ifndef ALKWEBPAGE_H
-#define ALKWEBPAGE_H
+#ifndef ALKWEBVIEW_H
+#define ALKWEBVIEW_H
 
 #include <alkimia/alk_export.h>
 
-#include <QObject>
+#include <QWidget>
 
-class QUrl;
+class AlkWebPage;
 
 #if defined(BUILD_WITH_WEBENGINE)
 
-#include <QWebEnginePage>
+#include <QWebEngineView>
 
-class ALK_EXPORT AlkWebPage : public QWebEnginePage
+class ALK_EXPORT AlkWebView : public QWebEngineView
 {
     Q_OBJECT
 public:
-    AlkWebPage(QObject *parent = nullptr);
-    virtual ~AlkWebPage();
+    AlkWebView(AlkWebPage *page, QWidget *parent = nullptr);
+    virtual ~AlkWebView();
 
-    QWidget *widget();
-    void load(const QUrl &url, const QString &acceptLanguage);
-    void setContent(const QByteArray& data, const QString& mimeType = QString(), const QUrl& baseUrl = QUrl());
-    void setUrl(const QUrl &url);
-    QString toHtml();
-    QString getFirstElement(const QString &symbol);
-
-Q_SIGNALS:
-    void urlChanged(const QUrl &url);
+    AlkWebPage *page();
+    void setPage(AlkWebPage *page);
+    void setWebInspectorEnabled(bool state);
+    bool webInspectorEnabled();
 
 private:
     class Private;
@@ -54,26 +49,26 @@ private:
 
 #elif defined(BUILD_WITH_WEBKIT)
 
-#include <QWebPage>
+#include <QWebView>
 
 /**
- * The AlkWebPage class provides an interface
+ * The AlkWebView class provides an interface
  * to a browser component with javascript support
  * It is used for fetching and showing web pages.
  *
  * @author Ralf Habacker <ralf.habacker@freenet.de>
  */
-class ALK_EXPORT AlkWebPage : public QWebPage
+class ALK_EXPORT AlkWebView : public QWebView
 {
+    Q_OBJECT
 public:
-    AlkWebPage(QObject *parent = nullptr);
-    virtual ~AlkWebPage();
+    AlkWebView(AlkWebPage *page, QWidget *parent = nullptr);
+    virtual ~AlkWebView();
 
-    void load(const QUrl &url, const QString &acceptLanguage);
-    void setContent(const QByteArray& data, const QString& mimeType = QString(), const QUrl& baseUrl = QUrl());
-    void setUrl(const QUrl &url);
-    QString toHtml();
-    QString getFirstElement(const QString &symbol);
+    AlkWebPage *page();
+    void setPage(AlkWebPage *page);
+    void setWebInspectorEnabled(bool enable);
+    bool webInspectorEnabled();
 
 private:
     class Private;
@@ -82,32 +77,26 @@ private:
 
 #else
 
-#include <QObject>
-#include <QUrl>
+#include <QWidget>
 
 /**
- * The AlkWebPage class provides an interface
+ * The AlkWebView class provides an interface
  * to a browser component with javascript support
  * It is used for fetching and showing web pages.
  *
  * @author Ralf Habacker <ralf.habacker@freenet.de>
  */
-class ALK_EXPORT AlkWebPage : public QObject
+class ALK_EXPORT AlkWebView : public QWidget
 {
     Q_OBJECT
 public:
-    AlkWebPage(QObject *parent = nullptr);
-    virtual ~AlkWebPage();
+    AlkWebView(AlkWebPage *page, QWidget *parent = nullptr);
+    virtual ~AlkWebView();
 
-    void load(const QUrl &url, const QString &acceptLanguage);
-    void setUrl(const QUrl &url);
-    void setContent(const QByteArray& data, const QString& mimeType = QString(), const QUrl& baseUrl = QUrl());
-    QString toHtml();
-    QString getFirstElement(const QString &symbol);
-
-Q_SIGNALS:
-    void loadStarted();
-    void loadFinished(bool);
+    AlkWebPage *page();
+    void setPage(AlkWebPage *page);
+    void setWebInspectorEnabled(bool enable);
+    bool webInspectorEnabled();
 
 private:
     class Private;
@@ -115,4 +104,4 @@ private:
 };
 #endif
 
-#endif // ALKWEBPAGE_H
+#endif // ALKWEBVIEW_H

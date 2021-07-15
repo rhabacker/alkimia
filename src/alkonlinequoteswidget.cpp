@@ -24,6 +24,7 @@
 #include "alkonlinequotesprofilemanager.h"
 #include "alkonlinequotesource.h"
 #include "alkwebpage.h"
+#include "alkwebview.h"
 
 #include <QRegExp>
 #include <QCheckBox>
@@ -79,6 +80,7 @@ public:
     QPixmap m_failIcon;
     QPixmap m_unknownIcon;
     QDialog *m_webPageDialog;
+    AlkWebView *m_webView;
 
     Private(bool showProfiles, bool showUpload, QWidget *parent);
     ~Private();
@@ -627,8 +629,9 @@ void AlkOnlineQuotesWidget::Private::slotShowButton()
         m_webPageDialog->setWindowTitle(i18n("Online Quote HTML Result Window"));
         QVBoxLayout *layout = new QVBoxLayout;
         AlkWebPage *webPage = AlkOnlineQuotesProfileManager::instance().webPage();
-        webPage->setWebInspectorEnabled(true);
-        layout->addWidget(webPage->widget());
+        m_webView = new AlkWebView(webPage);
+        m_webView->setWebInspectorEnabled(true);
+        layout->addWidget(m_webView);
         m_webPageDialog->setLayout(layout);
     }
     m_webPageDialog->show();

@@ -24,6 +24,7 @@
 #include "alkonlinequotesprofilemanager.h"
 #include "alkonlinequoteswidget.h"
 #include "alkwebpage.h"
+#include "alkwebview.h"
 
 #include <QComboBox>
 #include <QDockWidget>
@@ -149,12 +150,13 @@ MainWindow::MainWindow(QWidget *parent)
     // setup browser window
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addLayout(hLayout);
-    layout->addWidget(webPage->widget());
+    AlkWebView *webView = new AlkWebView(webPage, this);
+    webView->setWebInspectorEnabled(true);
+    layout->addWidget(webView);
     QWidget *group = new QWidget;
     group->setLayout(layout);
     browserWidget->setWidget(group);
     addDockWidget(Qt::RightDockWidgetArea, browserWidget);
-    webPage->setWebInspectorEnabled(true);
 #endif
 
     setCentralWidget(nullptr);
