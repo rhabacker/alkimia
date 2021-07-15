@@ -106,6 +106,9 @@ AlkWebPage *AlkOnlineQuotesProfileManager::webPage()
     if (!d->m_page) {
     // make sure that translations are installed on windows
         initLocale();
+#if defined(Q_OS_LINUX) && QT_VERSION > QT_VERSION_CHECK(5,0,0)
+        qputenv("QT_WEBENGINE_DISABLE_NOUVEAU_WORKAROUND", "1");
+#endif
         d->m_page = new AlkWebPage;
     }
     return d->m_page;
