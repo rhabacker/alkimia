@@ -63,12 +63,18 @@ void AlkWebPage::load(const QUrl &url, const QString &acceptLanguage)
 
 void AlkWebPage::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
-    qWarning() << "not implemented";
+    Q_UNUSED(data)
+    Q_UNUSED(mimeType)
+    Q_UNUSED(baseUrl)
+
+    qWarning() << "not implemented yet";
 }
 
 void AlkWebPage::setUrl(const QUrl &url)
 {
-    qWarning() << "not implemented";
+    Q_UNUSED(url)
+
+    qWarning() << "not implemented yet";
 }
 
 QString AlkWebPage::toHtml()
@@ -87,6 +93,8 @@ QString AlkWebPage::toHtml()
 
 QString AlkWebPage::getFirstElement(const QString &symbol)
 {
+    Q_UNUSED(symbol)
+
     return QString();
 }
 

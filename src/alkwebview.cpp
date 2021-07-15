@@ -43,6 +43,7 @@ public:
 
     void setWebInspectorEnabled(bool enable)
     {
+        Q_UNUSED(enable)
     }
 
     bool webInspectorEnabled()
@@ -180,6 +181,7 @@ public:
 
     void setWebInspectorEnabled(bool enable)
     {
+        Q_UNUSED(enable)
     }
 
     bool webInspectorEnabled()
@@ -191,6 +193,7 @@ public:
 AlkWebView::AlkWebView(AlkWebPage *page, QWidget *parent)
     : d(new Private(this))
 {
+    Q_UNUSED(parent)
     setPage(page);
 }
 
