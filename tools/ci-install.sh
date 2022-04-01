@@ -21,129 +21,68 @@ set -x
 # One of kf5, kde4
 : "${ci_variant:=kf5}"
 
-zypper="/usr/bin/zypper --non-interactive"
+r=$(realpath $0)
+r=$(dirname $r)
 
-install=
-source_install=
-
-if [ "$ci_distro" = "auto" ]; then
-    ci_distro=$(. /etc/os-release; echo ${ID})
+if [ -f /.dockerenv ]; then
+    sudo=
 fi
 
-case "$ci_distro" in
-    (opensuse*)
-        $zypper modifyrepo --enable repo-source
-        # save time
-        #$zypper update
-        repo=$(. /etc/os-release; echo $PRETTY_NAME | sed 's, ,_,g')
-        packages=(cmake)
-        source_packages=()
+. $r/ci-lib.sh
 
-        # xvfb-run does not have added all required tools
-        packages=(
-           "${packages[@]}"
-            openbox
-            psmisc # killall
-            shadow # useradd
-            sharutils # uuencode
-            sudo # sudoers
-            xvfb-run
-            which
-            xauth
-            xterm
-        )
+distros=(opensuse_tumbleweed opensuse_leap debian)
+variants=(kf5 kf5_webengine kf5_webkit kde4)
+hosts=(native mingw32 mingw64)
 
-        # for screenshots
-        packages=(
-           "${packages[@]}"
-            xwd ImageMagick
-        )
-        case "$ci_variant" in
-            (kf5*)
-                case "$ci_host" in
-                    (native)
-                        source_packages=(
-                            "${source_packages[@]}"
-                            alkimia
-                        )
-                        packages=(
-                            "${packages[@]}"
-                            kinit
-                        )
-                        ;;
-                esac
-                ;;
-            (kde4)
-                $zypper ar --refresh --no-gpgcheck \
-                    https://download.opensuse.org/repositories/windows:/mingw/$repo/windows:mingw.repo || true
+repos_opensuse_leap=(
+    https://download.opensuse.org/repositories/windows:/mingw/$repo/windows:mingw.repo
+)
+repos_opensuse_leap_mingw32=(
+    https://download.opensuse.org/repositories/windows:/mingw:/win32/$repo/windows:mingw:win32.repo
+)
+repos_opensuse_leap_mingw64=(
+    https://download.opensuse.org/repositories/windows:/mingw:/win64/$repo/windows:mingw:win64.repo
+)
+source_packages_opensuse_leap=()
+source_packages_opensuse_leap_native=(libalkimia)
+source_packages_opensuse_leap_mingw32=(mingw32-libalkimia)
+source_packages_opensuse_leap_mingw64=(mingw64-libalkimia)
 
-                case "$ci_host" in
-                    (native)
-                        # for libQtWebKit-devel
-                        packages=(
-                            "${packages[@]}"
-                            gcc-c++
-                            extra-cmake-modules
-                            libkde4-devel
-                            libQtWebKit-devel
-                            kdebase4-runtime
-                            gmp-devel
-                        )
-                        ;;
-                    (mingw32|mingw64)
-                         # add required repos
-                        bits=$(echo $ci_host | sed 's,mingw,,g')
-                        prefix=${ci_host}
-                        # for mingw packages
-                        $zypper ar --refresh --no-gpgcheck \
-                           https://download.opensuse.org/repositories/windows:/mingw:/win${bits}/$repo/windows:mingw:win${bits}.repo || true
-                        packages=(
-                            "${packages[@]}"
-                            ${prefix}-cross-gcc-c++
-                            ${prefix}-extra-cmake-modules
-                            ${prefix}-libkde4-devel
-                            ${prefix}-gmp-devel
-                        )
-                        ;;
-                    (*)
-                        echo "unsupported value 'ci_host=${ci_host}'"
-                        exit 1
-                        ;;
-                esac
-                ;;
-        esac
+packages_opensuse_leap=(
+    cmake
+    # xvfb-run does not have added all required tools
+    openbox
+    psmisc # killall
+    shadow # useradd
+    sharutils # uuencode
+    sudo # sudoers
+    xvfb-run
+    which
+    xauth
+    xterm
+    # for screenshots
+    xwd ImageMagick
+)
 
-        case "$ci_variant" in
-            (kf5-webkit)
-                packages=(
-                    "${packages[@]}"
-                    libQt5WebKitWidgets-devel
-                )
-                ;;
-            (kf5-webengine)
-                packages=(
-                    "${packages[@]}"
-                    libqt5-qtwebengine-devel
-                )
-                ;;
-        esac
+packages_opensuse_leap_native_kde4=(
+    # for libQtWebKit-devel
+    gcc-c++
+    extra-cmake-modules
+    libkde4-devel
+    libQtWebKit-devel
+    kdebase4-runtime
+    gmp-devel
+)
+packages_opensuse_leap_mingw32_kde4=(
+    ${prefix}-cross-gcc-c++
+    ${prefix}-extra-cmake-modules
+    ${prefix}-libkde4-devel
+    ${prefix}-gmp-devel
+)
+packages_opensuse_leap_mingw64_kde4=${packages_opensuse_leap_mingw32_kde4[@]}
 
-        # update package repos
-        $zypper refresh
-        # install source packages
-        if test -v "source_packages"; then
-            $zypper source-install "${source_packages[@]}"
-        fi
-        # install remaining packages
-        $zypper install "${packages[@]}"
-        ;;
-esac
-
-# Add the user that we will use to do the build inside the
-# Docker container, and let them use sudo
-if [ -f /.dockerenv ] && [ -z `getent passwd | grep user` ]; then
-    useradd -m user
-    passwd -ud user
-    echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/nopasswd
-    chmod 0440 /etc/sudoers.d/nopasswd
-fi
+check_config
+add_repos
+add_source_packages
+add_packages
+add_user
