@@ -44,9 +44,10 @@ repos_opensuse_leap_mingw64=(
     https://download.opensuse.org/repositories/windows:/mingw:/win64/$repo/windows:mingw:win64.repo
 )
 source_packages_opensuse_leap=()
-source_packages_opensuse_leap_native=(libalkimia)
-source_packages_opensuse_leap_mingw32=(mingw32-libalkimia)
-source_packages_opensuse_leap_mingw64=(mingw64-libalkimia)
+source_packages_opensuse_leap_native_kf5=(alkimia)
+source_packages_opensuse_leap_mingw32_kf5=(mingw32-libalkimia5)
+source_packages_opensuse_leap_mingw32_kde4=(mingw32-libalkimia)
+source_packages_opensuse_leap_mingw64_kde4=(mingw64-libalkimia)
 
 packages_opensuse_leap=(
     cmake
@@ -63,7 +64,17 @@ packages_opensuse_leap=(
     # for screenshots
     xwd ImageMagick
 )
-
+packages_opensuse_leap_native_kf5=(
+    kinit
+)
+packages_opensuse_leap_native_kf5_webkit=(
+    kinit
+    libQt5WebKitWidgets-devel
+)
+packages_opensuse_leap_native_kf5_webengine=(
+    kinit
+    libqt5-qtwebengine-devel
+)
 packages_opensuse_leap_native_kde4=(
     # for libQtWebKit-devel
     gcc-c++
@@ -72,6 +83,20 @@ packages_opensuse_leap_native_kde4=(
     libQtWebKit-devel
     kdebase4-runtime
     gmp-devel
+)
+packages_opensuse_leap_mingw32_kf5=(
+    mingw32-filesystem
+    mingw32-cross-gcc-c++
+)
+packages_opensuse_leap_mingw32_kf5_webkit=(
+    mingw32-filesystem
+    mingw32-cross-gcc-c++
+    mingw32-libQt5WebKitWidgets-devel
+)
+packages_opensuse_leap_mingw32_kf5_webengine=(
+    mingw32-filesystem
+    mingw32-cross-gcc-c++
+    mingw32-libqt5-qtwebengine-devel
 )
 packages_opensuse_leap_mingw32_kde4=(
     ${prefix}-cross-gcc-c++

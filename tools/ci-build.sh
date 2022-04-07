@@ -49,10 +49,10 @@ case "$ci_variant" in
     (kf5)
         cmake_options+=" -DBUILD_WITH_WEBKIT=0 -DBUILD_WITH_WEBENGINE=0"
         ;;
-    (kf5-webkit)
+    (kf5*webkit)
         cmake_options+=" -DBUILD_WITH_WEBKIT=1"
         ;;
-    (kf5-webengine)
+    (kf5*webengine)
         cmake_options+=" -DBUILD_WITH_WEBENGINE=1"
         ;;
 esac
@@ -62,7 +62,7 @@ case "$ci_host" in
         cmake=cmake
         ;;
     (mingw*)
-        cmake="${ci_host}-cmake-kde4 --"
+        cmake="${ci_host}-cmake-${ci_variant%%_*} --"
         # not supported yet
         ci_test=no
         ;;
