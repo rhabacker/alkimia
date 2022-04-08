@@ -170,6 +170,7 @@ else()
         Config
         CoreAddons
         Completion
+        DocTools
         I18n
         ${PLASMA_COMPONENT}
         NewStuff
@@ -251,6 +252,10 @@ include_directories(
 
 add_subdirectory(src)
 add_subdirectory(qml)
+if(KF5DocTools_FOUND)
+    add_subdirectory(doc)
+endif()
+
 if(BUILD_APPLETS)
     if(BUILD_QT4)
         add_subdirectory(plasma/applets/onlinequote)

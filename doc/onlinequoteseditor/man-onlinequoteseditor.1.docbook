@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN" "dtd/kdedbx45.dtd" [
+<!ENTITY % English "INCLUDE">
+<!ENTITY onlinequoteseditor "<application>Online Quotes Editor</application>">
+]>
+
+<refentry lang="&language;">
+<refentryinfo>
+
+<author>
+  <firstname>Ralf</firstname><surname>Habacker</surname>
+  <contrib>Application.</contrib>
+  <email>ralf.habacker@freenet.de</email>
+</author>
+
+<date>2022-04-08</date>
+<releaseinfo>Online quotes editor @VERSION</releaseinfo>
+</refentryinfo>
+
+<refmeta>
+<refentrytitle><command>onlinequoteseditor@TARGET_SUFFIX@</command></refentrytitle>
+<manvolnum>1</manvolnum>
+<refmiscinfo class="source">&onlinequoteseditor;</refmiscinfo>
+<refmiscinfo class="manual">Executable programs</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname><command>onlinequoteseditor</command></refname>
+<refpurpose>Online quotes editor by &kde;</refpurpose>
+</refnamediv>
+
+<refsect1>
+<title>Description</title>
+
+<para>&onlinequoteseditor; is an editor and testing tools for online quotes sources by &kde;.</para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist>
+<member>The full documentation for &onlinequoteseditor; is maintained as a docbook manual.
+If the &khelpcenter; program is properly installed at your site, the command
+<userinput><command>khelpcenter</command>
+<parameter>help:/kmymoney</parameter></userinput> should give you access to the
+complete manual.  Alternatively the manual can be browsed in &konqueror; giving
+it the <acronym>URL</acronym> <ulink
+url="help:/onlinequoteseditor">help:/onlinequoteseditor</ulink></member>
+<member>kf5options(7)</member>
+<member>qt5options(7)</member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
