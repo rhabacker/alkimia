@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow, public ApplicationSettings
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(const QString &profile = QString(), QWidget *parent = 0);
     ~MainWindow();
 
 protected slots:

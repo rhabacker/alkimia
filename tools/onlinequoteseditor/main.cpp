@@ -12,6 +12,7 @@
 #include <KAboutData>
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     #include <QApplication>
+    #include <QCommandLineParser>
     #include <KLocalizedString>
 
     #define _i18n i18n
@@ -43,14 +44,26 @@ int main(int argc, char **argv)
                      LICENCE_GPL,
                      _i18n("(C) 2018-2019 Ralf Habacker"));
 
+    QString profile;
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     QApplication app(argc,argv);
+    QCommandLineParser parser;
+    QCommandLineOption profileOption(QStringList() << "p" << "profile",
+                                     i18n("Select profile"), i18n("profile"));
+    parser.addOption(profileOption);
+    parser.process(app);
+    profile = parser.value(profileOption);
 #else
-    KCmdLineArgs::init(argc, argv, &about);
     KApplication app(true);
+    KCmdLineArgs::init(argc, argv, &about);
+    KCmdLineOptions options;
+    options.add("p").add("profile \<profile>", i18n("Select profile"));
+
+    KCmdLineArgs *args = KCmdLineArgs.parsedArgs();
+    profile = args->getOption("profile");
 #endif
 
-    MainWindow w;
+    MainWindow w(profile);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     KHelpMenu helpMenu(&w, about.shortDescription());
