@@ -58,33 +58,13 @@ void MainWindow::slotLanguageChanged(const QString &text)
         slotEditingFinished();
 }
 
-MainWindow::MainWindow(const QString &profile, QWidget *parent)
+MainWindow::MainWindow(const QStringList &profiles, QWidget *parent)
     : QMainWindow(parent)
     , ApplicationSettings(this, false)
     , d(new Private)
 {
     AlkOnlineQuotesProfileManager &manager = AlkOnlineQuotesProfileManager::instance();
-
-    if (!profile.isEmpty()) {
-        if (profile == "kmymoney5")
-            manager.addProfile(new AlkOnlineQuotesProfile("kmymoney5", AlkOnlineQuotesProfile::Type::KMyMoney5, "kmymoney-quotes.knsrc"));
-        else if (profile == "kmymoney4")
-            manager.addProfile(new AlkOnlineQuotesProfile("kmymoney4", AlkOnlineQuotesProfile::Type::KMyMoney4, "kmymoney-quotes.knsrc"));
-    } else {
-        manager.addProfile(new AlkOnlineQuotesProfile("no-config-file", AlkOnlineQuotesProfile::Type::None));
-    #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-        manager.addProfile(new AlkOnlineQuotesProfile("alkimia4", AlkOnlineQuotesProfile::Type::Alkimia4, "alkimia-quotes.knsrc"));
-        manager.addProfile(new AlkOnlineQuotesProfile("skrooge4", AlkOnlineQuotesProfile::Type::Skrooge4, "skrooge-quotes.knsrc"));
-        manager.addProfile(new AlkOnlineQuotesProfile("kmymoney4", AlkOnlineQuotesProfile::Type::KMyMoney4, "kmymoney-quotes.knsrc"));
-    #else
-        manager.addProfile(new AlkOnlineQuotesProfile("alkimia5", AlkOnlineQuotesProfile::Type::Alkimia5, "alkimia-quotes.knsrc"));
-        manager.addProfile(new AlkOnlineQuotesProfile("skrooge5", AlkOnlineQuotesProfile::Type::Skrooge5, "skrooge-quotes.knsrc"));
-        manager.addProfile(new AlkOnlineQuotesProfile("kmymoney5", AlkOnlineQuotesProfile::Type::KMyMoney5, "kmymoney-quotes.knsrc"));
-    #endif
-    #ifdef ENABLE_FINANCEQUOTE
-        manager.addProfile(new AlkOnlineQuotesProfile("Finance::Quote", AlkOnlineQuotesProfile::Type::Script));
-    #endif
-    }
+    manager.addProfiles(profiles);
     d->ui.setupUi(this);
     d->quotesWidget = new AlkOnlineQuotesWidget(true, true);
 
@@ -113,7 +93,7 @@ MainWindow::MainWindow(const QString &profile, QWidget *parent)
     quoteDetailsWidget->setWidget(d->quotesWidget->quoteDetailsWidget());
     addDockWidget(Qt::RightDockWidgetArea, quoteDetailsWidget);
 
-    connect(&AlkOnlineQuotesProfileManager::instance(), SIGNAL(updateAvailable(const QString &, const QString &)),
+    connect(&manager, SIGNAL(updateAvailable(const QString &, const QString &)),
             this, SLOT(slotUpdateAvailable(const QString &, const QString &)));
 
     manager.setWebPageEnabled(true);

@@ -12,6 +12,7 @@
 #include <QMainWindow>
 #include "applicationsettings.h"
 
+class AlkOnlineQuotesProfileManager;
 class QUrl;
 
 class MainWindow : public QMainWindow, public ApplicationSettings
@@ -19,7 +20,7 @@ class MainWindow : public QMainWindow, public ApplicationSettings
     Q_OBJECT
 
 public:
-    explicit MainWindow(const QString &profile = QString(), QWidget *parent = 0);
+    explicit MainWindow(const QStringList &profiles, QWidget *parent = 0);
     ~MainWindow();
 
 protected slots:
@@ -30,6 +31,7 @@ protected slots:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    void setupProfiles(AlkOnlineQuotesProfileManager &manager, const QStringList &profiles);
 
 private:
     class Private;

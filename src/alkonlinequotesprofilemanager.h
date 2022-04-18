@@ -26,6 +26,13 @@ public:
     ~AlkOnlineQuotesProfileManager();
 
     void addProfile(AlkOnlineQuotesProfile *profile);
+    /**
+     * add profiles from list of profile names
+     * @param list with profile names
+     * @return #true, the requested profiles has been added
+     * @return #false, one or more of the requested profiles are not available
+     */
+    bool addProfiles(const QStringList &profiles);
     AlkOnlineQuotesProfileList profiles();
     AlkOnlineQuotesProfile *profile(const QString &name);
     QStringList profileNames();

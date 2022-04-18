@@ -44,26 +44,37 @@ int main(int argc, char **argv)
                      LICENCE_GPL,
                      _i18n("(C) 2018-2019 Ralf Habacker"));
 
-    QString profile;
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    QStringList profiles;
+    profiles << "no-config-file" << "alkimia5" << "skrooge5" << "kmymoney5";
+#ifdef ENABLE_FINANCEQUOTE
+    profiles << "Finance::Quote";
+#endif
     QApplication app(argc,argv);
     QCommandLineParser parser;
     QCommandLineOption profileOption(QStringList() << "p" << "profile",
                                      i18n("Select profile"), i18n("profile"));
     parser.addOption(profileOption);
     parser.process(app);
-    profile = parser.value(profileOption);
+    if (!parser.value(profileOption).isEmpty())
+        profiles = QStringList() << parser.value(profileOption);
 #else
-    KApplication app(true);
+    QStringList profiles;
+    profiles << "no-config-file" << "alkimia4" << "skrooge4" << "kmymoney4";
+#ifdef ENABLE_FINANCEQUOTE
+    profiles << "Finance::Quote";
+#endif
     KCmdLineArgs::init(argc, argv, &about);
+    KApplication app(true);
     KCmdLineOptions options;
-    options.add("p").add("profile \<profile>", i18n("Select profile"));
-
-    KCmdLineArgs *args = KCmdLineArgs.parsedArgs();
-    profile = args->getOption("profile");
+    options.add("p").add("profile \\<profile>", ki18n("Select profile"));
+    KCmdLineArgs::addCmdLineOptions(options);
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    if (args->isSet("profile"))
+        profiles = QStringList() << args->getOption("profile");
 #endif
 
-    MainWindow w(profile);
+    MainWindow w(profiles);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     KHelpMenu helpMenu(&w, about.shortDescription());
