@@ -70,7 +70,7 @@
   <launchable type="desktop-id">org.kde.onlinequoteseditor.desktop</launchable>
   <screenshots>
     <screenshot type="default">
-      <image>https://cdn.kde.org/screenshots/onlinequoteseditor/onlinequoteseditor.png</image>
+      <image>https://cdn.kde.org/screenshots/onlinequoteseditor/onlinequoteseditor@TARGET_SUFFIX@.png</image>
     </screenshot>
   </screenshots>
   <provides>
