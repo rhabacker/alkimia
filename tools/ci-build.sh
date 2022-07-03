@@ -93,8 +93,9 @@ init_wine() {
 
     # create registry file from template
     local wineaddpath=$(echo "$addpath" | sed 's,\\,\\\\\\\\,g')
-    r=$(realpath $0)
-    r=$(dirname $r)
+    #r=$(realpath $0)
+    #r=$(dirname $r)
+    r=${srcdir}/tools
     sed "s,@PATH@,$wineaddpath,g" "$r/user-path.reg.in" > user-path.reg
 
     # add path to registry
@@ -131,13 +132,14 @@ init_cross_runtime() {
             # fallback: assume the dependency libraries were built with --prefix=/${ci_host}
             dep_prefix="/${ci_host}"
         fi
+        WINEDEBUG="fixme-all${WINEDEBUG:+,$WINEDEBUG}"
         # choose correct wine architecture
         if [ "${ci_host%%-*}" = x86_64 ]; then
             export WINEARCH=win64
-            export WINEPREFIX=${HOME}/.wine64
+            export WINEPREFIX=${HOME}/.ci-build-wine64
         else
             export WINEARCH=win32
-            export WINEPREFIX=${HOME}/.wine32
+            export WINEPREFIX=${HOME}/.ci-build-wine32
         fi
         # clean wine prefix
         rm -rf ${WINEPREFIX}
@@ -160,6 +162,10 @@ init_cross_runtime() {
 # ci_host:
 # See ci-install.sh
 : "${ci_host:=native}"
+
+# ci_jobs:
+# number of jobs
+: "${ci_jobs:=5}"
 
 # ci_variant:
 # One of kf5, kde4
@@ -215,8 +221,8 @@ case "$ci_host" in
         export LD_LIBRARY_PATH=${builddir}/bin
         ;;
     (mingw*)
-        CMAKE_CROSSCOMPILING_EMULATOR=/usr/bin/wine
-        init_cross_runtime $builddir/bin        
+        wrapper="/usr/bin/wine"
+        cmake_options+=" -DCMAKE_CROSSCOMPILING_EMULATOR=$wrapper"
         case "$ci_variant" in
             (kf5*)
                 cmake="${ci_host}-cmake-${cmake_suffix} --"
@@ -248,13 +254,21 @@ fi
 
 # run tests
 if test "$ci_test" = yes; then
+    case "$ci_host" in
+        (mingw32)
+            ci_host=i686-w64-mingw32 ci_runtime=shared init_cross_runtime $builddir/bin
+            ;;
+        (mingw64)
+            ci_host=x86_64-w64-mingw32 ci_runtime=shared init_cross_runtime $builddir/bin
+            ;;
+    esac
     trap cleanup EXIT
 
     start_x_session
 
-    start_kde_session
+    DBUS_SESSION_BUS_ADDRESS= start_kde_session || true
 
-    ctest --output-on-failure --timeout 60 --jobs $ci_jobs
+    ctest -VV --output-on-failure --timeout 60 --jobs $ci_jobs
 
     # show screenshot in case of errors
     if test $? -ne 0; then
