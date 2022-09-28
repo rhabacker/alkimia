@@ -60,6 +60,15 @@ case "$ci_distro" in
                     https://download.opensuse.org/repositories/windows:/mingw/${repo_name}/windows:mingw.repo
                 )
                 ;;
+            (kf6*-native)
+                # required for tumbleweed
+                _repo_name=openSUSE_Factory
+                repos=(
+                    "${repos[@]}"
+                    https://download.opensuse.org/repositories/KDE:/Qt6/${repo_name}/KDE:Qt6.repo
+                    https://download.opensuse.org/repositories/KDE:/Unstable:/Frameworks/${_repo_name}/KDE:Unstable:Frameworks.repo
+                )
+                ;;
         esac
 
         # setup packages
@@ -100,6 +109,29 @@ case "$ci_distro" in
                 packages=(
                     "${packages[@]}"
                     kinit
+                )
+                ;;
+            (kf6*-native)
+                packages=(
+                    "${packages[@]}"
+                    doxygen
+                    extra-cmake-modules
+                    gmp-devel
+                    kinit
+                    "cmake(KF5Completion)"
+                    "cmake(KF5Config)"
+                    "cmake(KF5CoreAddons)"
+                    "cmake(KF5I18n)"
+                    "cmake(KF5IconThemes)"
+                    "cmake(KF5KIO)"
+                    "cmake(KF5NewStuff)"
+                    "cmake(KF5Package)"
+                    "cmake(KF5TextWidgets)"
+                    "cmake(Qt6Core)"
+                    "cmake(Qt6DBus)"
+                    "cmake(Qt6Qml)"
+                    "cmake(Qt6Test)"
+                    "cmake(Qt6Widgets)"
                 )
                 ;;
             (kf5*-mingw*)

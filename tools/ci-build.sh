@@ -210,6 +210,14 @@ fi
 
 # settings for build variants
 case "$ci_variant" in
+    (kf6*)
+        cmake_options="-DBUILD_WITH_QT6=ON  -DQT_MAJOR_VERSION=6 -DBUILD_APPLETS=0 -DBUILD_TESTING=1 -DBUILD_WITH_QTNETWORK=1"
+        export QT_LOGGING_RULES="*=true"
+        export QT_FORCE_STDERR_LOGGING=1
+        export QT_ASSUME_STDERR_HAS_CONSOLE=1
+        start_kde_session=kdeinit5
+        cmake_suffix="kf6"
+        ;;
     (kf5*)
         cmake_options="-DBUILD_APPLETS=0 -DBUILD_TESTING=1 -DBUILD_WITH_QTNETWORK=1"
         export QT_LOGGING_RULES="*=true"
@@ -247,6 +255,15 @@ esac
 
 # custom settings
 case "$ci_variant" in
+    (kf6)
+        cmake_options+=" -DBUILD_WITH_WEBKIT=0 -DBUILD_WITH_WEBENGINE=0"
+        ;;
+    (kf6-webkit)
+        cmake_options+=" -DBUILD_WITH_WEBKIT=1"
+        ;;
+    (kf6-webengine)
+        cmake_options+=" -DBUILD_WITH_WEBENGINE=1"
+        ;;
     (kf5)
         cmake_options+=" -DBUILD_WITH_WEBKIT=0 -DBUILD_WITH_WEBENGINE=0"
         ;;
