@@ -25,3 +25,8 @@ add_executable(alkonlinequoteswidgettest
     alkonlinequoteswidgettest.cpp
 )
 target_link_libraries(alkonlinequoteswidgettest ${TEST_LIB})
+
+add_executable(alkpayeelinkswidgettest
+    alkpayeelinkswidgettest.cpp
+)
+target_link_libraries(alkpayeelinkswidgettest ${TEST_LIB})
