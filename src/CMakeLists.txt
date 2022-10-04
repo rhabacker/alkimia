@@ -53,6 +53,8 @@ set(alkimia_LIB_SRCS
     alkonlinequotesprofile.cpp
     alkonlinequotesprofilemanager.cpp
     alkonlinequoteswidget.cpp
+    alkpayeelinks.cpp
+    alkpayeelinkswidget.cpp
     alkvalue.cpp
     alkwebpage.cpp
 )
@@ -64,6 +66,8 @@ set(alkimia_LIB_HEADERS
     alkonlinequotesprofile.h
     alkonlinequotesprofilemanager.h
     alkonlinequoteswidget.h
+    alkpayeelinkswidget.h
+    alkpayeelinks.h
     alkwebpage.h
 )
 
@@ -78,6 +82,7 @@ endif()
 
 set(alkimia_UI
     alkonlinequoteswidget.ui
+    alkpayeelinkswidget.ui
 )
 
 configure_file(
