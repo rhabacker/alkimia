@@ -82,7 +82,7 @@ endif()
 
 set(alkimia_UI
     alkonlinequoteswidget.ui
-    alkpayeelinkswidget.ui
+    alkpayeelinkswidgetimpl.ui
 )
 
 configure_file(
