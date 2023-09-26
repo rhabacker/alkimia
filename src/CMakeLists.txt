@@ -14,6 +14,7 @@ set(alkimia_INTERNAL_SRCS
     alkdateformat.cpp
     alkexception.cpp
     alkonlinequoteprocess.cpp
+    alkonlinequoteuploaddialog.cpp
     alkquoteitem.cpp
     alkquotereceiver.cpp
 )
@@ -22,19 +23,28 @@ set(alkimia_INTERNAL_HEADERS
     alkdateformat.h
     alkexception.h
     alkonlinequoteprocess.h
+    alkonlinequoteuploaddialog.h
     alkquoteitem.h
     alkquotereceiver.h
 )
 
 set(alkimia_INTERNAL_UI
+     alkonlinequoteuploaddialog.ui
 )
 
 ki18n_wrap_ui(alkimia_INTERNAL_SRCS ${alkimia_INTERNAL_UI} )
 add_library(alkimia-internal STATIC ${alkimia_INTERNAL_SRCS} ${alkimia_INTERNAL_HEADERS})
-if(NOT BUILD_QT4)
+if(BUILD_QT4)
     set (ALKIMIA_INTERNAL_LIBS
         PRIVATE
+        ${KDE4_KDEUI_LIBS}
+    )
+else()
+    set (ALKIMIA_INTERNAL_LIBS
+        PRIVATE
+        KF5::Completion
         KF5::CoreAddons
+        KF5::I18n
         KF5::NewStuff
     )
 endif()
