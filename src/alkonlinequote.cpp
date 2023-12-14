@@ -19,12 +19,13 @@
 #include "alkonlinequotesprofilemanager.h"
 #include "alkonlinequotesource.h"
 #include "alkimia/alkversion.h"
+#include "alkregexp.h"
+#include "alkstring.h"
 #include "alkwebpage.h"
 
 #include <QApplication>
 #include <QByteArray>
 #include <QFile>
-#include <QRegExp>
 #include <QTextStream>
 #include <QTextCodec>
 #include <QTimer>
@@ -40,7 +41,6 @@
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     #include <KLocalizedString>
-    #include <QRegularExpression>
 #ifndef BUILD_WITH_QTNETWORK
     #include <KIO/Job>
 #endif
@@ -64,12 +64,6 @@
 #include <KEncodingProber>
 #include <KProcess>
 #include <KShell>
-
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    using Regex = QRegExp;
-#else
-    using Regex = QRegularExpression;
-#endif
 
 #ifndef I18N_NOOP
 #include <KLazyLocalizedString>
@@ -204,7 +198,7 @@ bool AlkOnlineQuote::Private::initLaunch(const QString &_symbol, const QString &
     if (m_source.url().contains("%2")) {
         // this is a two-symbol quote.  split the symbol into two.  valid symbol
         // characters are: 0-9, A-Z and the dot.  anything else is a separator
-        QRegExp splitrx("([0-9a-z\\.]+)[^a-z0-9]+([0-9a-z\\.]+)", Qt::CaseInsensitive);
+        AlkRegExp splitrx("([0-9a-z\\.]+)[^a-z0-9]+([0-9a-z\\.]+)", AlkRegExp::CaseInsensitive);
         // if we've truly found 2 symbols delimited this way...
         if (splitrx.indexIn(m_symbol) != -1) {
             url = KUrl(m_source.url().arg(splitrx.cap(1), splitrx.cap(2)));
@@ -588,16 +582,17 @@ bool AlkOnlineQuote::Private::parsePrice(const QString &_pricestr)
     //
     // Remove all non-digits from the price string except the last one, and
     // set the last one to a period.
-    QString pricestr(_pricestr);
+    AlkString pricestr(_pricestr);
+    AlkRegExp rx("\\D");
     if (!pricestr.isEmpty()) {
-        int pos = pricestr.lastIndexOf(Regex("\\D"));
+        int pos = pricestr.lastIndexOf(rx);
         if (pos > 0) {
             pricestr[pos] = '.';
-            pos = pricestr.lastIndexOf(Regex("\\D"), pos - 1);
+            pos = pricestr.lastIndexOf(rx, pos - 1);
         }
         while (pos > 0) {
             pricestr.remove(pos, 1);
-            pos = pricestr.lastIndexOf(Regex("\\D"), pos);
+            pos = pricestr.lastIndexOf(rx, pos);
         }
 
         m_price = pricestr.toDouble();
@@ -651,17 +646,19 @@ bool AlkOnlineQuote::Private::parseDate(const QString &datestr)
  */
 bool AlkOnlineQuote::Private::parseQuoteStripHTML(const QString &_quotedata)
 {
-    QString quotedata = _quotedata;
+    AlkString quotedata = _quotedata;
 
     //
     // First, remove extraneous non-data elements
     //
 
     // HTML tags
-    quotedata.remove(Regex("<[^>]*>"));
+    AlkRegExp rx("<[^>]*>");
+    quotedata.remove(rx);
 
     // &...;'s
-    quotedata.replace(Regex("&\\w+;"), " ");
+    AlkRegExp rx2("&\\w+;");
+    quotedata.replace(rx2, " ");
 
     // Extra white space
     quotedata = quotedata.simplified();
@@ -683,9 +680,9 @@ bool AlkOnlineQuote::Private::parseQuoteHTML(const QString &quotedata)
     bool gotdate = false;
     bool result = true;
 
-    QRegExp identifierRegExp(m_source.idRegex());
-    QRegExp dateRegExp(m_source.dateRegex());
-    QRegExp priceRegExp(m_source.priceRegex());
+    AlkRegExp identifierRegExp(m_source.idRegex());
+    AlkRegExp dateRegExp(m_source.dateRegex());
+    AlkRegExp priceRegExp(m_source.priceRegex());
 
     if (identifierRegExp.indexIn(quotedata) > -1) {
         kDebug(Private::dbgArea()) << "Symbol" << identifierRegExp.cap(1);
@@ -730,9 +727,9 @@ bool AlkOnlineQuote::Private::parseQuoteCSV(const QString &quotedata)
 {
     QString dateColumn(m_source.dateRegex());
     QString priceColumn(m_source.priceRegex());
-    QStringList lines = quotedata.split(QRegExp("\r?\n"));
+    QStringList lines = AlkString(quotedata).split(AlkRegExp("\r?\n"));
     QString header = lines.first();
-    QRegExp rx("([,;\t])");
+    AlkRegExp rx("([,;\t])");
     QString columnSeparator;
     if (rx.indexIn(header) != -1) {
         columnSeparator = rx.cap(1);

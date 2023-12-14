@@ -14,6 +14,7 @@
 #include "alkonlinequotesprofilemanager.h"
 
 #include "alkonlinequotesource.h"
+#include "alkregexp.h"
 
 #include <QApplication>
 #include <QDir>
@@ -36,7 +37,6 @@ namespace KNS = KNSCore;
     #include <knewstuff3/downloadmanager.h>
     namespace KNS = KNS3;
 #endif
-#include <QRegExp>
 
 class AlkOnlineQuotesProfile::Private : public QObject
 {
@@ -142,7 +142,7 @@ public Q_SLOTS:
         QStringList groups = kconfig->groupList();
 
         QStringList::Iterator it;
-        QRegExp onlineQuoteSource(QString("^Online-Quote-Source-(.*)$"));
+        AlkRegExp onlineQuoteSource(QString("^Online-Quote-Source-(.*)$"));
 
         // get rid of all 'non online quote source' entries
         for (it = groups.begin(); it != groups.end(); it = groups.erase(it)) {

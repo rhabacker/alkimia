@@ -8,13 +8,11 @@
 
 #include "alkimia/alkvalue.h"
 
-#include <iostream>
-#include <QRegExp>
-#include <QSharedData>
+#include "alkregexp.h"
+#include "alkstring.h"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-#include <QRegularExpression>
-#endif
+#include <iostream>
+#include <QSharedData>
 
 class AlkValue::Private : public QSharedData
 {
@@ -142,7 +140,7 @@ AlkValue::AlkValue(const QString &str, const QChar &decimalSymbol)
 
     // take care of mixed prices of the form "5 8/16" as well
     // as own internal string representation
-    QRegExp regExp(QLatin1String("^((\\d+)\\s+|-)?(\\d+/\\d+)"));
+    AlkRegExp regExp(QLatin1String("^((\\d+)\\s+|-)?(\\d+/\\d+)"));
     //                               +-#2-+        +---#3----+
     //                              +-----#1-----+
     if (regExp.indexIn(str) > -1) {
@@ -165,15 +163,10 @@ AlkValue::AlkValue(const QString &str, const QChar &decimalSymbol)
     // everything else gets down here
     const QString negChars = QString::fromLatin1("\\-\\(\\)");
     const QString validChars = QString::fromLatin1("\\d\\%1%2").arg(decimalSymbol, negChars);
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    QRegExp invCharSet(QString::fromLatin1("[^%1]").arg(validChars));
-    QRegExp negCharSet(QString::fromLatin1("[%1]").arg(negChars));
-#else
-    QRegularExpression invCharSet(QString::fromLatin1("[^%1]").arg(validChars));
-    QRegularExpression negCharSet(QString::fromLatin1("[%1]").arg(negChars));
-#endif
+    AlkRegExp invCharSet(QString::fromLatin1("[^%1]").arg(validChars));
+    AlkRegExp negCharSet(QString::fromLatin1("[%1]").arg(negChars));
 
-    QString res(str);
+    AlkString res(str);
     // get rid of any character that is not allowed.
     res.remove(invCharSet);
 

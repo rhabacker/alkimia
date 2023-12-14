@@ -16,6 +16,8 @@ set(alkimia_INTERNAL_SRCS
     alkonlinequoteprocess.cpp
     alkquoteitem.cpp
     alkquotereceiver.cpp
+    alkregexp.cpp
+    alkstring.cpp
 )
 
 set(alkimia_INTERNAL_HEADERS
@@ -24,6 +26,8 @@ set(alkimia_INTERNAL_HEADERS
     alkonlinequoteprocess.h
     alkquoteitem.h
     alkquotereceiver.h
+    alkregexp.h
+    alkstring.h
 )
 
 set(alkimia_INTERNAL_UI

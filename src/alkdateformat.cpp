@@ -9,19 +9,16 @@
 
 #include "alkdateformat.h"
 
-#include <QDebug>
+#include "alkregexp.h"
 
+#include <QDebug>
 
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #include <KGlobal>
 #include <KCalendarSystem>
 #else
 #include <QLocale>
-#include <QRegularExpression>
-#include <QRegularExpressionMatch>
 #endif
-#include <QRegExp>
-
 
 class AlkDateFormat::Private
 {
@@ -76,7 +73,7 @@ public:
 
             m_format = m_format.toLower();
 
-            QRegExp formatrex("([mdy]+)(\\W+)([mdy]+)(\\W+)([mdy]+)", Qt::CaseInsensitive);
+            AlkRegExp formatrex("([mdy]+)(\\W+)([mdy]+)(\\W+)([mdy]+)", AlkRegExp::CaseInsensitive);
             if (formatrex.indexIn(m_format) == -1) {
                 return setError(AlkDateFormat::InvalidFormatString, m_format);
             }
@@ -109,7 +106,7 @@ public:
         // Break date format string into component parts
         //
 
-        QRegExp formatrex("%([mdy]+)(\\W+)%([mdy]+)(\\W+)%([mdy]+)", Qt::CaseInsensitive);
+        AlkRegExp formatrex("%([mdy]+)(\\W+)%([mdy]+)(\\W+)%([mdy]+)", Qt::CaseInsensitive);
         if (formatrex.indexIn(m_format) == -1) {
             return setError(AlkDateFormat::InvalidFormatString, m_format);
         }
@@ -125,7 +122,7 @@ public:
 
         // make sure to escape delimiters that are special chars in regex
         QStringList::iterator it;
-        QRegExp specialChars("^[\\.\\\\\\?]$");
+        AlkRegExp specialChars("^[\\.\\\\\\?]$");
         for(it = formatDelimiters.begin(); it != formatDelimiters.end(); ++it) {
             if (specialChars.indexIn(*it) != -1)
                 (*it).prepend("\\");
@@ -136,7 +133,7 @@ public:
         // using the delimiters found in the format string
         //
 
-        QRegExp inputrex;
+        AlkRegExp inputrex;
         inputrex.setCaseSensitivity(Qt::CaseInsensitive);
 
         // strict mode means we must enforce the delimiters as specified in the
@@ -162,7 +159,7 @@ public:
         //
         unsigned day = 0, month = 0, year = 0;
         bool ok;
-        QRegExp digitrex("(\\d+)");
+        AlkRegExp digitrex("(\\d+)");
         QStringList::const_iterator it_scanned = scannedParts.constBegin();
         QStringList::const_iterator it_format = formatParts.constBegin();
         while (it_scanned != scannedParts.constEnd()) {
@@ -254,8 +251,8 @@ public:
       // Break date format string into component parts
       //
 
-      QRegularExpression formatrex("%([mdy]+)(\\W+)%([mdy]+)(\\W+)%([mdy]+)", QRegularExpression::CaseInsensitiveOption);
-      QRegularExpressionMatch match = formatrex.match(m_format);
+      AlkRegExp formatrex("%([mdy]+)(\\W+)%([mdy]+)(\\W+)%([mdy]+)", AlkRegExp::CaseInsensitiveOption);
+      AlkRegExpMatch match = formatrex.match(m_format);
       if (!match.hasMatch()) {
         return setError(AlkDateFormat::InvalidFormatString, m_format);
       }
@@ -271,9 +268,9 @@ public:
 
       // make sure to escape delimiters that are special chars in regex
       QStringList::iterator it;
-      QRegularExpression specialChars("^[\\.\\\\\\?]$");
+      AlkRegExp specialChars("^[\\.\\\\\\?]$");
       for(it = formatDelimiters.begin(); it != formatDelimiters.end(); ++it) {
-        QRegularExpressionMatch special = specialChars.match(*it);
+        AlkRegExpMatch special = specialChars.match(*it);
         if (special.hasMatch()) {
           (*it).prepend("\\");
         }
@@ -283,8 +280,8 @@ public:
       // Break input string up into component parts,
       // using the delimiters found in the format string
       //
-      QRegularExpression inputrex;
-      inputrex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+      AlkRegExp inputrex;
+      inputrex.setPatternOptions(AlkRegExp::CaseInsensitiveOption);
 
       // strict mode means we must enforce the delimiters as specified in the
       // format.  non-strict allows any delimiters
@@ -308,7 +305,7 @@ public:
       //
       unsigned day = 0, month = 0, year = 0;
       bool ok;
-      QRegularExpression digitrex("(\\d+)");
+      AlkRegExp digitrex("(\\d+)");
       QStringList::const_iterator it_scanned = scannedParts.constBegin();
       QStringList::const_iterator it_format = formatParts.constBegin();
       while (it_scanned != scannedParts.constEnd()) {
