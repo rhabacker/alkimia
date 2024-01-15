@@ -20,7 +20,7 @@
  *
  * @author Ralf Habacker
  */
-class ALK_NO_EXPORT AlkNewStuffWidget : public QObject
+class ALK_EXPORT AlkNewStuffWidget : public QObject
 {
     Q_OBJECT
 public:

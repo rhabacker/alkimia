@@ -39,7 +39,6 @@ endif()
 
 target_link_libraries(onlinequoteseditor
     alkimia
-    alkimia-internal
     Qt${QT_MAJOR_VERSION}::Core
     KF${QT_MAJOR_VERSION}::CoreAddons
     KF${QT_MAJOR_VERSION}::I18n

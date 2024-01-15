@@ -7,47 +7,6 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-########### target alkimia-internal ###########
-
-set(alkimia_INTERNAL_SRCS
-    alkdateformat.cpp
-    alkexception.cpp
-    alknewstuffwidget.cpp
-    alkonlinequoteprocess.cpp
-    alkquoteitem.cpp
-    alkquotereceiver.cpp
-)
-
-set(alkimia_INTERNAL_HEADERS
-    alkdateformat.h
-    alkexception.h
-    alknewstuffwidget.h
-    alkonlinequoteprocess.h
-    alkquoteitem.h
-    alkquotereceiver.h
-)
-
-set(alkimia_INTERNAL_UI
-)
-
-ki18n_wrap_ui(alkimia_INTERNAL_SRCS ${alkimia_INTERNAL_UI} )
-add_library(alkimia-internal STATIC ${alkimia_INTERNAL_SRCS} ${alkimia_INTERNAL_HEADERS})
-if (QT_MAJOR_VERSION GREATER_EQUAL 5)
-    list(APPEND ALKIMIA_INTERNAL_LIBS
-        PRIVATE
-        Qt${QT_MAJOR_VERSION}::DBus
-        KF${QT_MAJOR_VERSION}::Completion
-        KF${QT_MAJOR_VERSION}::CoreAddons
-        KF${QT_MAJOR_VERSION}::I18n
-    )
-endif()
-
-target_link_libraries(alkimia-internal PRIVATE
-    ${ALKIMIA_INTERNAL_LIBS}
-    ${KF_NEWSTUFF_LIB}
-)
-kde_target_enable_exceptions(alkimia-internal PUBLIC)
-
 ########### target alkimia ###########
 
 set(ALKIMIA_LIB_VERSION ${alkimia_VERSION})
@@ -55,15 +14,21 @@ set(ALKIMIA_LIB_SOVERSION "${alkimia_VERSION_MAJOR}")
 
 set(alkimia_LIB_SRCS
     alkcompany.cpp
+    alkdateformat.cpp
     alkenvironment.cpp
+    alkexception.cpp
     alknewstuffengine.cpp
+    alknewstuffwidget.cpp
     alkonlinequote.cpp
     alkonlinequote_p.cpp
+    alkonlinequoteprocess.cpp
     alkonlinequotesource.cpp
     alkonlinequotesprofile.cpp
     alkonlinequotesprofile_p.cpp
     alkonlinequotesprofilemanager.cpp
     alkonlinequoteswidget.cpp
+    alkquoteitem.cpp
+    alkquotereceiver.cpp
     alkvalue.cpp
     alkwebpage.cpp
 )
@@ -81,10 +46,16 @@ set(alkimia_LIB_HEADERS
 )
 
 set(alkimia_LIB_PRIVATE_HEADERS
+    alkdateformat.h
+    alkexception.h
+    alknewstuffwidget.h
     alkonlinequote_p.h
+    alkonlinequoteprocess.h
     alkonlinequotesource_p.h
     alkonlinequotesprofile_p.h
     alkpushbutton.h
+    alkquoteitem.h
+    alkquotereceiver.h
 )
 
 if(ENABLE_FINANCEQUOTE)
@@ -121,7 +92,13 @@ foreach(header ${alkimia_LIB_HEADERS})
 endforeach()
 
 ki18n_wrap_ui(alkimia_LIB_SRCS ${alkimia_UI} )
-add_library(alkimia ${alkimia_LIB_SRCS} ${alkimia_LIB_HEADERS} ${alkimia_LIB_PRIVATE_HEADERS})
+add_library(alkimia
+    ${alkimia_LIB_SRCS}
+    ${alkimia_LIB_HEADERS}
+    ${alkimia_LIB_PRIVATE_HEADERS}
+    ${alkimia_INTERNAL_SRCS}
+    ${alkimia_INTERNAL_HEADERS}
+)
 
 kde_target_enable_exceptions(alkimia PUBLIC)
 target_link_libraries(alkimia PRIVATE
@@ -146,7 +123,6 @@ target_include_directories(alkimia
 
 target_link_libraries(alkimia
     PRIVATE
-    alkimia-internal
     Qt${QT_MAJOR_VERSION}::Core
     PUBLIC
     ${MP_LIBRARIES}

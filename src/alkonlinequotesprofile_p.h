@@ -32,7 +32,7 @@
     #include <KSharedConfig>
 #endif
 
-class ALK_NO_EXPORT AlkOnlineQuotesProfile::Private : public QObject
+class ALK_EXPORT AlkOnlineQuotesProfile::Private : public QObject
 {
     Q_OBJECT
 public:

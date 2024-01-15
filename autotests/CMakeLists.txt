@@ -4,7 +4,6 @@ set(TEST_LIB
     Qt${QT_MAJOR_VERSION}::Core
     Qt${QT_MAJOR_VERSION}::DBus
     ${MP_LIBRARIES}
-    alkimia-internal
     alkimia
 )
 
@@ -20,7 +19,6 @@ ecm_add_tests(
 
 ecm_add_test(
     alkonlinequotetest.cpp
-    ../src/alkquotereceiver.cpp
     LINK_LIBRARIES ${TEST_LIB}
     TEST_NAME alkonlinequotestest
 )
@@ -41,7 +39,7 @@ ecm_add_test(
 
 ecm_add_test(
     alknewstuffenginetest.cpp
-    LINK_LIBRARIES alkimia alkimia-internal ${KF_NEWSTUFF_LIB}
+    LINK_LIBRARIES alkimia ${KF_NEWSTUFF_LIB}
     TEST_NAME alknewstuffenginetest
 )
 

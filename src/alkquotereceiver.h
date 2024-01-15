@@ -23,7 +23,7 @@ Simple class to handle signals/slots for unit tests
 
 @author Ace Jones acejones @users.sourceforge.net
 */
-class ALK_NO_EXPORT AlkQuoteReceiver : public QObject
+class ALK_EXPORT AlkQuoteReceiver : public QObject
 {
     Q_OBJECT
 public:

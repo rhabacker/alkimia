@@ -21,7 +21,7 @@
  * It holds information of use to assess the equity value
  */
 
-class ALK_NO_EXPORT AlkQuoteItem : public QObject
+class ALK_EXPORT AlkQuoteItem : public QObject
 {
     Q_OBJECT
 
@@ -117,8 +117,8 @@ private:
     Private *const d;
 };
 
-ALK_NO_EXPORT QDBusArgument &operator<<(QDBusArgument &argument, const AlkQuoteItem &item);
-ALK_NO_EXPORT const QDBusArgument &operator>>(const QDBusArgument &argument, AlkQuoteItem &item);
+ALK_EXPORT QDBusArgument &operator<<(QDBusArgument &argument, const AlkQuoteItem &item);
+ALK_EXPORT const QDBusArgument &operator>>(const QDBusArgument &argument, AlkQuoteItem &item);
 
 Q_DECLARE_METATYPE(AlkQuoteItem)
 

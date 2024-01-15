@@ -24,7 +24,7 @@
  * format in a way I don't understand.  So for the moment, they are 99%
  * compatible, waiting on that issue. (acejones)
  */
-class ALK_NO_EXPORT AlkDateFormat
+class ALK_EXPORT AlkDateFormat
 {
 public:
     explicit AlkDateFormat(const QString &format);

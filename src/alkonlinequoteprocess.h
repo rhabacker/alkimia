@@ -20,7 +20,7 @@ of a local script being used to fetch the quote.
 
 @author Thomas Baumgart <thb@net-bembel.de> & Ace Jones acejones @users.sourceforge.net
 */
-class ALK_NO_EXPORT AlkOnlineQuoteProcess : public KProcess
+class ALK_EXPORT AlkOnlineQuoteProcess : public KProcess
 {
     Q_OBJECT
 public:
