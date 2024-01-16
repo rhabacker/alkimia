@@ -46,6 +46,7 @@ if(Qt4_FOUND)
     foreach(COMPONENT ${Qt4_COMPONENTS})
         if(TARGET Qt4::Qt${COMPONENT})
             add_library(Qt4::${COMPONENT} ALIAS Qt4::Qt${COMPONENT})
+            target_include_directories(Qt4::Qt${COMPONENT} INTERFACE ${CMAKE_CURRENT_LIST_DIR}/lib/include)
         endif()
     endforeach()
 
@@ -55,4 +56,5 @@ if(Qt4_FOUND)
     add_library(Qt4::Widgets ALIAS Qt4::QtGui)
 
     set(QT4_INSTALL_CMAKECONFIG_FILES ${CMAKE_CURRENT_LIST_DIR}/FindQt4.cmake)
+    set(QT4_INSTALL_DIRS ${CMAKE_CURRENT_LIST_DIR}/lib)
 endif()

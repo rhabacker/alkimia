@@ -9,18 +9,11 @@
 
 #include "alkdateformat.h"
 
+#include <QDateTime>
 #include <QDebug>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-#include <KGlobal>
-#include <KCalendarSystem>
-#include <QRegExp>
-#else
 #include <QLocale>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
-#endif
-
 
 class AlkDateFormat::Private
 {
@@ -65,11 +58,7 @@ public:
     {
         QDate date;
         if (m_format == "UNIX") {
-#if QT_VERSION >= QT_VERSION_CHECK(5,8,0)
             date = QDateTime::fromSecsSinceEpoch(_in.toUInt(), Qt::UTC).date();
-#else
-            date = QDateTime::fromTime_t(_in.toUInt()).date();
-#endif
         } else {
             const QString skroogeFormat = m_format;
 

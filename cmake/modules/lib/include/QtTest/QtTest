@@ -1,0 +1,16 @@
+#ifndef QT4_QTTEST_H
+#define QT4_QTTEST_H
+
+#include_next <QtTest/QtTest>
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#define QTEST_GUILESS_MAIN(TestObject) \
+int main(int argc, char *argv[]) \
+{ \
+    QCoreApplication app(argc, argv); \
+    TestObject tc; \
+    return QTest::qExec(&tc, argc, argv); \
+}
+#endif
+
+#endif // QT4_QTTEST_H

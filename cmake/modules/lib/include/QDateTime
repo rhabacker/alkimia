@@ -1,0 +1,4 @@
+#include_next <QDateTime>
+
+#define fromSecsSinceEpoch(secs, timeZone) QDateTime::fromTime_t(secs)
+
