@@ -62,6 +62,10 @@ if(CMAKE_CROSSCOMPILING)
         endif()
         string(REPLACE "\n" "/${TARGET_PREFIX}" TARGET_SYSROOT "${TARGET_SYSROOT}")
     endif()
+    if (EXISTS ${TARGET_SYSROOT}/mingw)
+        string(APPEND TARGET_SYSROOT "mingw")
+    endif()
+    message(STATUS "Using compiler sysroot '${TARGET_SYSROOT}'")
 endif()
 
 if(ENABLE_CLIENT_PACKAGE_TEST)
@@ -79,7 +83,7 @@ if(ENABLE_CLIENT_PACKAGE_TEST)
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 
-    set(FIND_ROOT_PATH "${TARGET_SYSROOT};${TEMP_INSTALL_DIR}${CMAKE_INSTALL_PREFIX}")
+    set(FIND_ROOT_PATH ${TARGET_SYSROOT} ${TEMP_INSTALL_DIR}${CMAKE_INSTALL_PREFIX})
     # build/install a client package using dbus cmake package support from this build
     add_test(
         NAME test-install-build-client-package
@@ -93,14 +97,15 @@ if(ENABLE_CLIENT_PACKAGE_TEST)
             --build-target install
             --build-options
                 #--trace-expand
+                #--trace-redirect=${CMAKE_CURRENT_BINARY_DIR}/client-package/cmake.log
                 -DALKIMIA_PATH_SUFFIX=${ALKIMIA_PATH_SUFFIX}
-                -DLibAlkimia${ALKIMIA_PATH_SUFFIX}_DIR=${TEMP_INSTALL_DIR}${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR}
+                -DLibAlkimia${ALKIMIA_PATH_SUFFIX}_DIR=${TEMP_INSTALL_DIR}${CMAKECONFIG_INSTALL_DIR}
                 -DCHECK_VERSION=${PROJECT_VERSION}
                 -DCMAKE_CROSSCOMPILING=${CMAKE_CROSSCOMPILING}
                 -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                 -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                -DCMAKE_INSTALL_PREFIX:PATH=${TEMP_INSTALL_DIR}${CMAKE_INSTALL_PREFIX}
-                -DCMAKE_FIND_ROOT_PATH:PATH=${FIND_ROOT_PATH}
+                -DCMAKE_INSTALL_PREFIX=${TEMP_INSTALL_DIR}${CMAKE_INSTALL_PREFIX}
+                "-DCMAKE_FIND_ROOT_PATH=${FIND_ROOT_PATH}"
                 -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER
                 -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
                 -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY
