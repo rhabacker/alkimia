@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 #endif
 
-    QString configFile = KNSRC_DIR "/alkimia-quotes.knsrc";
-
+    bool showPayeeLinks = app.arguments().size() > 1 && app.arguments().at(1) == "--payee-links";
+    QString configFile = showPayeeLinks ? KNSRC_DIR "/alkimia-payee-links.knsrc" : KNSRC_DIR "/alkimia-quotes.knsrc";
     AlkNewStuffWidget engine;
     engine.init(configFile);
     engine.showInstallDialog();

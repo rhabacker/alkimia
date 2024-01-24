@@ -69,6 +69,7 @@ set(alkimia_LIB_SRCS
     alkonlinequotesprofilemanager.cpp
     alkonlinequoteswidget.cpp
     alkonlinequoteuploaddialog.cpp
+    alkpayeereferencelink.cpp
     alkvalue.cpp
     alkutils.cpp
     alkwebpage.cpp
@@ -84,6 +85,7 @@ set(alkimia_LIB_HEADERS
     alkonlinequotesprofile.h
     alkonlinequotesprofilemanager.h
     alkonlinequoteswidget.h
+    alkpayeereferencelink.h
     alkwebpage.h
 )
 
