@@ -72,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
     manager.addProfile(new AlkOnlineQuotesProfile("kmymoney4", AlkOnlineQuotesProfile::Type::KMyMoney4, "kmymoney-quotes.knsrc"));
 #else
     manager.addProfile(new AlkOnlineQuotesProfile("alkimia5", AlkOnlineQuotesProfile::Type::Alkimia5, "alkimia-quotes.knsrc"));
+    manager.addProfile(new AlkOnlineQuotesProfile("test", AlkOnlineQuotesProfile::Type::Test, "test-quotes.knsrc"));
     manager.addProfile(new AlkOnlineQuotesProfile("skrooge5", AlkOnlineQuotesProfile::Type::Skrooge5, "skrooge-quotes.knsrc"));
     manager.addProfile(new AlkOnlineQuotesProfile("kmymoney5", AlkOnlineQuotesProfile::Type::KMyMoney5, "kmymoney-quotes.knsrc"));
 #endif
