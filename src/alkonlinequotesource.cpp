@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2018 Ralf Habacker ralf.habacker@freenet.de
+ * SPDX-FileCopyrightText: 2018,2024 Ralf Habacker ralf.habacker@freenet.de
  * SPDX-FileCopyrightText: 2023 Thomas Baumgart <tbaumgart@kde.org>
  * SPDX-License-Identifier: LGPL-2.1-or-later
  *
@@ -9,8 +9,8 @@
 #include "alkonlinequotesource.h"
 
 #include "alkonlinequotesprofile.h"
-
 #include "alkonlinequotesource_p.h"
+#include "alktestdefs.h"
 
 /**
  * Key to identifying "Finance::Quote" sources
@@ -80,6 +80,53 @@ AlkOnlineQuoteSource AlkOnlineQuoteSource::defaultCurrencyQuoteSource(const QStr
                                 ",\\s*(\\d+\\s*[a-zA-Z]{3}\\s*\\d{4})",
                                 "%d %m %y",
                                 HTML
+    );
+}
+AlkOnlineQuoteSource AlkOnlineQuoteSource::testQuoteSource(const QString& name, bool twoSymbols, DownloadType downloadType, DataFormat format)
+{
+    QString url = TEST_LAUNCH_URL;
+    QString type;
+    QString priceRegex;
+    QString dateRegex;
+
+    url.append(QLatin1String("a=%1"));
+    if (twoSymbols) {
+        url.append("&b=%2");
+    }
+
+    if (format == HTML) {
+        if (twoSymbols) {
+            priceRegex = QLatin1String("</span><br\\s*/>\\s+([\\d.]+)\\s+\\w");
+            dateRegex = QLatin1String("([\\d]+/[\\d]+/[\\d]+)");
+        } else {
+            priceRegex = QLatin1String("<body>([\\d.]+) ");
+            dateRegex = QLatin1String("([\\d]+/[\\d]+/[\\d]+)");
+        }
+    } else if (format == CSV) {
+        type = QLatin1String("&type=csv");
+        priceRegex = QLatin1String("value");
+        dateRegex = QLatin1String("date");
+    } else {
+        return AlkOnlineQuoteSource();
+    }
+    url.append(type);
+
+    if (downloadType == Javascript) {
+        url.append(QLatin1String("&dtype=javascript"));
+        priceRegex = QLatin1String("<span>\\s*([\\d.]+)\\s+\\w");
+        dateRegex = QLatin1String("([\\d]+/[\\d]+/[\\d]+)");
+    }
+
+    return AlkOnlineQuoteSource(name,
+                                url,
+                                QString(), // idregexp
+                                AlkOnlineQuoteSource::Symbol,
+                                priceRegex,
+                                dateRegex,
+                                "%d/%m/%y",
+                                format,
+                                AlkOnlineQuoteSource::Period,
+                                downloadType
     );
 }
 
