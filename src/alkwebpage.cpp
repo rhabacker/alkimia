@@ -189,7 +189,7 @@ bool AlkWebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::Naviga
 #include <QWebView>
 #include <QNetworkRequest>
 
-class AlkWebPage::Private
+class AlkWebPage::Private : public QWebPage
 {
 public:
     QWebInspector *inspector;
@@ -204,12 +204,13 @@ public:
         // see https://community.kde.org/Policies/API_to_Avoid#QNetworkAccessManager
         networkAccessManager->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
 #endif
-        p->page()->setNetworkAccessManager(networkAccessManager);
+        p->setPage(this);
+        setNetworkAccessManager(networkAccessManager);
     }
 
     ~Private()
     {
-        p->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
+        settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
         if (inspector)
             inspector->setPage(nullptr);
         delete inspector;
@@ -218,17 +219,26 @@ public:
 
     void setWebInspectorEnabled(bool enable)
     {
-        p->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enable);
+        settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enable);
         if (enable && !inspector) {
             inspector = new QWebInspector();
-            inspector->setPage(p->page());
+            inspector->setPage(this);
         }
     }
 
     bool webInspectorEnabled()
     {
-        return p->page()->settings()->testAttribute(QWebSettings::DeveloperExtrasEnabled);
+        return settings()->testAttribute(QWebSettings::DeveloperExtrasEnabled);
     }
+
+    bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type) override
+    {
+        // qDebug() << request.url() << type;
+        // if (type == QWebPage::NavigationTypeRedirect && isMainFrame)
+        //     Q_EMIT p->loadRedirectedTo(url);
+        return QWebPage::acceptNavigationRequest(frame, request, type);
+    }
+
 };
 
 AlkWebPage::AlkWebPage(QWidget *parent)
