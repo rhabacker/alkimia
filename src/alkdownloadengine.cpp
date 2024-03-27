@@ -289,7 +289,7 @@ void AlkDownloadEngine::Private::slotFinishedJavaScriptEngine(bool ok)
 bool AlkDownloadEngine::Private::downloadUrlWithJavaScriptEngine(const QUrl &url)
 {
     if (!m_webPage) {
-        m_webPage = new AlkWebPage;
+        m_webPage = new AlkWebPageWebKit;
         m_webPageCreated = true;
     }
     connect(m_webPage, SIGNAL(loadStarted()), this, SLOT(slotLoadStarted()));

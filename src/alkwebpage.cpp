@@ -182,27 +182,30 @@ bool AlkWebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::Naviga
 
 #include "alkwebpage.moc"
 
-#elif defined(BUILD_WITH_WEBKIT)
+#endif
+#if defined(BUILD_WITH_WEBKIT)
+
 #include <QWebFrame>
 #include <QWebElement>
 #include <QWebInspector>
 #include <QWebView>
 #include <QNetworkRequest>
 
-class AlkWebPage::Private : public QWebPage
+class AlkWebPageWebKit::Private : public QWebPage
 {
 public:
     QWebInspector *inspector;
-    AlkWebPage *p;
+    AlkWebPageWebKit *p;
     QNetworkAccessManager *networkAccessManager;
-    explicit Private(AlkWebPage *parent)
+    QUrl url;
+    explicit Private(AlkWebPageWebKit *parent)
       : inspector(nullptr),
         p(parent),
         networkAccessManager(new QNetworkAccessManager)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(5,9,0)
         // see https://community.kde.org/Policies/API_to_Avoid#QNetworkAccessManager
-        networkAccessManager->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+        networkAccessManager->setRedirectPolicy(QNetworkRequest::SameOriginRedirectPolicy);
 #endif
         p->setPage(this);
         setNetworkAccessManager(networkAccessManager);
@@ -241,27 +244,29 @@ public:
 
 };
 
-AlkWebPage::AlkWebPage(QWidget *parent)
+AlkWebPageWebKit::AlkWebPageWebKit(QWidget *parent)
   : QWebView(parent)
   , d(new Private(this))
 {
     page()->settings()->setAttribute(QWebSettings::JavaEnabled, false);
     page()->settings()->setAttribute(QWebSettings::AutoLoadImages, false);
     page()->settings()->setAttribute(QWebSettings::PluginsEnabled, false);
+    //connect(this, &QWebView::urlChanged, d, &Private::slotUrlChanged);
 }
 
-AlkWebPage::~AlkWebPage()
+AlkWebPageWebKit::~AlkWebPageWebKit()
 {
     delete d;
 }
 
-QWidget *AlkWebPage::widget()
+QWidget *AlkWebPageWebKit::widget()
 {
     return this;
 }
 
-void AlkWebPage::load(const QUrl &url, const QString &acceptLanguage)
+void AlkWebPageWebKit::load(const QUrl &url, const QString &acceptLanguage)
 {
+    d->url = url;
     QNetworkRequest request;
     request.setUrl(url);
     if (!acceptLanguage.isEmpty())
@@ -279,13 +284,23 @@ void AlkWebPage::load(const QUrl &url, const QString &acceptLanguage)
         QWebView::load(request);
 }
 
-QString AlkWebPage::toHtml()
+QString AlkWebPageWebKit::toHtml()
 {
     QWebFrame *frame = page()->mainFrame();
     return frame->toHtml();
 }
 
-QStringList AlkWebPage::getAllElements(const QString &symbol)
+void AlkWebPageWebKit::setContent(const QString &content)
+{
+    QWebView::setContent(content.toLocal8Bit());
+}
+
+void AlkWebPageWebKit::setHtml(const QString &data, const QUrl &url)
+{
+    QWebView::setHtml(data, url);
+}
+
+QStringList AlkWebPageWebKit::getAllElements(const QString &symbol)
 {
     QStringList result;
     QWebFrame *frame = page()->mainFrame();
@@ -296,24 +311,25 @@ QStringList AlkWebPage::getAllElements(const QString &symbol)
     return result;
 }
 
-QString AlkWebPage::getFirstElement(const QString &symbol)
+QString AlkWebPageWebKit::getFirstElement(const QString &symbol)
 {
     QWebFrame *frame = page()->mainFrame();
     QWebElement element = frame->findFirstElement(symbol);
     return element.toPlainText();
 }
 
-void AlkWebPage::setWebInspectorEnabled(bool enable)
+void AlkWebPageWebKit::setWebInspectorEnabled(bool enable)
 {
     d->setWebInspectorEnabled(enable);
 }
 
-bool AlkWebPage::webInspectorEnabled()
+bool AlkWebPageWebKit::webInspectorEnabled()
 {
     return d->webInspectorEnabled();
 }
 
-#else
+#endif
+#ifdef BUILD_WITH_QTEXTBROWSER
 
 #include <QEventLoop>
 #include <QNetworkAccessManager>
@@ -413,3 +429,28 @@ QVariant AlkWebPage::loadResource(int type, const QUrl &name)
 }
 
 #endif
+
+void AlkWebPage::setTimeout(int timeout)
+{
+    m_timeout = timeout;
+}
+
+int AlkWebPage::timeout() const
+{
+    return m_timeout;
+}
+
+AlkWebPage *AlkWebPageFactory::create(Type type)
+{
+    switch (type) {
+    case WebKit:
+        return new AlkWebPageWebKit;
+#if 0
+    case WebEngine:
+        return new AlkWebPageWebEngine;
+    case QTextBrowser:
+        return new AlkWebPageQTextBrowser;
+#endif
+    }
+    return nullptr;
+}

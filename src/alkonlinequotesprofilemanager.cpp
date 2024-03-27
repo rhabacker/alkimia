@@ -33,7 +33,8 @@ public:
 
     ~Private()
     {
-        m_page.data()->deleteLater();
+        m_page->deleteLater();
+        //m_page.data()->deleteLater();
     }
 };
 
@@ -95,7 +96,7 @@ AlkWebPage *AlkOnlineQuotesProfileManager::webPage()
     if (!d->m_page) {
     // make sure that translations are installed on windows
         initLocale();
-        d->m_page = new AlkWebPage;
+        d->m_page = new AlkWebPageWebKit;
     }
     return d->m_page;
 }
