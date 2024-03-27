@@ -189,55 +189,94 @@ bool AlkWebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::Naviga
 #include <QWebView>
 #include <QNetworkRequest>
 
-class AlkWebPage::Private
+class AlkWebView : public QWebView
 {
+public:
+    AlkWebView(QWidget *parent)
+        : QWebView(parent)
+    {}
+};
+
+class AlkWebPage::Private : public QWebPage
+{
+    Q_OBJECT
 public:
     QWebInspector *inspector;
     AlkWebPage *p;
+    AlkWebView *view;
     QNetworkAccessManager *networkAccessManager;
-    explicit Private(AlkWebPage *parent)
-      : inspector(nullptr),
-        p(parent),
-        networkAccessManager(new QNetworkAccessManager)
+    explicit Private(AlkWebPage *parent, QWidget *v)
+      : inspector(nullptr)
+      , p(parent)
+      , view(new AlkWebView(v))
+      , networkAccessManager(new QNetworkAccessManager)
     {
+        setView(view);
+        view->setPage(this);
+        connect(view, SIGNAL(loadStarted()), p, SIGNAL(loadStarted()));
+        connect(view, SIGNAL(loadFinished(bool)), p, SIGNAL(loadFinished(bool)));
+        connect(view, SIGNAL(titleChanged(QString)), this, SLOT(slotTitleChanged(QString)));
+        connect(view, SIGNAL(urlChanged(QUrl)), this, SLOT(slotUrlChanged(QUrl)));
+
 #if QT_VERSION >= QT_VERSION_CHECK(5,9,0)
         // see https://community.kde.org/Policies/API_to_Avoid#QNetworkAccessManager
-        networkAccessManager->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+        networkAccessManager->setRedirectPolicy(QNetworkRequest::SameOriginRedirectPolicy);
 #endif
-        p->page()->setNetworkAccessManager(networkAccessManager);
+        setNetworkAccessManager(networkAccessManager);
+        settings()->setAttribute(QWebSettings::JavaEnabled, false);
+        settings()->setAttribute(QWebSettings::AutoLoadImages, false);
+        settings()->setAttribute(QWebSettings::PluginsEnabled, false);
     }
 
     ~Private()
     {
-        p->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
+        settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
         if (inspector)
             inspector->setPage(nullptr);
         delete inspector;
         delete networkAccessManager;
+        delete view;
     }
 
     void setWebInspectorEnabled(bool enable)
     {
-        p->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enable);
+        settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enable);
         if (enable && !inspector) {
             inspector = new QWebInspector();
-            inspector->setPage(p->page());
+            inspector->setPage(this);
         }
     }
 
     bool webInspectorEnabled()
     {
-        return p->page()->settings()->testAttribute(QWebSettings::DeveloperExtrasEnabled);
+        return settings()->testAttribute(QWebSettings::DeveloperExtrasEnabled);
+    }
+
+#if 0
+    bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, NavigationType type) override
+    {
+        qDebug() << request.url().toString() << type;
+        // if (type == QWebPage::NavigationTypeRedirect && isMainFrame)
+        //Q_EMIT p->loadRedirectedTo(request.url());
+        return true;
+        return QWebPage::acceptNavigationRequest(frame, request, type);
+    }
+#endif
+
+public Q_SLOTS:
+    void slotTitleChanged(const QString &s)
+    {
+        qDebug() << s;
+    }
+    void slotUrlChanged(const QUrl &url)
+    {
+        qDebug() << url.toString();
     }
 };
 
 AlkWebPage::AlkWebPage(QWidget *parent)
-  : QWebView(parent)
-  , d(new Private(this))
+    : d(new Private(this, parent))
 {
-    page()->settings()->setAttribute(QWebSettings::JavaEnabled, false);
-    page()->settings()->setAttribute(QWebSettings::AutoLoadImages, false);
-    page()->settings()->setAttribute(QWebSettings::PluginsEnabled, false);
 }
 
 AlkWebPage::~AlkWebPage()
@@ -247,7 +286,7 @@ AlkWebPage::~AlkWebPage()
 
 QWidget *AlkWebPage::widget()
 {
-    return this;
+    return d->view;
 }
 
 void AlkWebPage::load(const QUrl &url, const QString &acceptLanguage)
@@ -259,26 +298,31 @@ void AlkWebPage::load(const QUrl &url, const QString &acceptLanguage)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     if (url.query().toLower().contains(QLatin1String("method=post"))) {
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-        QWebView::load(request, QNetworkAccessManager::PostOperation, url.query().toUtf8());
+        d->view->load(request, QNetworkAccessManager::PostOperation, url.query().toUtf8());
 #else
     if (url.hasQueryItem(QLatin1String("method")) && url.queryItemValue(QLatin1String("method")).toLower()== QLatin1String("post")) {
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-        QWebView::load(request, QNetworkAccessManager::PostOperation);
+        d->view->load(request, QNetworkAccessManager::PostOperation);
 #endif
     } else
-        QWebView::load(request);
+        d->view->load(request);
+}
+
+void AlkWebPage::setHtml(const QString &data, const QUrl &url)
+{
+    d->view->setHtml(data, url);
 }
 
 QString AlkWebPage::toHtml()
 {
-    QWebFrame *frame = page()->mainFrame();
+    QWebFrame *frame = d->mainFrame();
     return frame->toHtml();
 }
 
 QStringList AlkWebPage::getAllElements(const QString &symbol)
 {
     QStringList result;
-    QWebFrame *frame = page()->mainFrame();
+    QWebFrame *frame = d->mainFrame();
     QWebElementCollection elements = frame->findAllElements(symbol);
     for (const auto &e: elements) {
         result.append(e.toPlainText());
@@ -288,7 +332,7 @@ QStringList AlkWebPage::getAllElements(const QString &symbol)
 
 QString AlkWebPage::getFirstElement(const QString &symbol)
 {
-    QWebFrame *frame = page()->mainFrame();
+    QWebFrame *frame = d->mainFrame();
     QWebElement element = frame->findFirstElement(symbol);
     return element.toPlainText();
 }
@@ -302,6 +346,8 @@ bool AlkWebPage::webInspectorEnabled()
 {
     return d->webInspectorEnabled();
 }
+
+#include "alkwebpage.moc"
 
 #else
 

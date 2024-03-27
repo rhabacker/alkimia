@@ -59,7 +59,7 @@ private:
  *
  * @author Ralf Habacker ralf.habacker @freenet.de
  */
-class ALK_EXPORT AlkWebPage : public QWebView
+class ALK_EXPORT AlkWebPage : public QObject
 {
     Q_OBJECT
 public:
@@ -68,6 +68,7 @@ public:
 
     QWidget *widget();
     void load(const QUrl &url, const QString &acceptLanguage);
+    void setHtml(const QString &data, const QUrl &url = QUrl());
     QString toHtml();
     QStringList getAllElements(const QString &symbol);
     QString getFirstElement(const QString &symbol);
@@ -77,6 +78,8 @@ public:
     bool webInspectorEnabled();
 
 Q_SIGNALS:
+    void loadStarted();
+    void loadFinished(bool);
     void loadRedirectedTo(const QUrl&);
 
 private:
