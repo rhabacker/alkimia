@@ -56,8 +56,8 @@ void AlkWebPageTest::testRedirected()
     QSignalSpy spyFinished(&page, SIGNAL(loadFinished(bool)));
     QSignalSpy spyRedirected(&page, SIGNAL(loadRedirectedTo(QUrl)));
 
-    QUrl url(TEST_LAUNCH_URL);
-    page.load(url, QString());
+    QString url(TEST_LAUNCH_URL);
+    page.load(QUrl(url + "&redirect=1"), QString());
 
     // test signals
 #if defined(BUILD_WITH_WEBKIT) || defined(BUILD_WITH_WEBENGINE)
@@ -69,10 +69,13 @@ void AlkWebPageTest::testRedirected()
     QVERIFY(spyStarted.count() >= 1);
     QList<QVariant> arguments = spyFinished.takeFirst();
     QVERIFY(arguments.at(0).toBool() == true);
-#ifndef BUILD_WITH_WEBKIT
+#if defined(BUILD_WITH_WEBENGINE) && QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QCOMPARE(spyRedirected.count(), 1);
     arguments = spyRedirected.takeFirst();
-    QCOMPARE(arguments.at(0).toUrl(), url);
+    QCOMPARE(arguments.at(0).toUrl(), QUrl(url));
+#else
+    QWARN("This engine does not emit signal loadRedirectedTo()");
+    QWARN("This engine does not return a redirected url");
 #endif
     // test content
     QVERIFY(page.toHtml().contains(QLatin1String("</body></html>")));
