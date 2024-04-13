@@ -22,5 +22,5 @@ ci_variant=kf4 tools/ci-build.sh
 EOF
 
 sudo docker pull opensuse/leap
-sudo docker run -v $PWD:/mnt -it opensuse/leap /bin/bash
+sudo docker run -v $PWD:/mnt -it --net=host opensuse/leap /bin/bash
 
