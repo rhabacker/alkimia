@@ -9,8 +9,8 @@
 #include <QTest>
 #include <QtGlobal>
 
-#include "engine.h"
-#include "entryinternal.h"
+#include <knscore/engine.h>
+#include <knscore/entryinternal.h>
 
 using namespace KNSCore;
 

@@ -154,6 +154,17 @@ ecm_add_test(
     TEST_NAME alkwebpage${TEST_SUFFIX}test
 )
 
+macro(knewstuff_unit_tests)
+    ecm_add_tests(
+        ${ARGN}
+        ENV ${TEST_ENV}
+        COMPILER_FLAGS -DDATA_DIR=\"${DATA_DIR}\"
+        LINK_LIBRARIES ${TEST_LIB} ${KF_NEWSTUFF_LIB}
+    )
+endmacro()
+
+add_subdirectory(knewstuff)
+
 #
 # cmake install test
 #
