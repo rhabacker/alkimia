@@ -57,7 +57,7 @@ AlkOnlineQuotesProfile::AlkOnlineQuotesProfile(const QString &name, Type type,
         KConfigGroup group = ghnsConfig.group("KNewStuff3");
         d->m_GHNSFilePath = group.readEntry("TargetDir");
         d->m_engine->init(ghnsFile);
-        d->m_engine->checkForUpdates();
+        d->m_engine->checkForInstalled();
     }
 }
 
