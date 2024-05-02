@@ -12,10 +12,10 @@
 #include <QTest>
 #include <QtGlobal>
 
-#include "entryinternal.h"
-#include "installation.h"
-#include "itemsmodel.h"
-#include "questionmanager.h"
+#include <knscore/entryinternal.h>
+#include <knscore/installation.h>
+#include <knscore/itemsmodel.h>
+#include <knscore/questionmanager.h>
 
 using namespace KNSCore;
 
@@ -181,7 +181,7 @@ void InstallationTest::testCopyError()
     entry.setPayload(QUrl::fromLocalFile(QStringLiteral("data/does_not_exist.txt")).toString());
     QSignalSpy spy(installation, &Installation::signalEntryChanged);
     QSignalSpy errorSpy(installation, &Installation::signalInstallationFailed);
-    QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Download of .* failed, error: Could not open data/does_not_exist.txt for reading"));
+    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(".*Could not open data/does_not_exist.txt for reading"));
     installation->install(entry);
     QVERIFY(errorSpy.wait());
     QCOMPARE(spy.count(), 0);

@@ -10,7 +10,7 @@
 #include <QString>
 #include <QTest>
 
-#include "core/author.h"
+#include <knscore/author.h>
 
 const QString name = QStringLiteral("Name");
 const QString email = QStringLiteral("Email@nowhere.com");
