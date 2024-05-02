@@ -74,6 +74,7 @@ public:
 
     AlkNewStuffEntryList installedEntries() const;
 
+    void reload();
 Q_SIGNALS:
     void updatesAvailable(const AlkNewStuffEntryList &entries);
     void entriesAvailable(const AlkNewStuffEntryList &entries);

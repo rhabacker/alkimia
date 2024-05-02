@@ -242,3 +242,8 @@ QString AlkOnlineQuotesProfile::GHNSFilePath(const QString &name) const
 {
     return d->GHNSFilePath(name);
 }
+
+void AlkOnlineQuotesProfile::reload()
+{
+    return d->m_engine->reload();
+}

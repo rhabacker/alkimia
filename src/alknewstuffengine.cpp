@@ -290,6 +290,11 @@ AlkNewStuffEntryList AlkNewStuffEngine::installedEntries() const
     return d->installedEntries();
 }
 
+void AlkNewStuffEngine::reload()
+{
+    d->m_installedEntries.clear();
+}
+
 const char *toString(AlkNewStuffEntry::Status status)
 {
     switch(status) {
