@@ -157,17 +157,19 @@ const QStringList AlkOnlineQuotesProfile::Private::quoteSourcesGHNS()
     QStringList sources;
     QStringList files = AlkUtils::getDataFiles(m_GHNSFilePath, QStringList() << QStringLiteral("*.txt"));
 
+    alkDebug() << files;
     // add installed remote sources
     for (const AlkNewStuffEntry &entry : m_engine->installedEntries()) {
+        alkDebug() << entry.name << entry.installedFiles;
         AlkOnlineQuoteSource source(entry.name, m_p);
         if (entry.installedFiles.size() > 0)
             files.removeAll(entry.installedFiles[0]);
         if (source.isEmpty()) {
-            alkDebug() << "skipping" << entry.name;
+            alkDebug() << "skipping remote quote source" << entry.name;
             continue;
         }
         if (!sources.contains(entry.id)) {
-            alkDebug() << "adding quote source" << entry.name;
+            alkDebug() << "adding remote quote source" << entry.name;
             sources.push_back(entry.name);
         }
     }
@@ -178,11 +180,11 @@ const QStringList AlkOnlineQuotesProfile::Private::quoteSourcesGHNS()
         QString name = f.completeBaseName();
         AlkOnlineQuoteSource source(name, m_p);
         if (source.isEmpty()) {
-            alkDebug() << "skipping" << name;
+            alkDebug() << "skipping unpublished remote quote source" << name;
             continue;
         }
         if (!sources.contains(name)) {
-            alkDebug() << "adding quote source" << name;
+            alkDebug() << "adding unpublished remote quote source" << name << f;
             sources.push_back(name);
         }
     }
