@@ -98,7 +98,7 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
 
     connect(m_engine, &KNSCore::Engine::signalUpdateableEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
     {
-        alkDebug() << "updates loaded";
+        alkDebug() << entries.size() << " updates loaded" ;
         AlkNewStuffEntryList updateEntries;
         for (const KNSCore::EntryInternal &entry : entries) {
             AlkNewStuffEntry e;
@@ -115,11 +115,15 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
                 m_installedEntries[e.id] = e;
             alkDebug() << e.name << toString(e.status);
         }
-        Q_EMIT q->updatesAvailable(updateEntries);
+        if (updateEntries.size() > 0) {
+            alkDebug() << "emitting" << updateEntries.size() << "entries";
+            Q_EMIT q->updatesAvailable(updateEntries);
+        }
     });
 
     connect(m_engine, &KNSCore::Engine::signalEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
     {
+        alkDebug() << entries.size() << " entries loaded" ;
         for (const KNSCore::EntryInternal &entry : entries) {
             AlkNewStuffEntry e;
             e.category = entry.category();
@@ -132,10 +136,13 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
             e.version = entry.version();
             if (!this->m_installedEntries.contains(e.id)) {
                 this->m_installedEntries[e.id] = e;
-                alkDebug() << e.name << toString(e.status);
+                alkDebug() << e.name << toString(e.status) << e.installedFiles;
             }
         }
-        Q_EMIT q->entriesAvailable(this->m_installedEntries.values());
+        if (this->m_installedEntries.size() > 0) {
+            alkDebug() << "emitting" << this->m_installedEntries.size() << "entries";
+            Q_EMIT q->entriesAvailable(this->m_installedEntries.values());
+        }
     });
 #else
     m_engine = new KNS3::DownloadManager(configFile, this);
