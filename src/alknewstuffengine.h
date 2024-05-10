@@ -43,6 +43,7 @@ public:
 };
 
 typedef QList<AlkNewStuffEntry> AlkNewStuffEntryList;
+typedef QMap<QString,AlkNewStuffEntry> AlkNewStuffEntryMap;
 
 const char *toString(AlkNewStuffEntry::Status status);
 
@@ -69,11 +70,13 @@ public:
      * Update results are obtained using the updatesAvailable() signal.
      */
     void checkForUpdates();
+    void checkForInstalled();
 
     AlkNewStuffEntryList installedEntries() const;
 
 Q_SIGNALS:
     void updatesAvailable(const AlkNewStuffEntryList &entries);
+    void entriesAvailable(const AlkNewStuffEntryList &entries);
 
 private:
     class Private;

@@ -40,17 +40,19 @@ public:
     QPointer<KNSCore::Engine> m_engine;
     bool m_providersLoaded{false};
     bool m_wantUpdates{false};
+    bool m_wantInstalled{false};
 #else
     QPointer<KNS3::DownloadManager> m_engine;
 #endif
     QEventLoop m_loop;
-    AlkNewStuffEntryList m_availableEntries;
+    AlkNewStuffEntryMap m_installedEntries;
 
     explicit Private(AlkNewStuffEngine *parent);
     ~Private();
 
     bool init(const QString &configFile);
     void checkForUpdates();
+    void checkForInstalled();
 
     const AlkNewStuffEntryList installedEntries();
 
@@ -79,6 +81,7 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
     });
 #elif KNEWSTUFF_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     m_engine = new KNSCore::Engine(this);
+    m_engine->setPageSize(100);
     state = m_engine->init(configFile);
     if (!state)
         return false;
@@ -87,7 +90,9 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
     {
         alkDebug() << "providers loaded";
         m_providersLoaded = true;
-        if (m_wantUpdates)
+        if (m_wantInstalled)
+            m_engine->checkForInstalled();
+        else if (m_wantUpdates)
             m_engine->checkForUpdates();
     });
 
@@ -106,9 +111,31 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
                 static_cast<AlkNewStuffEntry::Status>(entry.status());
             e.version = entry.version();
             updateEntries.append(e);
+            if ((e.status == AlkNewStuffEntry::Installed || e.status == AlkNewStuffEntry::Updateable) && !m_installedEntries.contains(e.id))
+                m_installedEntries[e.id] = e;
             alkDebug() << e.name << toString(e.status);
         }
         Q_EMIT q->updatesAvailable(updateEntries);
+    });
+
+    connect(m_engine, &KNSCore::Engine::signalEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
+    {
+        for (const KNSCore::EntryInternal &entry : entries) {
+            AlkNewStuffEntry e;
+            e.category = entry.category();
+            e.id = entry.uniqueId();
+            e.installedFiles = entry.installedFiles();
+            e.name = entry.name();
+            e.providerId = entry.providerId();
+            e.status =
+                static_cast<AlkNewStuffEntry::Status>(entry.status());
+            e.version = entry.version();
+            if (!this->m_installedEntries.contains(e.id)) {
+                this->m_installedEntries[e.id] = e;
+                alkDebug() << e.name << toString(e.status);
+            }
+        }
+        Q_EMIT q->entriesAvailable(this->m_installedEntries.values());
     });
 #else
     m_engine = new KNS3::DownloadManager(configFile, this);
@@ -135,33 +162,30 @@ void AlkNewStuffEngine::Private::checkForUpdates()
 #endif
 }
 
+void AlkNewStuffEngine::Private::checkForInstalled()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    alkDebug() << "FIXME Qt6: no checkforUpdates() - how to proceed ?";
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    if (m_providersLoaded && !m_wantInstalled) {
+        m_engine->checkForInstalled();
+    } else
+        m_wantInstalled = true;
+#else
+    m_engine->checkForInstalled();
+#endif
+}
+
 const AlkNewStuffEntryList AlkNewStuffEngine::Private::installedEntries()
 {
-    if (m_availableEntries.empty()) {
+    if (m_installedEntries.empty()) {
 #if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
         alkDebug() << "FIXME Qt6:";
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        m_engine->checkForInstalled();
 #else
         m_engine->setSearchTerm("*");
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-        connect(m_engine, &KNSCore::Engine::signalEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
-        {
-            for (const KNSCore::EntryInternal &entry : entries) {
-                AlkNewStuffEntry e;
-                e.category = entry.category();
-                e.id = entry.uniqueId();
-                e.installedFiles = entry.installedFiles();
-                e.name = entry.name();
-                e.providerId = entry.providerId();
-                e.status =
-                    static_cast<AlkNewStuffEntry::Status>(entry.status());
-                e.version = entry.version();
-                this->m_availableEntries.append(e);
-                alkDebug() << e.name << toString(e.status);
-            }
-            m_loop.exit();
-        });
         m_engine->requestData(0, 1000);
-#else
         QEventLoop loop;
         disconnect(m_engine, SIGNAL(searchResult(KNS3::Entry::List)), this,
                 SLOT(slotUpdatesAvailable(KNS3::Entry::List)));
@@ -170,11 +194,10 @@ const AlkNewStuffEntryList AlkNewStuffEngine::Private::installedEntries()
         m_engine->search(0, 1000);
 #endif
         m_loop.exec();
-#endif
     }
 
     AlkNewStuffEntryList result;
-    for (const AlkNewStuffEntry &entry : m_availableEntries) {
+    for (const AlkNewStuffEntry &entry : m_installedEntries) {
         if (entry.status == AlkNewStuffEntry::Installed || entry.status == AlkNewStuffEntry::Updateable)
             result.append(entry);
     }
@@ -248,6 +271,11 @@ bool AlkNewStuffEngine::init(const QString &configFile)
 void AlkNewStuffEngine::checkForUpdates()
 {
     d->checkForUpdates();
+}
+
+void AlkNewStuffEngine::checkForInstalled()
+{
+    d->checkForInstalled();
 }
 
 AlkNewStuffEntryList AlkNewStuffEngine::installedEntries() const
