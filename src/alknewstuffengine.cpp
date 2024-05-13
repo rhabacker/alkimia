@@ -97,6 +97,10 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
         alkDebug() << message;
     });
 
+    q->connect(m_engine, &KNSCore::Engine::signalErrorCode, q, [this](const KNSCore::ErrorCode &, const QString &message, const QVariant &) {
+        alkDebug() << message;
+    });
+
     connect(m_engine, &KNSCore::Engine::signalProvidersLoaded, this, [this]()
     {
         alkDebug() << "providers loaded";
