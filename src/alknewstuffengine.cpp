@@ -83,6 +83,10 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
     m_engine = new KNSCore::Engine(this);
     m_engine->setPageSize(100);
 
+    q->connect(m_engine, &KNSCore::Engine::signalErrorCode, q, [this](const KNSCore::ErrorCode &, const QString &message, const QVariant &) {
+        alkDebug() << message;
+    });
+
     connect(m_engine, &KNSCore::Engine::signalProvidersLoaded, this, [this]()
     {
         alkDebug() << "providers loaded";
