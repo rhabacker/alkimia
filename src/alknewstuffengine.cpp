@@ -99,7 +99,7 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
 
     connect(m_engine, &KNSCore::Engine::signalUpdateableEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
     {
-        alkDebug() << entries.size() << " updates loaded" ;
+        alkDebug() << entries.size() << " updates loaded for category" << m_engine->categories();
         AlkNewStuffEntryList updateEntries;
         for (const KNSCore::EntryInternal &entry : entries) {
             AlkNewStuffEntry e;
@@ -124,7 +124,7 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
 
     connect(m_engine, &KNSCore::Engine::signalEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
     {
-        alkDebug() << entries.size() << " entries loaded" ;
+        alkDebug() << entries.size() << " entries loaded for category" << m_engine->categories();
         for (const KNSCore::EntryInternal &entry : entries) {
             AlkNewStuffEntry e;
             e.category = entry.category();
