@@ -82,9 +82,6 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
 #elif KNEWSTUFF_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     m_engine = new KNSCore::Engine(this);
     m_engine->setPageSize(100);
-    state = m_engine->init(configFile);
-    if (!state)
-        return false;
 
     connect(m_engine, &KNSCore::Engine::signalProvidersLoaded, this, [this]()
     {
@@ -144,6 +141,9 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
             Q_EMIT q->entriesAvailable(this->m_installedEntries.values());
         }
     });
+    state = m_engine->init(configFile);
+    if (!state)
+        return false;
 #else
     m_engine = new KNS3::DownloadManager(configFile, this);
     // no chance get the state
