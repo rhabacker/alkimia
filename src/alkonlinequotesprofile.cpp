@@ -143,6 +143,11 @@ void AlkOnlineQuotesProfile::setKConfig(KSharedConfigPtr kconfig)
 }
 #endif
 
+AlkNewStuffEngine *AlkOnlineQuotesProfile::engine()
+{
+    return d->m_engine;
+}
+
 AlkNewStuffWidget *AlkOnlineQuotesProfile::installWidget()
 {
     return d->m_widget;

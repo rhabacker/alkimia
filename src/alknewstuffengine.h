@@ -15,6 +15,7 @@
 #include <QStringList>
 #include <QObject>
 
+class AlkOnlineQuoteSource;
 /**
  * Platform independent wrapper for new stuff entry
  *
@@ -74,6 +75,7 @@ public:
      */
     void checkForUpdates();
     void checkForInstalled();
+    void uninstall(const AlkOnlineQuoteSource *source);
 
     AlkNewStuffEntryList installedEntries() const;
 

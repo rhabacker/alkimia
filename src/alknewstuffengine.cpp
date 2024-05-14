@@ -9,6 +9,7 @@
 #include "alknewstuffengine.h"
 
 #include "alkdebug.h"
+#include "alkimia/alkonlinequotesource.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     #include <KNSCore/EngineBase>
@@ -46,6 +47,7 @@ public:
 #endif
     QEventLoop m_loop;
     AlkNewStuffEntryMap m_installedEntries;
+    KNSCore::EntryInternal::List m_EntriesInternal;
 
     explicit Private(AlkNewStuffEngine *parent);
     ~Private();
@@ -126,6 +128,7 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
     connect(m_engine, &KNSCore::Engine::signalEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
     {
         alkDebug() << entries.size() << " entries loaded for category" << m_engine->categories();
+        m_EntriesInternal = entries;
         for (const KNSCore::EntryInternal &entry : entries) {
             AlkNewStuffEntry e;
             e.category = entry.category();
@@ -293,6 +296,14 @@ void AlkNewStuffEngine::checkForUpdates()
 void AlkNewStuffEngine::checkForInstalled()
 {
     d->checkForInstalled();
+}
+
+void AlkNewStuffEngine::uninstall(const AlkOnlineQuoteSource *source)
+{
+    for (const auto &e : d->m_EntriesInternal) {
+        if (e.name() == source->name())
+            d->m_engine->uninstall(e);
+    }
 }
 
 AlkNewStuffEntryList AlkNewStuffEngine::installedEntries() const

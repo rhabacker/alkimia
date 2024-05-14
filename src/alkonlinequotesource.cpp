@@ -8,6 +8,7 @@
 
 #include "alkonlinequotesource.h"
 
+#include "alknewstuffengine.h"
 #include "alkonlinequotesprofile.h"
 #include "alkonlinequotesource_p.h"
 #include "alktestdefs.h"
@@ -367,7 +368,8 @@ void AlkOnlineQuoteSource::rename(const QString &name)
 void AlkOnlineQuoteSource::remove()
 {
     if (d->m_profile->hasGHNSSupport() && d->m_isGHNSSource) {
-        d->removeGHNSFile();
+        d->m_profile->engine()->uninstall(this);
+        //d->removeGHNSFile();
     } else if (d->m_profile->type() != AlkOnlineQuotesProfile::Type::None) {
         d->remove();
     }

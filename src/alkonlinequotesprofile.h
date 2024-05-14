@@ -18,6 +18,8 @@
 #include <QString>
 #include <QMap>
 
+class AlkNewStuffEngine;
+class AlkNewStuffWidget;
 class AlkOnlineQuoteSource;
 class AlkOnlineQuotesProfileManager;
 
@@ -46,6 +48,9 @@ public:
 
     KSharedConfigPtr kConfig() const;
     void setKConfig(KSharedConfigPtr kconfig);
+
+    AlkNewStuffEngine *engine();
+    AlkNewStuffWidget *installWidget();
 
     /**
      * Check if the profile is supported (build) by Alkimia
