@@ -32,12 +32,12 @@ class AlkNewStuffEngine::Private : public QObject
 public:
     AlkNewStuffEngine *q;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QPointer<KNSCore::EngineBase> m_engine;
+    QPointer<KNSCore::EngineBase> m_engine{nullptr};
     #define KNS3 KNSCore
     bool m_providersLoaded{false};
     bool m_wantUpdates{false};
 #elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    QPointer<KNSCore::Engine> m_engine;
+    QPointer<KNSCore::Engine> m_engine{nullptr};
     bool m_providersLoaded{false};
     bool m_wantUpdates{false};
     bool m_wantInstalled{false};
@@ -62,7 +62,7 @@ public Q_SLOTS:
 };
 
 AlkNewStuffEngine::Private::Private(AlkNewStuffEngine *parent)
-    : q(parent), m_engine(nullptr) {}
+    : q(parent) {}
 
 AlkNewStuffEngine::Private::~Private() { delete m_engine; }
 
@@ -80,7 +80,8 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
         }
     });
 #elif KNEWSTUFF_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    m_engine = new KNSCore::Engine(this);
+    if (!m_engine)
+        m_engine = new KNSCore::Engine(this);
     m_engine->setPageSize(100);
 
     q->connect(m_engine, &KNSCore::Engine::signalErrorCode, q, [this](const KNSCore::ErrorCode &, const QString &message, const QVariant &) {
@@ -271,6 +272,11 @@ AlkNewStuffEngine::AlkNewStuffEngine(QObject *parent)
     : QObject{parent}
     , d(new Private(this))
 {
+}
+
+void AlkNewStuffEngine::setEngine(QObject *engine)
+{
+    d->m_engine = dynamic_cast<KNSCore::Engine*>(engine);
 }
 
 bool AlkNewStuffEngine::init(const QString &configFile)

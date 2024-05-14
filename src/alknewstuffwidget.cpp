@@ -37,6 +37,7 @@ class AlkNewStuffWidget::Private : public QObject
 public:
     AlkNewStuffWidget *q;
     QString _configFile;
+    QPointer<KNS3::QtQuickDialogWrapper> _knsWrapper;
     Private(AlkNewStuffWidget *parent);
 
     ~Private();
@@ -60,6 +61,7 @@ AlkNewStuffWidget::AlkNewStuffWidget(QObject *parent)
 bool AlkNewStuffWidget::init(const QString &configFile)
 {
     d->_configFile = configFile;
+    d->_knsWrapper = new KNS3::QtQuickDialogWrapper(configFile);
     return true;
 }
 
@@ -90,13 +92,17 @@ bool AlkNewStuffWidget::showInstallDialog(QWidget *parent)
 #elif KNEWSTUFF_VERSION < QT_VERSION_CHECK(5, 94, 0)
     return !KNS3::QtQuickDialogWrapper(configFile).exec().isEmpty();
 #else
-    QPointer<KNS3::QtQuickDialogWrapper> knsWrapper = new KNS3::QtQuickDialogWrapper(configFile, dynamic_cast<QObject*>(parent));
-    knsWrapper->open();
+    d->_knsWrapper->open();
     QEventLoop loop;
-    connect(knsWrapper, &KNS3::QtQuickDialogWrapper::closed, &loop, &QEventLoop::quit);
+    connect(d->_knsWrapper, &KNS3::QtQuickDialogWrapper::closed, &loop, &QEventLoop::quit);
     loop.exec();
-    return !knsWrapper->changedEntries().empty();
+    return !d->_knsWrapper->changedEntries().empty();
 #endif
+}
+
+QObject *AlkNewStuffWidget::baseEngine()
+{
+    return d->_knsWrapper->engine();
 }
 
 #include "alknewstuffwidget.moc"

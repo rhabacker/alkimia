@@ -27,6 +27,7 @@ public:
     explicit AlkNewStuffWidget(QObject *parent = nullptr);
     bool init(const QString &configFile);
     bool showInstallDialog(QWidget *parent = nullptr);
+    QObject *baseEngine();
 
 private:
     class Private;

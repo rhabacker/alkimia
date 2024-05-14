@@ -56,6 +56,9 @@ AlkOnlineQuotesProfile::AlkOnlineQuotesProfile(const QString &name, Type type,
         KConfig ghnsConfig(ghnsFile);
         KConfigGroup group = ghnsConfig.group("KNewStuff3");
         d->m_GHNSFilePath = group.readEntry("TargetDir");
+        d->m_widget = new AlkNewStuffWidget;
+        d->m_widget->init(ghnsFile);
+        d->m_engine->setEngine(d->m_widget->baseEngine());
         d->m_engine->init(ghnsFile);
         d->m_engine->checkForInstalled();
     }
@@ -139,6 +142,11 @@ void AlkOnlineQuotesProfile::setKConfig(KSharedConfigPtr kconfig)
     d->m_config = kconfig;
 }
 #endif
+
+AlkNewStuffWidget *AlkOnlineQuotesProfile::installWidget()
+{
+    return d->m_widget;
+}
 
 AlkOnlineQuotesProfile::Type AlkOnlineQuotesProfile::type()
 {

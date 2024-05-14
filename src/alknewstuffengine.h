@@ -57,6 +57,9 @@ class ALK_EXPORT AlkNewStuffEngine : public QObject
     Q_OBJECT
 public:
     explicit AlkNewStuffEngine(QObject *parent = nullptr);
+
+    void setEngine(QObject *engine);
+
     /**
      * Initialization of the new stuff engine
      * @param configFile path to the configuration file (.knsrc)

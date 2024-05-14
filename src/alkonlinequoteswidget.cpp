@@ -773,11 +773,8 @@ void AlkOnlineQuotesWidget::Private::slotQuoteSourceRenamed(QTreeWidgetItem *ite
 
 void AlkOnlineQuotesWidget::Private::slotInstallEntries()
 {
-    QString configFile = m_profile->hotNewStuffConfigFile();
-
-    AlkNewStuffWidget widget;
-    widget.init(configFile);
-    if (widget.showInstallDialog()) {
+    AlkNewStuffWidget *widget = m_profile->installWidget();
+    if (widget->showInstallDialog()) {
         m_profile->reload();
         loadQuotesList();
     }

@@ -13,6 +13,7 @@
 #include "alkonlinequotesprofile.h"
 
 #include "alknewstuffengine.h"
+#include "alknewstuffwidget.h"
 
 #ifdef ENABLE_FINANCEQUOTE
 #include "alkfinancequoteprocess.h"
@@ -42,6 +43,7 @@ public:
     QString m_GHNSFilePath;
     QString m_kconfigFile;
     AlkOnlineQuotesProfileManager *m_profileManager;
+    AlkNewStuffWidget *m_widget = 0;
     AlkNewStuffEngine *m_engine = 0;
     KSharedConfigPtr m_config;
     Type m_type;
