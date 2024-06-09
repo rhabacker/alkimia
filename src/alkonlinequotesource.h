@@ -76,6 +76,8 @@ public:
 
     friend void swap(AlkOnlineQuoteSource& first, AlkOnlineQuoteSource& second);
 
+    AlkOnlineQuoteSource asReference();
+    bool isReference();
     bool isEmpty();
     bool isValid();
 
@@ -84,6 +86,7 @@ public:
     void rename(const QString &name);
     void remove();
 
+    QString referenceName() const;
     QString name() const;
     QString url() const;
     DecimalSeparator priceDecimalSeparator() const;
@@ -106,6 +109,7 @@ public:
     bool isFinanceQuote() const;
     static bool isFinanceQuote(const QString &name);
 
+    void setReferenceName(const QString &referenceName);
     void setName(const QString &name);
     void setUrl(const QString &url);
     void setPriceDecimalSeparator(DecimalSeparator separator);

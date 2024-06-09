@@ -106,6 +106,7 @@ public Q_SLOTS:
     void slotDeleteEntry();
     void slotDuplicateEntry();
     void slotAcceptEntry();
+    void slotAddReferenceButton();
     void slotLoadQuoteSource(const QModelIndex &index = QModelIndex());
     void slotEntryChanged();
     void slotNewEntry();
@@ -239,6 +240,7 @@ AlkOnlineQuotesWidget::Private::Private(bool showProfiles, bool showUpload, QWid
 
     connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(slotLoadQuoteSource()));
     connect(m_acceptButton, SIGNAL(clicked()), this, SLOT(slotAcceptEntry()));
+    connect(m_addReferenceButton, SIGNAL(clicked()), this, SLOT(slotAddReferenceButton()));
     connect(m_newButton, SIGNAL(clicked()), this, SLOT(slotNewEntry()));
     connect(m_checkButton, SIGNAL(clicked()), this, SLOT(slotCheckEntry()));
     connect(m_deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteEntry()));
@@ -249,11 +251,11 @@ AlkOnlineQuotesWidget::Private::Private(bool showProfiles, bool showUpload, QWid
     QFontMetrics fm(QApplication::font());
     const int rowHeight = fm.height();
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    m_quoteSourceList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_quoteSourceList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_quoteSourceList->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     m_quoteSourceList->verticalHeader()->setDefaultSectionSize(rowHeight);
 #else
-    m_quoteSourceList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    m_quoteSourceList->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     m_quoteSourceList->verticalHeader()->setResizeMode(QHeaderView::Fixed);
     m_quoteSourceList->verticalHeader()->setDefaultSectionSize(rowHeight);
 #endif
@@ -450,7 +452,7 @@ void AlkOnlineQuotesWidget::Private::slotLoadQuoteSource(const QModelIndex &inde
         m_ghnsSource->setChecked(m_currentItem.isGHNS());
     }
 
-    bool enabled = !name.isEmpty();
+    bool enabled = !name.isEmpty() && !m_currentItem.isReference();
     bool isFinanceQuoteSource = (enabled && AlkOnlineQuoteSource::isFinanceQuote(name)) ||
             m_profile->type() == AlkOnlineQuotesProfile::Type::Script;
 
@@ -469,6 +471,7 @@ void AlkOnlineQuotesWidget::Private::slotLoadQuoteSource(const QModelIndex &inde
     m_ghnsSource->setVisible(m_profile && m_profile->hasGHNSSupport());
     m_ghnsSource->setEnabled(m_showUpload && m_profile && m_profile->hasGHNSSupport() && enabled);
     m_uploadButton->setEnabled(m_showUpload && m_profile && m_profile->hasGHNSSupport());
+    m_addReferenceButton->setEnabled(m_currentItem.isGHNS());
     m_editDataFormat->setEnabled(enabled);
 
     m_disableUpdate = false;
@@ -508,22 +511,31 @@ void AlkOnlineQuotesWidget::Private::updateButtonState()
     m_uploadButton->setEnabled(m_profile->hasGHNSSupport() && m_currentItem.isGHNS() && AlkOnlineQuoteUploadDialog::isSupported());
     m_acceptButton->setEnabled(modified);
     m_checkButton->setEnabled(isFinanceQuote || !modified);
-    m_checkSymbol->setEnabled(!m_currentItem.requiresTwoIdentifier());
-    m_checkSymbol2->setEnabled(m_currentItem.requiresTwoIdentifier());
     m_editIdSelector->setVisible(m_profile->type() == AlkOnlineQuotesProfile::Type::KMyMoney5);
     m_editIdSelectorLabel->setVisible(m_profile->type() == AlkOnlineQuotesProfile::Type::KMyMoney5);
-    if (m_currentItem.requiresTwoIdentifier()) {
-        m_checkSymbol->setText("");
-        m_checkSymbol2->setText(!m_currentItem.defaultId().isEmpty() ? m_currentItem.defaultId() : "BTC GBP");
-    } else {
-        m_checkSymbol->setText(!m_currentItem.defaultId().isEmpty() ? m_currentItem.defaultId() : "ORCL");
-        m_checkSymbol2->setText("");
-    }
-    bool isCSVSource = m_currentItem.dataFormat() == AlkOnlineQuoteSource::CSV;
+
+    // debug dock widget
+    AlkOnlineQuoteSource source(m_currentItem);
+    if (source.isReference())
+        source = source.asReference();
+
+    bool isCSVSource = source.dataFormat() == AlkOnlineQuoteSource::CSV;
     m_startDateLabel->setVisible(isCSVSource);
     m_endDateLabel->setVisible(isCSVSource);
     m_startDateEdit->setVisible(isCSVSource);
     m_endDateEdit->setVisible(isCSVSource);
+
+    if (source.requiresTwoIdentifier()) {
+        m_checkSymbol->setEnabled(false);
+        m_checkSymbol->setText("");
+        m_checkSymbol2->setEnabled(true);
+        m_checkSymbol2->setText(!source.defaultId().isEmpty() ? source.defaultId() : "BTC GBP");
+    } else {
+        m_checkSymbol->setEnabled(true);
+        m_checkSymbol->setText(!source.defaultId().isEmpty() ? source.defaultId() : "ORCL");
+        m_checkSymbol2->setEnabled(false);
+        m_checkSymbol2->setText("");
+    }
 }
 
 void AlkOnlineQuotesWidget::Private::slotDeleteEntry()
@@ -576,6 +588,25 @@ void AlkOnlineQuotesWidget::Private::slotAcceptEntry()
     m_checkButton->setEnabled(true);
     loadQuotesList();
     updateButtonState();
+}
+
+void AlkOnlineQuotesWidget::Private::slotAddReferenceButton()
+{
+    if (!m_quoteSourceList->currentIndex().isValid())
+        return;
+
+    QString newNameBase = m_currentItem.name() + i18n(".reference");
+    int index = 1;
+    QString newName = newNameBase;
+    while(m_profile->quoteSources().contains(newName)) {
+        newName = QString("%1%2").arg(newNameBase).arg(index++);
+    }
+    AlkOnlineQuoteSource copy(newName, m_profile);
+    copy.setGHNS(false);
+    copy.setReferenceName(m_currentItem.name());
+    copy.write();
+    m_currentItem = copy;
+    loadQuotesList();
 }
 
 void AlkOnlineQuotesWidget::Private::slotNewEntry()
@@ -658,15 +689,19 @@ void AlkOnlineQuotesWidget::Private::slotCheckEntry()
     connect(&quote, SIGNAL(quotes(QString,QString,AlkDatePriceMap)), this,
             SLOT(slotLogQuotes(QString,QString,AlkDatePriceMap)));
     initIcons();
-    if (m_currentItem.dataFormat() == AlkOnlineQuoteSource::CSV) {
+
+    AlkOnlineQuoteSource source(m_currentItem);
+    if (source.isReference())
+        source = source.asReference();
+    if (source.dataFormat() == AlkOnlineQuoteSource::CSV) {
         quote.setDateRange(m_startDateEdit->date(), m_endDateEdit->date());
     } else {
         quote.setDateRange(QDate(), QDate());
     }
-    if (m_currentItem.requiresTwoIdentifier()) {
-        quote.launch(m_checkSymbol2->text(), m_checkSymbol2->text(), m_currentItem.name());
+    if (source.requiresTwoIdentifier()) {
+        quote.launch(m_checkSymbol2->text(), m_checkSymbol2->text(), source.name());
     } else {
-        quote.launch(m_checkSymbol->text(), m_checkSymbol->text(), m_currentItem.name());
+        quote.launch(m_checkSymbol->text(), m_checkSymbol->text(), source.name());
     }
     setupIcons(quote.errors());
 }
@@ -739,10 +774,13 @@ void AlkOnlineQuotesWidget::Private::slotShowButton()
 
 QString AlkOnlineQuotesWidget::Private::expandedUrl() const
 {
-    if (m_currentItem.requiresTwoIdentifier()) {
-        return m_currentItem.url().arg(m_checkSymbol2->text());
+    AlkOnlineQuoteSource source(m_currentItem);
+    if (source.isReference())
+        source = source.asReference();
+    if (source.requiresTwoIdentifier()) {
+        return source.url().arg(m_checkSymbol2->text());
     } else {
-        return m_currentItem.url().arg(m_checkSymbol->text());
+        return source.url().arg(m_checkSymbol->text());
     }
 }
 

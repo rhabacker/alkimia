@@ -9,6 +9,7 @@
 #define ALKONLINEQUOTESMODEL_H
 
 #include <QAbstractItemModel>
+#include <QStringList>
 
 class AlkOnlineQuotesProfile;
 
@@ -19,6 +20,7 @@ public:
     enum Columns {
         Name,
         Source,
+        ReferenceTo
     };
 
     enum Roles {

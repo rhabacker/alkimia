@@ -282,7 +282,8 @@
             </property>
             <property name="icon">
              <iconset theme="dialog-cancel">
-              <normaloff>.</normaloff>.</iconset>
+              <normaloff/>
+             </iconset>
             </property>
            </widget>
           </item>
