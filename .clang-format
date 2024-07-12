@@ -86,3 +86,4 @@ BraceWrapping:
   AfterFunction: true
   AfterNamespace: false
 CompactNamespaces: true
+AllowShortEnumsOnASingleLine: false
