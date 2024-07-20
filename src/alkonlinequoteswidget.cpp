@@ -63,13 +63,12 @@ static KLocale _locale(TRANSLATION_DOMAIN);
 #define tr2i18n(text, context) ki18nc(context, text).toString(&_locale)
 #endif
 
-class AlkOnlineQuotesWidget::Private
-    : public QWidget
-    , public Ui::AlkOnlineQuoteDetailsWidget
-    , public Ui::AlkOnlineQuotesDebugWidget
-    , public Ui::AlkOnlineQuotesProfileDetailsWidget
-    , public Ui::AlkOnlineQuotesProfilesWidget
-    , public Ui::AlkOnlineQuotesListWidget
+class AlkOnlineQuotesWidget::Private : public QWidget,
+                                       public Ui::AlkOnlineQuoteDetailsWidget,
+                                       public Ui::AlkOnlineQuotesDebugWidget,
+                                       public Ui::AlkOnlineQuotesProfileDetailsWidget,
+                                       public Ui::AlkOnlineQuotesProfilesWidget,
+                                       public Ui::AlkOnlineQuotesWidget
 {
     Q_OBJECT
 public:
