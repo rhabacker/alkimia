@@ -17,7 +17,7 @@
 #include "alkonlinequoteprocess.h"
 #include "alkonlinequotesource.h"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #define KUrl QUrl
 #define prettyUrl() toDisplayString()
 #include <QUrl>

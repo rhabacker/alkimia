@@ -23,7 +23,7 @@
 #include "alkwebpage.h"
 #include "alkwebview.h"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <KLocalizedString>
 #include <QTemporaryFile>
 #define KIcon QIcon
@@ -38,7 +38,7 @@
 #include <KShell>
 #include <QFileInfo>
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #include <QRegExp>
 using Regex = QRegExp;
 #define hasRegexMatch(a) indexIn(a) != -1
