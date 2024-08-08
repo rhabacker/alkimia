@@ -12,6 +12,7 @@
 #include "alkonlinequotesprofile.h"
 #include "alkonlinequotesprofilemanager.h"
 #include "alkonlinequoteswidget.h"
+#include "alkpayeelinkswidget.h"
 #include "alkwebpage.h"
 #include "alkwebview.h"
 
@@ -35,6 +36,7 @@ public:
     }
     QLineEdit *urlLine;
     AlkOnlineQuotesWidget *quotesWidget;
+    AlkPayeeLinksWidget *payeeLinksWidget;
     Ui::MainWindow ui;
 };
 
@@ -155,6 +157,13 @@ MainWindow::MainWindow(QWidget *parent)
     group->setLayout(layout);
     browserWidget->setWidget(group);
     addDockWidget(Qt::RightDockWidgetArea, browserWidget);
+
+
+    d->payeeLinksWidget = new AlkPayeeLinksWidget;
+    QDockWidget *payeeLinksWidget = new QDockWidget(i18n("Payee links"), this);
+    payeeLinksWidget->setObjectName("payeeLinksDockWidget");
+    payeeLinksWidget->setWidget(d->payeeLinksWidget);
+    addDockWidget(Qt::LeftDockWidgetArea, payeeLinksWidget);
 
     setCentralWidget(nullptr);
 

@@ -94,6 +94,7 @@ set(alkimia_LIB_SRCS
     alkonlinequotesprofilemanager.cpp
     alkonlinequoteswidget.cpp
     alkonlinequoteuploaddialog.cpp
+    alkpayeelinkswidget.cpp
     alkvalue.cpp
     alkversion.cpp
     alkutils.cpp
@@ -125,6 +126,7 @@ set(alkimia_LIB_PRIVATE_HEADERS
     alkonlinequotesource_p.h
     alkonlinequotesprofile_p.h
     alkonlinequoteuploaddialog.h
+    alkpayeelinkswidget.h
     alkpushbutton.h
     alktestdefs.h
     alkutils.h
@@ -142,6 +144,7 @@ set(alkimia_UI
     alkonlinequotesprofiledetails.ui
     alkonlinequotesprofiles.ui
     alkonlinequoteuploaddialog.ui
+    alkpayeelinkslist.ui
 )
 
 configure_file(
