@@ -1,0 +1,5 @@
+[KNewStuff3]
+ProvidersUrl=https://autoconfig.kde.org/ocs/providers.xml
+Categories=Various Addons
+TargetDir=alkimia/payee-links
+Uncompress=archive

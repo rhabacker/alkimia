@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AlkPayeeLinksListWidget</class>
+ <widget class="QWidget" name="AlkPayeeLinksListWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>681</width>
+    <height>385</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Online Quotes</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_6">
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="whatsThis">
+      <string/>
+     </property>
+     <property name="title">
+      <string>Payee links</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0" colspan="3">
+         <widget class="QTableView" name="m_sourcesList"/>
+        </item>
+        <item row="0" column="3">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="AlkPushButton" name="m_newButton">
+            <property name="toolTip">
+             <string>Create a new source entry</string>
+            </property>
+            <property name="whatsThis">
+             <string>Use this to create a new entry.</string>
+            </property>
+            <property name="text">
+             <string comment="@action create new quote source">New</string>
+            </property>
+            <property name="icon">
+             <iconset theme="document-new">
+              <normaloff/>
+             </iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="AlkPushButton" name="m_deleteButton">
+            <property name="toolTip">
+             <string>Delete the selected payee link source</string>
+            </property>
+            <property name="whatsThis">
+             <string>Use this to delete the selected source</string>
+            </property>
+            <property name="text">
+             <string>Delete</string>
+            </property>
+            <property name="icon">
+             <iconset theme="edit-delete">
+              <normaloff/>
+             </iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="AlkPushButton" name="m_duplicateButton">
+            <property name="toolTip">
+             <string>Create a duplicate of the currently selected source entry under a different name.</string>
+            </property>
+            <property name="whatsThis">
+             <string>Use this to create a duplicate of an entry.</string>
+            </property>
+            <property name="text">
+             <string>Duplicate</string>
+            </property>
+            <property name="icon">
+             <iconset theme="edit-copy">
+              <normaloff/>
+             </iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="AlkPushButton" name="m_installButton">
+            <property name="toolTip">
+             <string>Install source from the KDE Store</string>
+            </property>
+            <property name="whatsThis">
+             <string>Use this to install a source from the KDE Store.</string>
+            </property>
+            <property name="text">
+             <string>Install</string>
+            </property>
+            <property name="icon">
+             <iconset theme="run-install">
+              <normaloff/>
+             </iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="AlkPushButton" name="m_uploadButton">
+            <property name="toolTip">
+             <string>Upload modified source to the KDE Store</string>
+            </property>
+            <property name="whatsThis">
+             <string>Use this to upload a modified source to the KDE Store.</string>
+            </property>
+            <property name="text">
+             <string>Upload</string>
+            </property>
+            <property name="icon">
+             <iconset theme="cloud-upload">
+              <normaloff/>
+             </iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="AlkPushButton" name="m_resetButton">
+            <property name="toolTip">
+             <string>Reset changes to local sources that were made after the last selection of this profile</string>
+            </property>
+            <property name="whatsThis">
+             <string>Use this to reset changes to local sources that were made after the last selection of this profile.</string>
+            </property>
+            <property name="text">
+             <string>Reset</string>
+            </property>
+            <property name="icon">
+             <iconset theme="edit-reset">
+              <normaloff/>
+             </iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>14</width>
+              <height>13</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Text example</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="m_checkIdPatternInput"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Result</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="m_checkResultLabel">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="AlkPushButton" name="m_checkButton">
+          <property name="toolTip">
+           <string>...</string>
+          </property>
+          <property name="whatsThis">
+           <string>....</string>
+          </property>
+          <property name="text">
+           <string>Check</string>
+          </property>
+          <property name="icon">
+           <iconset theme="document-edit-verify">
+            <normaloff/>
+           </iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>AlkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>alkpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
