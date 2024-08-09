@@ -9,6 +9,7 @@
 #include "alknewstuffengine.h"
 
 #include "alkdebug.h"
+#include "alkpayeereferencelink.h"
 
 #include <QApplication>
 #include <QObject>
@@ -51,11 +52,23 @@ public Q_SLOTS:
     }
 };
 
+QDebug operator<<(QDebug d, const AlkPayeeReferenceLinkData &v)
+{
+    d << "AlkPayeeReferenceLinkData:"
+      << v.date
+      << v.idPattern
+      << v.name
+      << v.urlTemplate
+      << v.uuid;
+    return d;
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    QString configFile = QString("%1/%2").arg(KNSRC_DIR, "alkimia-quotes.knsrc");
+    QString key = app.arguments().size() == 2 ? app.arguments().at(1) : "quotes";
+    QString configFile = QString("%1/alkimia-%2.knsrc").arg(KNSRC_DIR, key);
 
     QEventLoop loop;
     TestReceiver receiver(loop);
@@ -67,7 +80,12 @@ int main(int argc, char *argv[])
     QObject::connect(&engine, SIGNAL(updatesAvailable(const AlkNewStuffEntryList &)), &receiver, SLOT(updatesAvailable(const AlkNewStuffEntryList &)));
 #endif
     engine.init(configFile);
+    for (const AlkNewStuffEntry &entry : engine.installedEntries())
+        alkDebug() << entry.name;
     engine.checkForUpdates();
+
+    AlkPayeeReferenceLink link("Amazon EU order Link", engine);
+    alkDebug() << link.data();
 
     return loop.exec();
 }
