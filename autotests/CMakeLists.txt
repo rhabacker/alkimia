@@ -37,6 +37,7 @@ ecm_add_tests(
     alkquoteitemtest.cpp
     alkcompanytest.cpp
     alkexceptiontest.cpp
+    alkpayeereferencelinktest.cpp
     ENV ${TEST_ENV}
     LINK_LIBRARIES
     ${TEST_LIB}
