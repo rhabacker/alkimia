@@ -73,9 +73,10 @@ AllowShortLambdasOnASingleLine: Empty
 # We do not want clang-format to put all arguments on a new line
 AllowAllArgumentsOnNextLine: false
 
-# KMyMoney specific values
+# Alkimia specific values
 
-PointerAlignment: Left
+DerivePointerAlignment: true
+PointerAlignment: Right
 BreakBeforeBraces: Custom
 # break before braces on functions and class definitions.
 BraceWrapping:
@@ -86,4 +87,4 @@ BraceWrapping:
   AfterFunction: true
   AfterNamespace: false
 CompactNamespaces: true
-AllowShortEnumsOnASingleLine: false
+#AllowShortEnumsOnASingleLine: false
