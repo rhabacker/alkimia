@@ -49,6 +49,7 @@ public:
 
 Q_SIGNALS:
     void updatesAvailable(const AlkNewStuffEntryList &entries);
+    void entriesAvailable(const AlkNewStuffEntryList &entries);
 
 private:
     class Private;

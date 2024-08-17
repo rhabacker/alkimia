@@ -119,6 +119,16 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
         alkDebug() << updateEntries;
         Q_EMIT q->updatesAvailable(updateEntries);
     });
+
+    connect(m_engine, &KNSCore::Engine::signalEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
+    {
+        alkDebug() << entries.size() << "entries loaded";
+        AlkNewStuffEntryList availableEntries;
+        toAlkEntryList(availableEntries, entries);
+        alkDebug() << availableEntries;
+        Q_EMIT q->entriesAvailable(availableEntries);
+    });
+    m_engine->setSearchTerm(QStringLiteral("*"));
 #else
     m_engine = new KNS3::DownloadManager(configFile, this);
     QFileInfo f(configFile);
