@@ -51,6 +51,10 @@ AlkNewStuffEntry toAlkEntry(const KNSCore::EntryInternal &entry)
     e.id = entry.uniqueId();
     e.installedFiles = entry.installedFiles();
     e.name = entry.name();
+    if (!entry.payload().isEmpty())
+        e.payload = entry.payload();
+    else if (entry.downloadLinkInformationList().size() > 0 && entry.downloadLinkInformationList().at(0).isDownloadtypeLink)
+        e.payload = entry.downloadLinkInformationList().at(0).descriptionLink;
     e.providerId = entry.providerId();
     e.status = static_cast<AlkNewStuffEntry::Status>(entry.status());
     e.version = entry.version();
@@ -63,6 +67,21 @@ void toAlkEntryList(AlkNewStuffEntryList &result, const KNSCore::EntryInternal::
         result.append(toAlkEntry(entry));
     }
 }
+
+KNSCore::EntryInternal toKNSEntry(const AlkNewStuffEntry &entry)
+{
+    KNSCore::EntryInternal e;
+    e.setCategory(entry.category);
+    e.setUniqueId(entry.id);
+    e.setInstalledFiles(entry.installedFiles);
+    e.setName(entry.name);
+    e.setPayload(entry.payload);
+    e.setProviderId(entry.providerId);
+    e.setStatus(static_cast<KNS3::Entry::Status>(entry.status));
+    e.setVersion(entry.version);
+    return e;
+}
+
 #else
 QDebug operator<<(QDebug out, const KNS3::Entry &entry)
 {

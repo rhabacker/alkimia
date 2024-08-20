@@ -394,7 +394,7 @@ void AlkOnlineQuoteSource::rename(const QString &name)
 void AlkOnlineQuoteSource::remove()
 {
     if (d->m_profile->hasGHNSSupport() && d->m_isGHNSSource) {
-        d->removeGHNSFile();
+        d->m_profile->GHNSremove(d->m_name);
     } else if (d->m_profile->type() != AlkOnlineQuotesProfile::Type::None) {
         d->remove();
     }

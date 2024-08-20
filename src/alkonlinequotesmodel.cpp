@@ -122,7 +122,7 @@ bool AlkOnlineQuotesModel::removeRows(int row, int count, const QModelIndex &par
         }
         for (const auto &i : sources.keys()) {
             AlkOnlineQuoteSource source(sources[i], _profile);
-            if (source.isValid() && !source.isGHNS()) {
+            if (source.isValid()) {
                 beginRemoveRows(parent, i, i);
                 source.remove();
                 _sourceNames.removeAll(sources[i]);

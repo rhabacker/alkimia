@@ -253,3 +253,14 @@ QString AlkOnlineQuotesProfile::GHNSName(const QString &id) const
 {
     return  d->GHNSName(id);
 }
+
+bool AlkOnlineQuotesProfile::GHNSremove(const QString &name) const
+{
+    for (const auto &e : d->m_engine->installedEntries()) {
+        if (e.name == name) {
+            d->m_engine->uninstall(e);
+            return true;
+        }
+    }
+    return false;
+}

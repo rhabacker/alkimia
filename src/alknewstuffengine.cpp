@@ -128,6 +128,19 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
         alkDebug() << availableEntries;
         Q_EMIT q->entriesAvailable(availableEntries);
     });
+
+    connect(m_engine, &KNSCore::Engine::signalEntryEvent, this, [this](const KNSCore::EntryInternal &entry, KNSCore::EntryInternal::EntryEvent event) {
+        alkDebug() << "--------- signalEntryEvent -------------" << entry.name() << entry.status() << event;
+        if (event == KNSCore::EntryInternal::StatusChangedEvent) {
+            if (entry.status() == KNS3::Entry::Status::Installed) {
+                alkDebug() << "entry installed" << entry.name() << entry.status() << event;
+                Q_EMIT q->installFinished(toAlkEntry(entry));
+            } else if (entry.status() == KNS3::Entry::Status::Deleted) {
+                alkDebug() << "entry uninstalled" << entry.name() << entry.status() << event;
+                Q_EMIT q->installFinished(toAlkEntry(entry));
+            }
+        }
+    });
     m_engine->setSearchTerm(QStringLiteral("*"));
 #else
     m_engine = new KNS3::DownloadManager(configFile, this);
@@ -209,6 +222,56 @@ AlkNewStuffEntryList AlkNewStuffEngine::installedEntries() const
 void AlkNewStuffEngine::reload()
 {
     d->m_cache->readRegistry();
+}
+
+bool AlkNewStuffEngine::install(const AlkNewStuffEntry &entry, bool blocking)
+{
+    KNSCore::EntryInternal e = toKNSEntry(entry);
+    if (blocking) {
+        QEventLoop loop;
+        QMetaObject::Connection myConnect =
+            connect(d->m_engine,
+                    &KNSCore::Engine::signalEntryEvent,
+                    this,
+                    [this, &loop](const KNSCore::EntryInternal &entry, KNSCore::EntryInternal::EntryEvent event) {
+                        if (event == KNSCore::EntryInternal::StatusChangedEvent
+                            && (entry.status() == KNS3::Entry::Status::Installed || entry.status() == KNS3::Entry::Status::Deleted)) {
+                            loop.exit();
+                        }
+                    });
+
+        d->m_engine->install(e);
+        loop.exec();
+        disconnect(myConnect);
+    } else
+        d->m_engine->install(e);
+
+    return true;
+}
+
+bool AlkNewStuffEngine::uninstall(const AlkNewStuffEntry &entry, bool blocking)
+{
+    KNSCore::EntryInternal e = toKNSEntry(entry);
+    if (blocking) {
+        QEventLoop loop;
+        QMetaObject::Connection myConnect =
+            connect(d->m_engine,
+                    &KNSCore::Engine::signalEntryEvent,
+                    this,
+                    [this, &loop](const KNSCore::EntryInternal &entry, KNSCore::EntryInternal::EntryEvent event) {
+                        if (event == KNSCore::EntryInternal::StatusChangedEvent
+                            && (entry.status() == KNS3::Entry::Status::Installed || entry.status() == KNS3::Entry::Status::Deleted)) {
+                            loop.exit();
+                        }
+                    });
+
+        d->m_engine->uninstall(e);
+        loop.exec();
+        disconnect(myConnect);
+    } else
+        d->m_engine->uninstall(e);
+
+    return true;
 }
 
 const char *toString(AlkNewStuffEntry::Status status)

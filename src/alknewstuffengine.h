@@ -47,9 +47,22 @@ public:
      */
     void reload();
 
+    /**
+     * Install entry
+     * see signal installFinished
+     */
+    bool install(const AlkNewStuffEntry &entry, bool blocking = false);
+
+    /**
+     * Uninstall entry
+     * see signal installFinished
+     */
+    bool uninstall(const AlkNewStuffEntry &entry, bool blocking = false);
+
 Q_SIGNALS:
     void updatesAvailable(const AlkNewStuffEntryList &entries);
     void entriesAvailable(const AlkNewStuffEntryList &entries);
+    void installFinished(const AlkNewStuffEntry &entry);
 
 private:
     class Private;

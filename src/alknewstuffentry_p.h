@@ -23,6 +23,7 @@ ALK_EXPORT QDebug operator<<(QDebug out, const KNSCore::EntryInternal &entry);
 ALK_EXPORT QDebug operator<<(QDebug out, const KNSCore::EntryInternal::List &entries);
 ALK_EXPORT AlkNewStuffEntry toAlkEntry(const KNSCore::EntryInternal &entry);
 ALK_EXPORT void toAlkEntryList(AlkNewStuffEntryList &result, const KNSCore::EntryInternal::List &entries);
+ALK_EXPORT KNSCore::EntryInternal toKNSEntry(const AlkNewStuffEntry &entry);
 #else
 ALK_EXPORT QDebug operator<<(QDebug out, const KNS3::Entry &entry);
 ALK_EXPORT QDebug operator<<(QDebug out, const KNS3::Entry::List &entries);

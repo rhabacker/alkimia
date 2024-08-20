@@ -39,6 +39,7 @@ public:
     QString version;
     QStringList installedFiles;
     Status status;
+    QString payload;
 };
 
 typedef QList<AlkNewStuffEntry> AlkNewStuffEntryList;
