@@ -125,21 +125,7 @@ const AlkOnlineQuoteSource &AlkOnlineQuote::source() const
 
 bool AlkOnlineQuote::launch(const QString &_symbol, const QString &_id, const QString &_source)
 {
-#ifdef ENABLE_FINANCEQUOTE
-    if (AlkOnlineQuoteSource::isFinanceQuote(_source) ||
-            d->m_profile->type() == AlkOnlineQuotesProfile::Type::Script) {
-        return d->launchFinanceQuote(_symbol, _id, _source);
-    } else
-#endif
-    d->initSource(_source);
-
-    if (d->m_source.downloadType() == AlkOnlineQuoteSource::Javascript) {
-        return d->launchWithJavaScriptSupport(_symbol, _id, AlkDownloadEngine::JavaScriptEngine);
-    } else if (d->m_source.dataFormat() == AlkOnlineQuoteSource::CSS) {
-        return d->launchWithJavaScriptSupport(_symbol, _id, AlkDownloadEngine::JavaScriptEngineCSS);
-    } else {
-        return d->launchNative(_symbol, _id);
-    }
+    return d->launch(_symbol, _id, _source);
 }
 
 const AlkOnlineQuote::Errors &AlkOnlineQuote::errors()

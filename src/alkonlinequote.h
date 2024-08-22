@@ -165,6 +165,9 @@ public:
      */
     bool useSingleQuoteSignal();
 
+
+    void setEnableReverseSearch(bool state);
+
     const AlkOnlineQuoteSource &source() const;
 
 public Q_SLOTS:
