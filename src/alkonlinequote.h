@@ -48,6 +48,7 @@ public:
         enum Type {
             None,
             Data,
+            DataFormat,
             Date,
             DateFormat,
             Price,

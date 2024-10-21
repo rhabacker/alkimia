@@ -239,4 +239,25 @@ void AlkOnlineQuotePrivateTest::testDateRangeInCSVUrls()
     QVERIFY(!p.applyDateRange(url));
 }
 
+void AlkOnlineQuotePrivateTest::testParseQuoteJson()
+{
+    AlkOnlineQuote::Private &p = d_ptr();
+
+    AlkOnlineQuoteSource source("test", "", "", AlkOnlineQuoteSource::Symbol, "chart:result:indicators:quote:open", "chart:result:timestamp", "%u", AlkOnlineQuoteSource::JSON);
+    p.m_source = source;
+    p.m_startDate = QDate::fromString("21-10-2024", "dd-MM-yyyy");
+    p.m_endDate = QDate::fromString("25-10-2024", "dd-MM-yyyy");
+
+    QFile f(":/alkonlinequoteprivatetest.json");
+    QVERIFY(f.open(QIODevice::ReadOnly));
+    QString quotedata = f.readAll();
+
+    AlkDatePriceMap map;
+    map[QDate::fromString("23-10-2024", "dd-MM-yyyy")] = 61807.7109375;
+    map[QDate::fromString("24-10-2024", "dd-MM-yyyy")] = 61798.4375;
+    MultipleQuotesReceiver multiReceiver(map);
+    connect(this, SIGNAL(quotes(QString,QString,AlkDatePriceMap)), &multiReceiver, SLOT(quotes(QString,QString,AlkDatePriceMap)));
+    QVERIFY(p.parseQuoteJson(quotedata));
+}
+
 #include "alkonlinequoteprivatetest.moc"
