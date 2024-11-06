@@ -82,7 +82,8 @@ case "$ci_distro" in
             (kf6-native)
                 repos=(
                     "${repos[@]}"
-                    https://download.opensuse.org/repositories/KDE:/Unstable:/Frameworks/openSUSE_Factory/KDE:Unstable:Frameworks.repo
+                    https://download.opensuse.org/repositories/KDE:/Unstable:/Frameworks/${repo_name}/KDE:Unstable:Frameworks.repo
+                    https://download.opensuse.org/repositories/KDE:/Qt6/${repo_name}/KDE:Qt6.repo
                 )
                 ;;
 
@@ -142,6 +143,7 @@ case "$ci_distro" in
                 )
                 packages=(
                     "${packages[@]}"
+                    gcc10-c++
                     kinit
                     "cmake(KF6Completion)"
                     "cmake(KF6Config)"
@@ -157,8 +159,9 @@ case "$ci_distro" in
                     "cmake(Qt6Core)"
                     "cmake(Qt6DBus)"
                     "cmake(Qt6Qml)"
-                    "cmake(Qt6Test)"
+                    "cmake(Qt6WebEngineWidgets)"
                     "cmake(Qt6Widgets)"
+                    "cmake(Qt6Test)"
                     "doxygen"
                     "gmp-devel"
                     "kf6-extra-cmake-modules"
