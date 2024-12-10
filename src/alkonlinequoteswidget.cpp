@@ -415,14 +415,14 @@ void AlkOnlineQuotesWidget::Private::slotLoadQuoteSource(const QModelIndex &inde
             source = source.asReference();
         m_editURL->setText(source.url());
         m_editIdentifier->setText(source.idRegex());
+        m_editIdSelector->setCurrentIndex(source.idSelector());
         m_editPriceDecimalSeparator->setCurrentIndex(source.priceDecimalSeparator());
-        m_editIdSelector->setData<AlkOnlineQuoteSource::IdSelector>(source.idSelector());
         m_editPrice->setText(source.priceRegex());
-        m_editDataFormat->setData<AlkOnlineQuoteSource::DataFormat>(source.dataFormat());
+        m_editDataFormat->setCurrentIndex(m_editDataFormat->findData(source.dataFormat()));
         m_editDate->setText(source.dateRegex());
         m_editDateFormat->setText(source.dateFormat());
         m_editDefaultId->setText(source.defaultId());
-        m_editDownloadType->setData<AlkOnlineQuoteSource::DownloadType>(source.downloadType());
+        m_editDownloadType->setCurrentIndex(source.downloadType());
         m_ghnsSource->setChecked(source.isGHNS());
     }
 
@@ -481,13 +481,13 @@ void AlkOnlineQuotesWidget::Private::updateButtonState()
     bool modified = !m_currentItem.isReference() &&
                     (m_editURL->text() != m_currentItem.url()
                     || m_editIdentifier->text() != m_currentItem.idRegex()
-                    || m_editIdSelector->currentIndex() != m_editIdSelector->findData(m_currentItem.idSelector())
+                    || m_editIdSelector->currentIndex() != static_cast<int>(m_currentItem.idSelector())
                     || m_editDataFormat->currentIndex() != m_editDataFormat->findData(m_currentItem.dataFormat())
                     || m_editDate->text() != m_currentItem.dateRegex()
                     || m_editDateFormat->text() != m_currentItem.dateFormat()
                     || m_editDefaultId->text() != m_currentItem.defaultId()
                     || m_editPriceDecimalSeparator->currentIndex() != static_cast<int>(m_currentItem.priceDecimalSeparator())
-                    || m_editDownloadType->currentIndex() != m_editDownloadType->findData(m_currentItem.downloadType())
+                    || m_editDownloadType->currentIndex() != static_cast<int>(m_currentItem.downloadType())
                     || m_editPrice->text() != m_currentItem.priceRegex()
                     || m_ghnsSource->isChecked() != m_currentItem.isGHNS());
 
@@ -573,13 +573,13 @@ void AlkOnlineQuotesWidget::Private::slotAcceptEntry()
 {
     m_currentItem.setUrl(m_editURL->text());
     m_currentItem.setIdRegex(m_editIdentifier->text());
-    m_currentItem.setIdSelector(m_editIdSelector->currentData().value<AlkOnlineQuoteSource::IdSelector>());
+    m_currentItem.setIdSelector(static_cast<AlkOnlineQuoteSource::IdSelector>(m_editIdSelector->currentIndex()));
     m_currentItem.setDataFormat(m_editDataFormat->currentData().value<AlkOnlineQuoteSource::DataFormat>());
     m_currentItem.setDateRegex(m_editDate->text());
     m_currentItem.setDateFormat(m_editDateFormat->text());
     m_currentItem.setDefaultId(m_editDefaultId->text());
     m_currentItem.setPriceDecimalSeparator(static_cast<AlkOnlineQuoteSource::DecimalSeparator>(m_editPriceDecimalSeparator->currentIndex()));
-    m_currentItem.setDownloadType(m_editDownloadType->currentData().value<AlkOnlineQuoteSource::DownloadType>());
+    m_currentItem.setDownloadType(static_cast<AlkOnlineQuoteSource::DownloadType>(m_editDownloadType->currentIndex()));
     m_currentItem.setPriceRegex(m_editPrice->text());
     m_currentItem.setGHNS(m_ghnsSource->isChecked());
     m_currentItem.write();

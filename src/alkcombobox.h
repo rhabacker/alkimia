@@ -11,7 +11,11 @@
 
 #include <QtGlobal>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <KComboBox>
+#define AlkComboBox KComboBox
+#else
+#include "kcombobox.h"
 class AlkComboBox : public KComboBox
 {
 public:
@@ -20,17 +24,11 @@ public:
     {
     }
 
-    template<class T> void setData(T value)
-    {
-        setCurrentIndex(findData(value));
-    }
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     QVariant currentData()
     {
         return itemData(currentIndex());
     }
-#endif
 };
+#endif
 
 #endif
