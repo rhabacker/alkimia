@@ -248,6 +248,14 @@ AlkOnlineQuotesWidget::Private::Private(bool showProfiles, bool showUpload, AlkO
     connect(m_editDate, SIGNAL(textChanged(QString)), this, SLOT(slotEntryChanged()));
     connect(m_editDateFormat, SIGNAL(textChanged(QString)), this, SLOT(slotEntryChanged()));
     connect(m_editDefaultId, SIGNAL(textChanged(QString)), this, SLOT(slotEntryChanged()));
+
+    // TODO fix order
+    // m_editPriceDecimalSeparator->setItemData(2, AlkOnlineQuoteSource::DecimalSeparator::Period);
+    // m_editPriceDecimalSeparator->setItemData(1, AlkOnlineQuoteSource::DecimalSeparator::Comma);
+    // m_editPriceDecimalSeparator->setItemData(0, AlkOnlineQuoteSource::DecimalSeparator::Legacy);
+    // m_editPriceDecimalSeparator->addItem(i18nc("@item:inlistbox Stock", "Legacy"), AlkOnlineQuoteSource::DecimalSeparator::Legacy);
+    // m_editPriceDecimalSeparator->addItem(i18nc("@item:inlistbox Stock", "Period (.)"), AlkOnlineQuoteSource::DecimalSeparator::Period);
+    // m_editPriceDecimalSeparator->addItem(i18nc("@item:inlistbox Stock", "Comma (,)"), AlkOnlineQuoteSource::DecimalSeparator::Comma);
     connect(m_editPriceDecimalSeparator, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEntryChanged()));
     connect(m_editPrice, SIGNAL(textChanged(QString)), this, SLOT(slotEntryChanged()));
 
@@ -415,8 +423,8 @@ void AlkOnlineQuotesWidget::Private::slotLoadQuoteSource(const QModelIndex &inde
             source = source.asReference();
         m_editURL->setText(source.url());
         m_editIdentifier->setText(source.idRegex());
-        m_editPriceDecimalSeparator->setCurrentIndex(source.priceDecimalSeparator());
         m_editIdSelector->setData<AlkOnlineQuoteSource::IdSelector>(source.idSelector());
+        m_editPriceDecimalSeparator->setData<AlkOnlineQuoteSource::DecimalSeparator>(source.priceDecimalSeparator());
         m_editPrice->setText(source.priceRegex());
         m_editDataFormat->setData<AlkOnlineQuoteSource::DataFormat>(source.dataFormat());
         m_editDate->setText(source.dateRegex());
@@ -478,6 +486,20 @@ void AlkOnlineQuotesWidget::Private::slotEntryChanged()
 void AlkOnlineQuotesWidget::Private::updateButtonState()
 {
     clearIcons();
+    alkDebug()
+                    << (m_editURL->text() != m_currentItem.url())
+                    << (m_editIdentifier->text() != m_currentItem.idRegex())
+                    << (m_editIdSelector->currentIndex() != m_editIdSelector->findData(m_currentItem.idSelector()))
+                    << (m_editDataFormat->currentIndex() != m_editDataFormat->findData(m_currentItem.dataFormat()))
+                    << (m_editDate->text() != m_currentItem.dateRegex())
+                    << (m_editDateFormat->text() != m_currentItem.dateFormat())
+                    << (m_editDefaultId->text() != m_currentItem.defaultId())
+                    << (m_editPriceDecimalSeparator->currentIndex() != m_editPriceDecimalSeparator->findData(m_currentItem.priceDecimalSeparator()))
+                    << (m_editDownloadType->currentIndex() != m_editDownloadType->findData(m_currentItem.downloadType()))
+                    << (m_editPrice->text() != m_currentItem.priceRegex())
+                    << (m_ghnsSource->isChecked() != m_currentItem.isGHNS())
+            ;
+
     bool modified = !m_currentItem.isReference() &&
                     (m_editURL->text() != m_currentItem.url()
                     || m_editIdentifier->text() != m_currentItem.idRegex()
@@ -486,7 +508,7 @@ void AlkOnlineQuotesWidget::Private::updateButtonState()
                     || m_editDate->text() != m_currentItem.dateRegex()
                     || m_editDateFormat->text() != m_currentItem.dateFormat()
                     || m_editDefaultId->text() != m_currentItem.defaultId()
-                    || m_editPriceDecimalSeparator->currentIndex() != static_cast<int>(m_currentItem.priceDecimalSeparator())
+                    || m_editPriceDecimalSeparator->currentIndex() != m_editPriceDecimalSeparator->findData(m_currentItem.priceDecimalSeparator())
                     || m_editDownloadType->currentIndex() != m_editDownloadType->findData(m_currentItem.downloadType())
                     || m_editPrice->text() != m_currentItem.priceRegex()
                     || m_ghnsSource->isChecked() != m_currentItem.isGHNS());
@@ -578,7 +600,7 @@ void AlkOnlineQuotesWidget::Private::slotAcceptEntry()
     m_currentItem.setDateRegex(m_editDate->text());
     m_currentItem.setDateFormat(m_editDateFormat->text());
     m_currentItem.setDefaultId(m_editDefaultId->text());
-    m_currentItem.setPriceDecimalSeparator(static_cast<AlkOnlineQuoteSource::DecimalSeparator>(m_editPriceDecimalSeparator->currentIndex()));
+    m_currentItem.setPriceDecimalSeparator(m_editPriceDecimalSeparator->currentData().value<AlkOnlineQuoteSource::DecimalSeparator>());
     m_currentItem.setDownloadType(m_editDownloadType->currentData().value<AlkOnlineQuoteSource::DownloadType>());
     m_currentItem.setPriceRegex(m_editPrice->text());
     m_currentItem.setGHNS(m_ghnsSource->isChecked());
