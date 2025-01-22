@@ -188,7 +188,7 @@ public:
 
         m_model = new AlkPayeeLinksModel;
         PayeeLink l1 = { "Ebay", "\\d{11}", "https://www.ebay.de/itm/%1", "156276533721" };
-        PayeeLink l2 = { "Amazon", "\\w\\d{2}-\\d{7}-\\d{7}\\b}", "https://www.amazon.de/gp/your-account/order-details/ref=ppx_yo_dt_b_order_details_o00?ie=UTF8&orderID=%1", "" };
+        PayeeLink l2 = { "Amazon", "\\w\\d{2}-\\d{7}-\\d{7}\\b", "https://www.amazon.de/gp/your-account/order-details/ref=ppx_yo_dt_b_order_details_o00?ie=UTF8&orderID=%1", "" };
         m_model->payeeLinks().append(l1);
         m_model->payeeLinks().append(l2);
         auto proxyModel = new QSortFilterProxyModel(this);
@@ -205,6 +205,14 @@ public:
         m_sourcesList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
         m_sourcesList->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
         m_sourcesList->verticalHeader()->setDefaultSectionSize(rowHeight);
+        m_sourcesList->setSelectionMode(QAbstractItemView::SingleSelection);
+        m_sourcesList->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+        m_capturedResultLabel->setText(QString());
+        m_resultingURLLabel->setText(QString());
+        m_resultingURLLabel->setOpenExternalLinks(true);
+        m_resultingURLLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse | Qt::LinksAccessibleByKeyboard);
+        //m_resultingURLLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
 
         connect(m_addReferenceButton, SIGNAL(clicked()), this, SLOT(slotAddReferenceButton()));
         connect(m_deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteEntry()));
@@ -215,6 +223,8 @@ public:
         connect(m_duplicateButton, SIGNAL(clicked()), this, SLOT(slotDuplicateEntry()));
         connect(m_installButton, SIGNAL(clicked()), this, SLOT(slotInstallEntries()));
         connect(m_uploadButton, SIGNAL(clicked()), this, SLOT(slotUploadEntry()));
+        connect(m_identifierEdit, SIGNAL(textChanged(QString)), this, SLOT(slotRunTest()));
+        connect(m_testButton, SIGNAL(clicked()), this, SLOT(slotRunTest()));
     }
 
 public Q_SLOTS:
@@ -262,6 +272,21 @@ public Q_SLOTS:
 
     void slotResetList()
     {}
+
+    void slotRunTest()
+    {
+        QString identifier = m_identifierEdit->text();
+        PayeeLink pl = m_model->data(m_sourcesList->currentIndex(), AlkPayeeLinksModel::NameRole).value<PayeeLink>();
+        QRegularExpression re(pl.idPattern);
+        QRegularExpressionMatch match = re.match(identifier);
+        if (match.hasMatch()) {
+            m_capturedResultLabel->setText(match.captured());
+            m_resultingURLLabel->setText(QString("<a href=\"%1\">%1").arg(pl.urlTemplate.arg(match.captured())));
+        } else {
+            m_capturedResultLabel->setText(QString());
+            m_resultingURLLabel->setText(QString());
+        }
+    }
 
     void slotUploadEntry()
     {}
