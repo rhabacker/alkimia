@@ -37,6 +37,7 @@
 #include <KProcess>
 #include <KShell>
 #include <QFileInfo>
+#include <QTimeZone>
 
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #include <QRegExp>
@@ -905,6 +906,18 @@ bool AlkOnlineQuote::Private::parseQuoteJson(const QString &quotedata)
     QList<double> priceList;
     for(const auto &v : data.value<QVariantList>()) {
         priceList.append(v.toDouble());
+    }
+
+    // extract range
+    QVariant periodList;
+    QString path = "chart:result:0:meta:currentTradingPeriod:regular";
+    if (getSubTree(treeData, path, periodList, errorKey)) {
+        alkDebug() << periodList;
+        QVariantMap map = periodList.value<QVariantMap>();
+        QTimeZone zone(map["timezone"].toString().toLocal8Bit());
+        QDateTime startTime = QDateTime::fromSecsSinceEpoch(map["start"].toInt(), zone);
+        QDateTime endTime = QDateTime::fromSecsSinceEpoch(map["end"].toInt(), zone);
+        alkDebug() << zone << startTime << endTime;
     }
 
     AlkDatePriceMap prices;
