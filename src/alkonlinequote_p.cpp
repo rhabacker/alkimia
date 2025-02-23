@@ -241,6 +241,14 @@ bool AlkOnlineQuote::Private::launch(const QString &symbol, const QString &id, c
     if (!initSource(source))
         return false;
 
+    // stock
+    if (!m_source.requiresTwoIdentifier() && m_alwaysReturnLastPrice == LastPriceState::AlwaysWhenToday && m_startDate == m_endDate
+        && m_startDate == QDate::currentDate() && m_startDate.dayOfWeek() >= Qt::Saturday) {
+        m_startDate = m_startDate.addDays(Qt::Friday - m_endDate.dayOfWeek());
+        Q_EMIT m_p->status(i18n("Adjusting start date to start not at weekend"));
+        // TODO source should have an entry to setup no data on weekend
+    }
+
     if (m_source.downloadType() == AlkOnlineQuoteSource::Javascript) {
         result = launchWithJavaScriptSupport(symbol, id, AlkDownloadEngine::JavaScriptEngine);
     } else if (m_source.dataFormat() == AlkOnlineQuoteSource::CSS) {
