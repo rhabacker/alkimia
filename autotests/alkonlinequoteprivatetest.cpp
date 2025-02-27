@@ -275,6 +275,10 @@ void AlkOnlineQuotePrivateTest::testDateRangeInUrls()
 
 void AlkOnlineQuotePrivateTest::testParseQuoteJson()
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    QSKIP("unsupported yet", SkipSingle);
+#endif
+
     AlkOnlineQuote::Private &p = d_ptr();
 
     AlkOnlineQuoteSource source("test", "", "", AlkOnlineQuoteSource::Symbol, "chart:result:indicators:quote:open", "chart:result:timestamp", "%u", AlkOnlineQuoteSource::JSON);
