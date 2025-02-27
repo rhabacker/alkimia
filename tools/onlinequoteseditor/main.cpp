@@ -10,10 +10,10 @@
 #include "mainwindow.h"
 
 #include "alkapplication.h"
+#include "alklocale.h"
 
 #include <KAboutData>
 #include <KHelpMenu>
-#include <KLocalizedString>
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #include <KMenu>
 #endif

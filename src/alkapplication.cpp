@@ -8,10 +8,11 @@
 
 #include "alkapplication.h"
 
+#include "alklocale.h"
+
 #include <KAboutData>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <KLocalizedString>
 #include <QApplication>
 #else
 #include <KApplication>

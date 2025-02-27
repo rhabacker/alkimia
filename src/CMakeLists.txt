@@ -14,6 +14,7 @@ set(alkimia_INTERNAL_SRCS
     alkapplication.cpp
     alkdateformat.cpp
     alkexception.cpp
+    alklocale.cpp
     alknewstuffwidget.cpp
     alkonlinequoteprocess.cpp
     alkquoteitem.cpp
@@ -26,6 +27,7 @@ set(alkimia_INTERNAL_HEADERS
     alkdateformat.h
     alkdebug.h
     alkexception.h
+    alklocale.h
     alknewstuffwidget.h
     alkonlinequoteprocess.h
     alkquoteitem.h

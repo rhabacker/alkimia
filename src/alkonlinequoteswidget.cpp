@@ -9,6 +9,7 @@
 #include "alkonlinequoteswidget.h"
 
 #include "alkdebug.h"
+#include "alklocale.h"
 #include "alknewstuffwidget.h"
 #include "alkonlinequote.h"
 #include "alkonlinequotesmodel.h"
@@ -54,14 +55,6 @@
 #include <ui_alkonlinequotesdebug.h>
 #include <ui_alkonlinequotesprofiledetails.h>
 #include <ui_alkonlinequotesprofiles.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-#include <klocale.h>
-static KLocale _locale(TRANSLATION_DOMAIN);
-#define i18nc(context, text) ki18nc(context, text).toString(&_locale)
-#define i18n(text) ki18n(text).toString(&_locale)
-#define tr2i18n(text, context) ki18nc(context, text).toString(&_locale)
-#endif
 
 class AlkOnlineQuotesWidget::Private
     : public QWidget
@@ -162,9 +155,6 @@ AlkOnlineQuotesWidget::Private::Private(bool showProfiles, bool showUpload, AlkO
     , m_model(nullptr)
     , m_p(parent)
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    static KComponentData alk(TRANSLATION_DOMAIN);
-#endif
     Ui::AlkOnlineQuoteDetailsWidget::setupUi(parent);
     Ui::AlkOnlineQuotesDebugWidget::setupUi(parent);
     Ui::AlkOnlineQuotesProfileDetailsWidget::setupUi(parent);

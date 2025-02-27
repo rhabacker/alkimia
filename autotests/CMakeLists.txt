@@ -129,6 +129,19 @@ ecm_add_test(
     TEST_NAME alkwebpage${TEST_SUFFIX}test
 )
 
+ecm_add_test(
+    alklocaletest.cpp
+    ENV ${TEST_ENV} "LANG=de_DE.UTF-8"
+    LINK_LIBRARIES ${TEST_LIB} KF${QT_MAJOR_VERSION}::I18n
+    TEST_NAME alklocaletest
+)
+
+target_compile_options(alklocaletest PUBLIC -DCMAKE_BINARY_DIR="${CMAKE_BINARY_DIR}")
+
+if(QT_MAJOR_VERSION GREATER_EQUAL 5)
+    target_compile_options(alklocaletest PUBLIC -DTRANSLATION_DOMAIN=\"alkimia\")
+endif()
+
 #
 # cmake install test
 #
