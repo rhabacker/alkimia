@@ -129,6 +129,13 @@ ecm_add_test(
     TEST_NAME alkwebpage${TEST_SUFFIX}test
 )
 
+ecm_add_test(
+    alklocaletest.cpp
+    ENV ${TEST_ENV}
+    LINK_LIBRARIES ${TEST_LIB}
+    TEST_NAME alklocaletest
+)
+
 #
 # cmake install test
 #

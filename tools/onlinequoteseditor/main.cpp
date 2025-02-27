@@ -7,56 +7,33 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
+#include "alkaboutdata.h"
+#include "alkapplication.h"
+#include "alkhelpmenu.h"
+#include "alklocale.h"
 #include "mainwindow.h"
 
-#include "alkapplication.h"
-
-#include <KAboutData>
-#include <KHelpMenu>
-#include <KLocalizedString>
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-#include <KMenu>
-#endif
-
-#include <QMenuBar>
-
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(BUILD_WITH_KIO)
 #include <QNetworkProxyFactory>
 #endif
-
-void checkAndSetVisible(QAction *action, bool state)
-{
-    if (action)
-        action->setVisible(state);
-}
 
 int main(int argc, char **argv)
 {
     AlkApplication app(argc, argv);
 
     AlkAboutData about(QStringLiteral("onlinequoteseditor"),
-                       "Online Quotes Editor",
+                       i18n("Online Quotes Editor"),
                        QStringLiteral("1.0"),
-                       "Editor for online price quotes used by finance applications",
-                       AlkAboutData::License_GPL,
-                       "(C) 2018-2024 Ralf Habacker");
+                       i18n("Editor for online price quotes used by finance applications"),
+                       LICENCE_GPL,
+                       i18n("(C) 2018-2019 Ralf Habacker"));
 
 #if defined(Q_OS_WIN)
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 #endif
 
     MainWindow w;
-
-    KHelpMenu helpMenu(&w, about.shortDescription());
-    helpMenu.menu();
-    checkAndSetVisible(helpMenu.action(KHelpMenu::menuHelpContents), false);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    checkAndSetVisible(helpMenu.action(KHelpMenu::menuReportBug), false);
-#endif
-    checkAndSetVisible(helpMenu.action(KHelpMenu::menuSwitchLanguage), true);
-    helpMenu.action(KHelpMenu::menuAboutApp)->setText(i18n("&About %1", about.displayName()));
-    w.menuBar()->addMenu(static_cast<QMenu*>(helpMenu.menu()));
-
+    AlkHelpMenu helpMenu(&w, about);
     w.show();
     return app.exec();
 }
