@@ -8,6 +8,7 @@
 
 #include "alknewstuffwidget.h"
 
+#include "alkaboutdata.h"
 #include "alkapplication.h"
 
 #if defined(Q_OS_WIN)
@@ -19,9 +20,13 @@ int main(int argc, char *argv[])
     AlkApplication app(argc,argv);
 
     // this is needed by KNS3
-    AlkAboutData aboutData(QStringLiteral("alknewstuffwidgettest"), QStringLiteral("Alkimia New Stuff Widget Test"), QStringLiteral("1.0.0"));
+    AlkAboutData aboutData(QStringLiteral("alknewstuffwidgettest"),
+                           QStringLiteral("Alkimia New Stuff Widget Test"),
+                           QStringLiteral("1.0.0"),
+                           QString(),
+                           LICENCE_GPL);
     aboutData.setOrganizationDomain("kde.org");
-    AlkAboutData::setApplicationData(aboutData);
+    // AlkAboutData::setApplicationData(aboutData);
 
 #if defined(Q_OS_WIN)
     QNetworkProxyFactory::setUseSystemConfiguration(true);

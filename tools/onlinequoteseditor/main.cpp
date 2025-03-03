@@ -7,15 +7,13 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-#include "mainwindow.h"
-
+#include "alkaboutdata.h"
 #include "alkapplication.h"
 #include "alkhelpmenu.h"
 #include "alklocale.h"
+#include "mainwindow.h"
 
-#include <KAboutData>
-
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(BUILD_WITH_KIO)
 #include <QNetworkProxyFactory>
 #endif
 
@@ -24,11 +22,12 @@ int main(int argc, char **argv)
     AlkApplication app(argc, argv);
 
     AlkAboutData about(QStringLiteral("onlinequoteseditor"),
-                       "Online Quotes Editor",
+                       i18n("Online Quotes Editor"),
                        QStringLiteral("1.0"),
-                       "Editor for online price quotes used by finance applications",
-                       AlkAboutData::License_GPL,
-                       "(C) 2018-2024 Ralf Habacker");
+                       i18n("Editor for online price quotes used by finance applications"),
+                       LICENCE_GPL,
+                       i18n("(C) 2018-2019 Ralf Habacker"));
+    AlkAboutData::setApplicationData(about);
 
 #if defined(Q_OS_WIN)
     QNetworkProxyFactory::setUseSystemConfiguration(true);
