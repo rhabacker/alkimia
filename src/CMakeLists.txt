@@ -11,8 +11,8 @@ include_directories(
 
 set(alkimia_INTERNAL_SRCS
     alkaboutdata.cpp
-    alkdebug.cpp
     alkapplication.cpp
+    alkdebug.cpp
     alkdateformat.cpp
     alkexception.cpp
     alkhelpmenu.cpp
