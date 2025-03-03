@@ -10,25 +10,14 @@
 #include "mainwindow.h"
 
 #include "alkapplication.h"
+#include "alkhelpmenu.h"
 #include "alklocale.h"
 
 #include <KAboutData>
-#include <KHelpMenu>
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-#include <KMenu>
-#endif
-
-#include <QMenuBar>
 
 #if defined(Q_OS_WIN)
 #include <QNetworkProxyFactory>
 #endif
-
-void checkAndSetVisible(QAction *action, bool state)
-{
-    if (action)
-        action->setVisible(state);
-}
 
 int main(int argc, char **argv)
 {
@@ -46,17 +35,7 @@ int main(int argc, char **argv)
 #endif
 
     MainWindow w;
-
-    KHelpMenu helpMenu(&w, about.shortDescription());
-    helpMenu.menu();
-    checkAndSetVisible(helpMenu.action(KHelpMenu::menuHelpContents), false);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    checkAndSetVisible(helpMenu.action(KHelpMenu::menuReportBug), false);
-#endif
-    checkAndSetVisible(helpMenu.action(KHelpMenu::menuSwitchLanguage), true);
-    helpMenu.action(KHelpMenu::menuAboutApp)->setText(i18n("&About %1", about.displayName()));
-    w.menuBar()->addMenu(static_cast<QMenu*>(helpMenu.menu()));
-
+    AlkHelpMenu helpMenu(&w, about);
     w.show();
     return app.exec();
 }
