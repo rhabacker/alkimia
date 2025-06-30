@@ -1,0 +1,24 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "wincak@seznam.cz",
+                "Name": "wincak"
+            },
+            {
+                "Email": "petr@bravenec.eu",
+                "Name": "Petr Bravenec"
+            }
+        ],
+        "Category": "Online Services",
+        "Description": "Plasmoid showind curent foreign currencies prices.",
+        "Icon": "internet-web-browser",
+        "Id": "org.wincak.foreigncurrencies",
+        "Name": "Foreign Currencies",
+        "Version": "2",
+        "Website": "gitlab.com/wincak/ForeignCurrencies"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-API": "declarativeappletscript",
+    "KPackageStructure": "Plasma/Applet"
+}
