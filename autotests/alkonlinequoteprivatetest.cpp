@@ -170,6 +170,7 @@ public Q_SLOTS:
         QCOMPARE(prices.size(), _prices.size());
         QCOMPARE(prices.keys(), _prices.keys());
         for (auto &date: prices.keys()) {
+            alkDebug() << prices[date].toDouble() << _prices[date].toDouble();
             QCOMPARE(prices[date].toDouble(), _prices[date].toDouble());
         }
         Q_EMIT finished();
@@ -340,6 +341,31 @@ void AlkOnlineQuotePrivateTest::testParseQuoteJson()
 
     AlkOnlineQuoteSource source2("test", "", "", AlkOnlineQuoteSource::Symbol, "chart:result:0:indicators:quote:open", "chart:result:0:timestamp", "%u", AlkOnlineQuoteSource::JSON);
     p.m_source = source;
+    QVERIFY(p.parseQuoteJson(quotedata));
+#endif
+}
+
+void AlkOnlineQuotePrivateTest::testParseQuoteJsonCoinGecko()
+{
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    QSKIP("not implemented yet", SkipSingle);
+#else
+    AlkOnlineQuote::Private &p = d_ptr();
+
+    AlkOnlineQuoteSource source("test", "", "", AlkOnlineQuoteSource::Symbol, "prices:x:1", "prices:x:0", "%um", AlkOnlineQuoteSource::JSON);
+    p.m_source = source;
+    p.m_startDate = QDate::fromString("30-07-2025", "dd-MM-yyyy");
+    p.m_endDate = QDate::fromString("31-07-2025", "dd-MM-yyyy");
+
+    QFile f(":/alkonlinequoteprivatetest-coingecko.json");
+    QVERIFY(f.open(QIODevice::ReadOnly));
+    QString quotedata = f.readAll();
+
+    AlkDatePriceMap map;
+    map[QDate::fromString("30-07-2025", "dd-MM-yyyy")] = 102197.67376850011;
+    map[QDate::fromString("31-07-2025", "dd-MM-yyyy")] = 103562.05207859993;
+    MultipleQuotesReceiver multiReceiver(map);
+    connect(this, SIGNAL(quotes(QString,QString,AlkDatePriceMap)), &multiReceiver, SLOT(quotes(QString,QString,AlkDatePriceMap)));
     QVERIFY(p.parseQuoteJson(quotedata));
 #endif
 }

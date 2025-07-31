@@ -816,6 +816,35 @@ bool AlkOnlineQuote::Private::getSubTree(const QVariantMap &data, const QString 
         } else if (static_cast<QMetaType::Type>(m[key].userType()) == QMetaType::QVariantList) {
             l = m[key].value<QVariantList>();
             key = keyList.takeFirst();
+            // a list inside a list
+            if (static_cast<QMetaType::Type>(l.at(0).userType()) == QMetaType::QVariantList) {
+                if (key == "x") {
+                    key = keyList.takeFirst();
+                    bool ok = false;
+                    int index = key.toInt(&ok);
+                    if (!ok || index >= l.at(0).value<QVariantList>().size()) {
+                        errorKey = key;
+                        return false;
+                    }
+                    QVariantList d;
+                    for (int i = 0; i < l.size(); i++) {
+                        d.append(l.at(i).value<QVariantList>()[index]);
+                    }
+                    resultData = d;
+                    return true;
+                } else {
+                    bool ok = false;
+                    int index = key.toInt(&ok);
+                    key = keyList.takeFirst();
+                    int subIndex = key.toInt(&ok);
+                    if (!ok || index >= l.size() || subIndex >= l.at(index).value<QVariantList>().size()) {
+                        errorKey = key;
+                        return false;
+                    }
+                    resultData = l.at(index).value<QVariantList>()[subIndex];
+                }
+            }
+
             // check for index
             bool ok = false;
             int index = key.toInt(&ok);

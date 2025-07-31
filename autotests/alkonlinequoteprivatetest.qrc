@@ -3,5 +3,6 @@
         <file>alkonlinequoteprivatetest.data</file>
         <file>alkonlinequoteprivatetest.json</file>
         <file>alkonlinequoteprivatetest-2.json</file>
+        <file>alkonlinequoteprivatetest-coingecko.json</file>
     </qresource>
 </RCC>
