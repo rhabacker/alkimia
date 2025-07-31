@@ -28,6 +28,7 @@ private Q_SLOTS:
     void testDateRangeInUrls();
     void testGetSubTree();
     void testParseQuoteJson();
+    void testParseQuoteJsonCoinGecko();
 };
 
 #endif // ALKONLINEQUOTEPRIVATETEST_H
