@@ -7,24 +7,10 @@
 */
 
 #include "alknewstuffengine.h"
-#include "alknewstuffentry_p.h"
 
 #include "alkdebug.h"
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <KNSCore/Cache>
-#include <KNSCore/EngineBase>
-#include <KNSCore/Provider>
-#include <KNSCore/ResultsStream>
-#elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#include <KNSCore/Cache>
-#include <knewstuff_version.h>
-#include <knscore/engine.h>
-#else
-#include <knewstuff3/core/cache.h>
-#include <knewstuff3/downloadmanager.h>
-#define KNEWSTUFF_VERSION 0
-#endif
+#include "alknewstuffenginebase.h"
+#include "alknewstuffentry_p.h"
 
 #include <QEventLoop>
 #include <QPointer>
@@ -35,21 +21,10 @@ class AlkNewStuffEngine::Private : public QObject
     Q_OBJECT
 public:
     AlkNewStuffEngine *q;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QPointer<KNSCore::EngineBase> m_engine;
-    #define KNS3 KNSCore
-    QSharedPointer<KNSCore::Cache> m_cache;
+    QPointer<AlkNewStuffEngineBase> m_engine;
+    QSharedPointer<AlkNewStuffCache> m_cache;
     bool m_providersLoaded{false};
     bool m_wantUpdates{false};
-#elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    QPointer<KNSCore::Engine> m_engine;
-    QSharedPointer<KNSCore::Cache> m_cache;
-    bool m_providersLoaded{false};
-    bool m_wantUpdates{false};
-#else
-    QPointer<KNS3::DownloadManager> m_engine;
-    Cache* m_cache;
-#endif
     QEventLoop m_loop;
 
     explicit Private(AlkNewStuffEngine *parent);
@@ -61,7 +36,7 @@ public:
     const AlkNewStuffEntryList installedEntries();
 
 public Q_SLOTS:
-    void slotUpdatesAvailable(const KNS3::Entry::List &entries);
+    void slotUpdatesAvailable(const EntryList &entries);
 };
 
 AlkNewStuffEngine::Private::Private(AlkNewStuffEngine *parent)
@@ -82,32 +57,18 @@ AlkNewStuffEngine::Private::~Private()
 bool AlkNewStuffEngine::Private::init(const QString &configFile)
 {
     bool state = false;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    m_engine = new KNSCore::EngineBase(this);
-    state = m_engine->init(configFile);
-    if (!state)
-        return false;
-    m_cache = m_engine->cache();
-    connect(m_engine, &KNSCore::EngineBase::signalProvidersLoaded, this, [this]()
-    {
-        alkDebug() << "providers loaded";
-        m_providersLoaded = true;
-        if (m_wantUpdates) {
-            checkForUpdates();
-        }
-    });
-#elif KNEWSTUFF_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    m_engine = new KNSCore::Engine(this);
+#if KNEWSTUFF_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    m_engine = new AlkNewStuffEngineBase(this);
     state = m_engine->init(configFile);
     if (!state)
         return false;
     m_cache = m_engine->cache();
 
-    q->connect(m_engine, &KNSCore::Engine::signalErrorCode, q, [](const KNSCore::ErrorCode &, const QString &message, const QVariant &) {
+    q->connect(m_engine, &AlkNewStuffEngineBase::signalErrorCode, q, [](const ErrorCode &, const QString &message, const QVariant &) {
         alkDebug() << message;
     });
 
-    connect(m_engine, &KNSCore::Engine::signalProvidersLoaded, this, [this]()
+    connect(m_engine, &AlkNewStuffEngineBase::signalProvidersLoaded, this, [this]()
     {
         alkDebug() << "providers loaded";
         m_providersLoaded = true;
@@ -117,7 +78,7 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
             m_engine->checkForUpdates();
     });
 
-    connect(m_engine, &KNSCore::Engine::signalUpdateableEntriesLoaded, this, [this](const KNSCore::EntryInternal::List &entries)
+    connect(m_engine, &AlkNewStuffEngineBase::signalUpdateableEntriesLoaded, this, [this](const EntryList &entries)
     {
         alkDebug() << entries.size() << "updates loaded";
         AlkNewStuffEntryList updateEntries;
@@ -141,9 +102,7 @@ bool AlkNewStuffEngine::Private::init(const QString &configFile)
 
 void AlkNewStuffEngine::Private::checkForUpdates()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    alkDebug() << "FIXME Qt6: no checkforUpdates() - how to proceed ?";
-#elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     if (m_providersLoaded && !m_wantUpdates) {
         m_engine->checkForUpdates();
     } else
@@ -163,7 +122,7 @@ const AlkNewStuffEntryList AlkNewStuffEngine::Private::installedEntries()
     return result;
 }
 
-void AlkNewStuffEngine::Private::slotUpdatesAvailable(const KNS3::Entry::List &entries)
+void AlkNewStuffEngine::Private::slotUpdatesAvailable(const EntryList &entries)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     Q_UNUSED(entries);
