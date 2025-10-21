@@ -153,7 +153,7 @@ else()
     if(QT_MAJOR_VERSION GREATER_EQUAL 6)
         set(QT_DBUS_LIB Qt${QT_MAJOR_VERSION}::DBus)
         set(KF_NEWSTUFF_COMPONENT NewStuffCore NewStuff)
-        set(KF_NEWSTUFF_LIB KF${QT_MAJOR_VERSION}::NewStuffWidgets)
+        set(KF_NEWSTUFF_LIB KF${QT_MAJOR_VERSION}::NewStuffWidgets knewstuff)
         set(KF_PRIVATE_COMPONENTS Codecs WidgetsAddons)
         set(KF_PRIVATE_LIBS KF${QT_MAJOR_VERSION}::Codecs KF${QT_MAJOR_VERSION}::WidgetsAddons)
     else()
@@ -187,13 +187,17 @@ else()
 
     set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/LibAlkimia${ALKIMIA_PATH_SUFFIX}-${alkimia_VERSION_MAJOR}.${alkimia_VERSION_MINOR}")
 
-    add_definitions(
-        -DKF_DEPRECATED_WARNINGS_SINCE=0x60000
-        -DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x56200
-        -DQT_DEPRECATED_WARNINGS_SINCE=0x60000
-        -DQT_DISABLE_DEPRECATED_BEFORE=0x50f02
-        -DQT_NO_KEYWORDS
-    )
+    if(QT_MAJOR_VERSION GREATER_EQUAL 6)
+        add_subdirectory(3rdparty/KF${QT_MAJOR_VERSION}/knewstuff)
+    else()
+        add_definitions(
+            -DKF_DEPRECATED_WARNINGS_SINCE=0x60000
+            -DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x56200
+            -DQT_DEPRECATED_WARNINGS_SINCE=0x60000
+            -DQT_DISABLE_DEPRECATED_BEFORE=0x50f02
+            -DQT_NO_KEYWORDS
+        )
+    endif()
 endif()
 
 # setup common variables
