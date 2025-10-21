@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdelibs4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-05-08 00:36+0000\n"
+"POT-Creation-Date: 2025-05-30 00:39+0000\n"
 "PO-Revision-Date: 2020-10-07 21:04+0200\n"
 "Last-Translator: Mihkel Tõnnov <mihhkel@gmail.com>\n"
 "Language-Team: Estonian <>\n"
@@ -21,12 +21,12 @@ msgstr ""
 "X-Generator: Lokalize 20.08.1\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: attica/atticaprovider.cpp:165
+#: attica/atticaprovider.cpp:167
 #, kde-format
 msgid "All categories are missing"
 msgstr "Kõik kategooriad puuduvad"
 
-#: attica/atticaprovider.cpp:480
+#: attica/atticaprovider.cpp:352
 #, kde-format
 msgctxt ""
 "the price of a download item, parameter 1 is the currency, 2 is the price"
@@ -37,7 +37,7 @@ msgstr ""
 "See läheb maksma %2 %1.\n"
 "Kas soovid osta?"
 
-#: attica/atticaprovider.cpp:494
+#: attica/atticaprovider.cpp:366
 #, kde-format
 msgid ""
 "Your account balance is too low:\n"
@@ -48,37 +48,37 @@ msgstr ""
 "Sinu konto: %1\n"
 "Hind: %2"
 
-#: attica/atticaprovider.cpp:537
+#: attica/atticaprovider.cpp:398
 #, kde-format
 msgctxt "voting for an item (good/bad)"
 msgid "Your vote was recorded."
 msgstr "Sinu hääl salvestati."
 
-#: attica/atticaprovider.cpp:552
+#: attica/atticaprovider.cpp:413
 #, kde-format
 msgid "You are now a fan."
 msgstr "Oled nüüd fänn."
 
-#: attica/atticaprovider.cpp:580 core/enginebase.cpp:208
-#: opds/opdsprovider.cpp:287
+#: attica/atticaprovider.cpp:441 core/enginebase.cpp:269
+#: opds/opdsprovider.cpp:291
 #, kde-format
 msgid ""
 "The service is currently undergoing maintenance and is expected to be back "
 "in %1."
 msgstr ""
 
-#: attica/atticaprovider.cpp:585
+#: attica/atticaprovider.cpp:446
 #, kde-format
 msgid "Network error %1: %2"
 msgstr "Võrgu viga %1: %2"
 
-#: attica/atticaprovider.cpp:592
+#: attica/atticaprovider.cpp:453
 #, kde-format
 msgid "Too many requests to server. Please try again in a few minutes."
 msgstr ""
 "Liiga palju päringuid serverile. Palun proovi mõne minuti pärast uuesti."
 
-#: attica/atticaprovider.cpp:596
+#: attica/atticaprovider.cpp:457
 #, kde-format
 msgid ""
 "The Open Collaboration Services instance %1 does not support the attempted "
@@ -87,7 +87,7 @@ msgstr ""
 "Open Collaboration Services isend %1 ei toeta funktsiooni, mida proovisid "
 "kasutada."
 
-#: attica/atticaprovider.cpp:600
+#: attica/atticaprovider.cpp:461
 #, kde-format
 msgid "Unknown Open Collaboration Service API error. (%1)"
 msgstr "Tundmatu avatud koostööteenuste API viga. (%1)"
@@ -99,7 +99,7 @@ msgctxt ""
 msgid "Unknown CommentsModel role"
 msgstr "Tundmatu CommentsModel'i roll"
 
-#: core/enginebase.cpp:43
+#: core/enginebase.cpp:98
 #, kde-format
 msgid ""
 "An error occurred during the installation process:\n"
@@ -108,28 +108,28 @@ msgstr ""
 "Paigaldamise käigus tekkis tõrge:\n"
 "%1"
 
-#: core/enginebase.cpp:79
+#: core/enginebase.cpp:134
 #, fuzzy, kde-format
 #| msgid "Configuration file not found: \"%1\""
 msgid "Configuration file does not exist: \"%1\""
 msgstr "Seadistustefaili ei leitud: \"%1\""
 
-#: core/enginebase.cpp:87
+#: core/enginebase.cpp:142
 #, kde-format
 msgid "Configuration file exists, but cannot be opened: \"%1\""
 msgstr "Seadistustefail on olemas, aga seda ei saa avada: \"%1\""
 
-#: core/enginebase.cpp:94
+#: core/enginebase.cpp:149
 #, kde-format
 msgid "Configuration file is invalid: \"%1\""
 msgstr "Seadistustefail on vigane: \"%1\""
 
-#: core/enginebase.cpp:103
+#: core/enginebase.cpp:158
 #, kde-format
 msgid "Use"
 msgstr "Kasuta"
 
-#: core/enginebase.cpp:132
+#: core/enginebase.cpp:187
 #, fuzzy, kde-format
 #| msgid ""
 #| "Could not initialise the installation handler for %1\n"
@@ -142,17 +142,17 @@ msgstr ""
 "%1 paigalduskäitleja initsialiseerimine nurjus.\n"
 "See on kriitiline tõrge ja sellest tuleks teatada rakenduse autorile"
 
-#: core/enginebase.cpp:284
+#: core/enginebase.cpp:354
 #, kde-format
 msgid "Loading of providers from file: %1 failed"
 msgstr "Pakkujate laadimine failist %1 nurjus"
 
-#: core/enginebase.cpp:302
+#: core/enginebase.cpp:372
 #, kde-format
 msgid "Could not load get hot new stuff providers from file: %1"
 msgstr "Uue kuuma kraami pakkujate laadimine failist nurjus: %1"
 
-#: core/enginebase.cpp:333
+#: core/enginebase.cpp:403
 #, kde-format
 msgid "Error initializing provider."
 msgstr "Viga pakkuja initsialiseerimisel."
@@ -279,31 +279,31 @@ msgstr ""
 "Kui arvad, et see ei ole õige, võid kas jätkata või katkestada "
 "eemaldamisprotsessi"
 
-#: core/jobs/filecopyworker.cpp:49
+#: core/jobs/filecopyworker.cpp:60
 #, fuzzy, kde-format
 #| msgid "Cannot open %1 for reading"
 msgid "Could not open %1 for writing"
 msgstr "%1 avamine lugemiseks nurjus"
 
-#: core/jobs/filecopyworker.cpp:52
+#: core/jobs/filecopyworker.cpp:63
 #, fuzzy, kde-format
 #| msgid "Cannot open %1 for reading"
 msgid "Could not open %1 for reading"
 msgstr "%1 avamine lugemiseks nurjus"
 
-#: core/transaction.cpp:154
+#: core/transaction.cpp:126
 #, kde-format
 msgid ""
 "Could not perform an installation of the entry %1 as it does not have any "
 "downloadable items defined. Please contact the author so they can fix this."
 msgstr ""
 
-#: core/transaction.cpp:263
+#: core/transaction.cpp:341
 #, kde-format
 msgid "Pick Update Item"
 msgstr ""
 
-#: core/transaction.cpp:265
+#: core/transaction.cpp:343
 #, kde-format
 msgid ""
 "Please pick the item from the list below which should be used to apply this "
@@ -311,14 +311,14 @@ msgid ""
 "original item, which was named %1"
 msgstr ""
 
-#: core/transaction.cpp:289
+#: core/transaction.cpp:367
 #, kde-format
 msgid ""
 "We failed to identify a good link for updating %1, and are unable to perform "
 "the update"
 msgstr ""
 
-#: core/transaction.cpp:381
+#: core/transaction.cpp:460
 #, fuzzy, kde-format
 #| msgid "Failed to load file '%1'"
 msgid ""
@@ -341,10 +341,10 @@ msgid "Unknown Category"
 msgstr "Tundmatu kategooria"
 
 #. i18nd("knewstuff6", "Download New %1…").
-#. *
-#. @note For the sake of consistency, you should NOT override the text property, just set this one
 #.
-#: qtquick/qml/Button.qml:43
+#. \note For the sake of consistency, you should NOT override the text property, just set this one
+#.
+#: qtquick/qml/Button.qml:46
 #, fuzzy, kde-format
 #| msgctxt ""
 #| "Used to construct the button's label (which will become Download New "
@@ -356,7 +356,7 @@ msgctxt ""
 msgid "Stuff"
 msgstr "kraami"
 
-#: qtquick/qml/Button.qml:44
+#: qtquick/qml/Button.qml:47
 #, fuzzy, kde-format
 #| msgctxt ""
 #| "The dialog title when we know which type of stuff is being requested"
@@ -364,13 +364,13 @@ msgstr "kraami"
 msgid "Download New %1…"
 msgstr "Uue kraami tõmbamine: %1"
 
-#: qtquick/qml/Dialog.qml:44
+#: qtquick/qml/Dialog.qml:47
 #, kde-format
 msgctxt "The dialog title when we know which type of stuff is being requested"
 msgid "Download New %1"
 msgstr "Uue kraami tõmbamine: %1"
 
-#: qtquick/qml/Dialog.qml:45
+#: qtquick/qml/Dialog.qml:48
 #, kde-format
 msgctxt ""
 "A placeholder title used in the dialog when there is no better title "
@@ -378,12 +378,12 @@ msgctxt ""
 msgid "Download New Stuff"
 msgstr "Uue kraami tõmbamine"
 
-#: qtquick/qml/DownloadItemsSheet.qml:35
+#: qtquick/qml/DownloadItemsSheet.qml:38
 #, kde-format
 msgid "Pick Your Installation Option"
 msgstr "Paigaldamisvaliku valimine"
 
-#: qtquick/qml/DownloadItemsSheet.qml:47
+#: qtquick/qml/DownloadItemsSheet.qml:50
 #, kde-format
 msgid ""
 "Please select the option you wish to install from the list of downloadable "
@@ -396,19 +396,19 @@ msgstr ""
 "valida, võta palun ühendust elemendi loojaga ja palu seda täpsemalt "
 "selgitada."
 
-#: qtquick/qml/DownloadItemsSheet.qml:88
+#: qtquick/qml/DownloadItemsSheet.qml:91
 #, kde-format
 msgid "Install"
 msgstr "Paigalda"
 
-#: qtquick/qml/EntryDetails.qml:89
+#: qtquick/qml/EntryDetails.qml:92
 #, kde-format
 msgctxt ""
 "A passive notification shown when installation of an item is initiated"
 msgid "Installing %1 from %2"
 msgstr "%1 paigaldamine asukohast %2"
 
-#: qtquick/qml/EntryDetails.qml:106
+#: qtquick/qml/EntryDetails.qml:109
 #, kde-format
 msgctxt ""
 "Combined title for the entry details page made of the name of the entry, and "
@@ -416,9 +416,8 @@ msgctxt ""
 msgid "%1 by %2"
 msgstr "%1, autor: %2"
 
-#: qtquick/qml/EntryDetails.qml:111
+#: qtquick/qml/EntryDetails.qml:114
 #: qtquick/qml/private/entrygriddelegates/BigPreviewDelegate.qml:43
-#: qtquick/qml/private/entrygriddelegates/ThumbDelegate.qml:37
 #: qtquick/qml/private/entrygriddelegates/TileDelegate.qml:48
 #, kde-format
 msgctxt ""
@@ -427,9 +426,8 @@ msgctxt ""
 msgid "Install"
 msgstr "Paigalda"
 
-#: qtquick/qml/EntryDetails.qml:112
+#: qtquick/qml/EntryDetails.qml:115
 #: qtquick/qml/private/entrygriddelegates/BigPreviewDelegate.qml:44
-#: qtquick/qml/private/entrygriddelegates/ThumbDelegate.qml:38
 #: qtquick/qml/private/entrygriddelegates/TileDelegate.qml:49
 #, fuzzy, kde-format
 #| msgid "Install"
@@ -438,22 +436,21 @@ msgctxt ""
 msgid "Install…"
 msgstr "Paigalda"
 
-#: qtquick/qml/EntryDetails.qml:128
+#: qtquick/qml/EntryDetails.qml:131
 #: qtquick/qml/private/entrygriddelegates/BigPreviewDelegate.qml:59
-#: qtquick/qml/private/entrygriddelegates/ThumbDelegate.qml:53
 #: qtquick/qml/private/entrygriddelegates/TileDelegate.qml:64
 #, kde-format
 msgctxt "Request updating of this item"
 msgid "Update"
 msgstr "Uuenda"
 
-#: qtquick/qml/EntryDetails.qml:135 qtquick/qml/Page.qml:114
+#: qtquick/qml/EntryDetails.qml:138 qtquick/qml/Page.qml:121
 #, kde-format
 msgctxt "Request uninstallation of this item"
 msgid "Uninstall"
 msgstr "Eemalda"
 
-#: qtquick/qml/EntryDetails.qml:157
+#: qtquick/qml/EntryDetails.qml:160
 #, fuzzy, kde-format
 #| msgctxt ""
 #| "Status message to be shown when the entry is in the process of being "
@@ -465,7 +462,7 @@ msgctxt ""
 msgid "Currently working on the item %1 by %2. Please wait…"
 msgstr "Praegu uuendatakse komponenti %1, mille autor on %2. Palun oota ..."
 
-#: qtquick/qml/EntryDetails.qml:159
+#: qtquick/qml/EntryDetails.qml:162
 #, fuzzy, kde-format
 #| msgctxt ""
 #| "Status message to be shown when the entry is in the process of being "
@@ -476,7 +473,7 @@ msgctxt ""
 msgid "Currently updating the item %1 by %2. Please wait…"
 msgstr "Praegu uuendatakse komponenti %1, mille autor on %2. Palun oota ..."
 
-#: qtquick/qml/EntryDetails.qml:161
+#: qtquick/qml/EntryDetails.qml:164
 #, kde-format
 msgctxt ""
 "Status message which should only be shown when the entry has been given some "
@@ -490,30 +487,27 @@ msgstr ""
 "org/enter_bug.cgi?product=frameworks-knewstuff\">Palun anna sellest KDE "
 "kogukonnale teada veateatega</a>."
 
-#: qtquick/qml/EntryDetails.qml:214
-#, kde-format
-msgid "Comments and Reviews:"
-msgstr "Kommentaarid ja ülevaated:"
-
-#: qtquick/qml/EntryDetails.qml:216
-#, kde-format
-msgctxt ""
-"A link which, when clicked, opens a new sub page with comments (comments "
-"with or without ratings) for this entry"
-msgid "%1 Reviews and Comments"
-msgstr "%1 arvustused ja kommentaarid"
-
-#: qtquick/qml/EntryDetails.qml:222
+#: qtquick/qml/EntryDetails.qml:218
 #, kde-format
 msgid "Rating:"
 msgstr "Hinnang:"
 
-#: qtquick/qml/EntryDetails.qml:227
+#: qtquick/qml/EntryDetails.qml:226
+#, fuzzy, kde-format
+#| msgctxt ""
+#| "A link which, when clicked, opens a new sub page with comments (comments "
+#| "with or without ratings) for this entry"
+#| msgid "%1 Reviews and Comments"
+msgctxt "@action:button Opens a new sub-page with comments for this entry"
+msgid "See %1 Reviews and Comments"
+msgstr "%1 arvustused ja kommentaarid"
+
+#: qtquick/qml/EntryDetails.qml:231
 #, kde-format
 msgid "Homepage:"
 msgstr "Kodulehekülg:"
 
-#: qtquick/qml/EntryDetails.qml:228
+#: qtquick/qml/EntryDetails.qml:232
 #, kde-format
 msgctxt ""
 "A link which, when clicked, opens the website associated with the entry "
@@ -522,12 +516,12 @@ msgctxt ""
 msgid "Open the homepage for %1"
 msgstr "Ava %1 kodulehekülg"
 
-#: qtquick/qml/EntryDetails.qml:234
+#: qtquick/qml/EntryDetails.qml:238
 #, kde-format
 msgid "How To Donate:"
 msgstr "Kuidas annetust teha:"
 
-#: qtquick/qml/EntryDetails.qml:235
+#: qtquick/qml/EntryDetails.qml:239
 #, kde-format
 msgctxt ""
 "A link which, when clicked, opens a website with information on donation in "
@@ -535,202 +529,173 @@ msgctxt ""
 msgid "Find out how to donate to this project"
 msgstr "Selgitamine, kuidas projektile annetus teha"
 
-#: qtquick/qml/Page.qml:139
+#: qtquick/qml/Page.qml:147
 #, kde-kuit-format
+msgctxt "@info displayed as InlineMessage"
 msgid ""
 "Use caution when accessing user-created content shown here, as it may "
-"contain executable code that hasn't been tested by KDE or your distributor "
-"for safety, stability, or quality"
+"contain executable code that hasn't been tested by KDE or %1 for safety, "
+"stability, or quality."
 msgstr ""
 
-#: qtquick/qml/Page.qml:140
+#: qtquick/qml/Page.qml:148
 #, kde-format
+msgctxt "@info displayed as InlineMessage"
 msgid ""
-"User-created content shown here hasn't been tested by KDE or your "
-"distributor for functionality or quality."
+"User-created content shown here hasn't been tested by KDE or %1 for "
+"functionality or quality."
 msgstr ""
 
-#: qtquick/qml/Page.qml:172
+#: qtquick/qml/Page.qml:179
 #, fuzzy, kde-format
-#| msgid "&Tile"
-msgid "Tiles"
-msgstr "&Paanidena"
-
-#: qtquick/qml/Page.qml:174
-#, kde-format
-msgid "Icons"
-msgstr "Ikoonid"
-
-#: qtquick/qml/Page.qml:176
-#, fuzzy, kde-format
-#| msgid "Previews"
-msgid "Preview"
-msgstr "Eelvaatlused"
-
-#: qtquick/qml/Page.qml:192
-#, fuzzy, kde-format
-#| msgid "Detailed Tree View"
-msgid "Detailed Tiles View Mode"
-msgstr "Detailne puuvaade"
-
-#: qtquick/qml/Page.qml:203
-#, fuzzy, kde-format
-#| msgid "Icons view mode"
-msgid "Icons Only View Mode"
-msgstr "Ikoonivaate režiim"
-
-#: qtquick/qml/Page.qml:214
-#, fuzzy, kde-format
-#| msgid "Preview view mode"
-msgid "Large Preview View Mode"
-msgstr "Eelvaatluse režiim"
-
-#: qtquick/qml/Page.qml:227
-#, fuzzy, kde-format
-#| msgctxt "List option which will set the filter to show everything"
-#| msgid "Everything"
-msgid "Everything"
+#| msgid "All"
+msgctxt "@action:button opening menu similar to combobox, filter list"
+msgid "All"
 msgstr "Kõik"
 
-#: qtquick/qml/Page.qml:229
-#, kde-format
+#: qtquick/qml/Page.qml:181
+#, fuzzy, kde-format
+#| msgid "Installed"
+msgctxt "@action:button opening menu similar to combobox, filter list"
 msgid "Installed"
 msgstr "Paigaldatud"
 
-#: qtquick/qml/Page.qml:231
+#: qtquick/qml/Page.qml:183
 #, fuzzy, kde-format
 #| msgctxt ""
 #| "List option which will set the filter so only installed items with "
 #| "updates available are shown"
 #| msgid "Updateable Only"
+msgctxt "@action:button opening menu similar to combobox, filter list"
 msgid "Updateable"
 msgstr "Ainult uuendatavad"
 
-#: qtquick/qml/Page.qml:251
+#: qtquick/qml/Page.qml:193
 #, fuzzy, kde-format
-#| msgid "&Show All Entries"
-msgctxt "List option which will set the filter to show everything"
-msgid "Show All Entries"
-msgstr "&Näita kõiki kirjeid"
-
-#: qtquick/qml/Page.qml:262
-#, fuzzy, kde-format
-#| msgid "&Show All Entries"
+#| msgid "All"
 msgctxt ""
-"List option which will set the filter so only installed items are shown"
-msgid "Show Only Installed Entries"
-msgstr "&Näita kõiki kirjeid"
+"@option:radio similar to combobox item, List option which will set the "
+"filter to show everything"
+msgid "All"
+msgstr "Kõik"
 
-#: qtquick/qml/Page.qml:273
+#: qtquick/qml/Page.qml:204
 #, fuzzy, kde-format
-#| msgid "&Show All Entries"
+#| msgid "Installed"
 msgctxt ""
-"List option which will set the filter so only installed items with updates "
-"available are shown"
-msgid "Show Only Updateable Entries"
-msgstr "&Näita kõiki kirjeid"
+"@option:radio similar to combobox item, List option which will set the "
+"filter so only installed items are shown"
+msgid "Installed"
+msgstr "Paigaldatud"
 
-#: qtquick/qml/Page.qml:286
-#, fuzzy, kde-format
-#| msgctxt "QAccel"
-#| msgid "Percent"
-msgid "Recent"
-msgstr "Protsent"
-
-#: qtquick/qml/Page.qml:288
+#: qtquick/qml/Page.qml:215
 #, fuzzy, kde-format
 #| msgctxt ""
-#| "List option which will set the sort order to be alphabetical based on the "
-#| "name"
-#| msgid "Sort alphabetically"
-msgid "Alphabetical"
-msgstr "Sorteerimine tähestiku järgi"
+#| "List option which will set the filter so only installed items with "
+#| "updates available are shown"
+#| msgid "Updateable Only"
+msgctxt ""
+"@option:radio similar to combobox item, List option which will set the "
+"filter so only installed items with updates available are shown"
+msgid "Updateable"
+msgstr "Ainult uuendatavad"
 
-#: qtquick/qml/Page.qml:290
-#, kde-format
+#: qtquick/qml/Page.qml:228
+#, fuzzy, kde-format
+#| msgid "Release Date"
+msgctxt "@action:button opening menu similar to combobox, filter list"
+msgid "Sort: Release date"
+msgstr "Väljalaske kuupäev"
+
+#: qtquick/qml/Page.qml:230
+#, fuzzy, kde-format
+#| msgid "First Name"
+msgctxt "@action:button opening menu similar to combobox, filter list"
+msgid "Sort: Name"
+msgstr "Eesnimi"
+
+#: qtquick/qml/Page.qml:232
+#, fuzzy, kde-format
+#| msgid "Sorting"
+msgctxt "@action:button opening menu similar to combobox, filter list"
+msgid "Sort: Rating"
+msgstr "Sorteerimine"
+
+#: qtquick/qml/Page.qml:234
+#, fuzzy, kde-format
+#| msgid "Most Downloads"
+msgctxt "@action:button opening menu similar to combobox, filter list"
+msgid "Sort: Downloads"
+msgstr "Kõige tõmmatumad"
+
+#: qtquick/qml/Page.qml:243
+#, fuzzy, kde-format
+#| msgid "Name"
+msgctxt ""
+"@option:radio in menu, List option which will set the sort order to be "
+"alphabetical based on the name"
+msgid "Name"
+msgstr "Nimi"
+
+#: qtquick/qml/Page.qml:254
+#, fuzzy, kde-format
+#| msgid "Rating"
+msgctxt ""
+"@option:radio in menu, List option which will set the sort order to based on "
+"user ratings"
 msgid "Rating"
 msgstr "Hinnang"
 
-#: qtquick/qml/Page.qml:292
+#: qtquick/qml/Page.qml:265
 #, fuzzy, kde-format
 #| msgid "Download"
+msgctxt ""
+"@option:radio similar to combobox item, List option which will set the sort "
+"order to based on number of downloads"
 msgid "Downloads"
 msgstr "Laadi alla"
 
-#: qtquick/qml/Page.qml:312
+#: qtquick/qml/Page.qml:276
 #, fuzzy, kde-format
-#| msgctxt ""
-#| "List option which will set the sort order to based on when items were "
-#| "most recently updated"
-#| msgid "Show most recent first"
+#| msgid "Release Date"
 msgctxt ""
-"List option which will set the sort order to based on when items were most "
-"recently updated"
-msgid "Show Most Recent First"
-msgstr "Uusimate näitamine esimesena"
+"@option:radio similar to combobox item, List option which will set the sort "
+"order to based on when items were most recently updated"
+msgid "Release date"
+msgstr "Väljalaske kuupäev"
 
-#: qtquick/qml/Page.qml:323
-#, fuzzy, kde-format
-#| msgctxt ""
-#| "List option which will set the sort order to be alphabetical based on the "
-#| "name"
-#| msgid "Sort alphabetically"
-msgctxt ""
-"List option which will set the sort order to be alphabetical based on the "
-"name"
-msgid "Sort Alphabetically By Name"
-msgstr "Sorteerimine tähestiku järgi"
-
-#: qtquick/qml/Page.qml:334
-#, fuzzy, kde-format
-#| msgctxt "List option which will set the sort order to based on user ratings"
-#| msgid "Show highest rated first"
-msgctxt "List option which will set the sort order to based on user ratings"
-msgid "Show Highest Rated First"
-msgstr "Kõige hinnatumate näitamine esimesena"
-
-#: qtquick/qml/Page.qml:345
-#, fuzzy, kde-format
-#| msgctxt ""
-#| "List option which will set the sort order to based on number of downloads"
-#| msgid "Show most downloaded first"
-msgctxt ""
-"List option which will set the sort order to based on number of downloads"
-msgid "Show Most Downloaded First"
-msgstr "Kõige enam alla laaditute näitamine esimesena"
-
-#: qtquick/qml/Page.qml:358
+#: qtquick/qml/Page.qml:289
 #, fuzzy, kde-format
 #| msgid "Upload..."
 msgid "Upload…"
 msgstr "Üleslaadimine..."
 
-#: qtquick/qml/Page.qml:359
+#: qtquick/qml/Page.qml:290
 #, kde-format
 msgid "Learn how to add your own hot new stuff to this list"
 msgstr ""
 
-#: qtquick/qml/Page.qml:369
+#: qtquick/qml/Page.qml:300
 #, fuzzy, kde-format
 #| msgid "&Go To..."
 msgid "Go to…"
 msgstr "&Mine..."
 
-#: qtquick/qml/Page.qml:376 qtquick/qml/Page.qml:385
+#: qtquick/qml/Page.qml:307 qtquick/qml/Page.qml:316
 #, fuzzy, kde-format
 #| msgid "Search:"
 msgid "Search…"
 msgstr "Otsing:"
 
-#: qtquick/qml/Page.qml:439
+#: qtquick/qml/Page.qml:370
 #, kde-format
 msgid "Category:"
 msgstr "Kategooria:"
 
-#: qtquick/qml/Page.qml:459
+#: qtquick/qml/Page.qml:390
 #, fuzzy, kde-format
 #| msgid "Continue operation"
-msgid "Contribute your own…"
+msgid "Contribute Your Own…"
 msgstr "Jätka tegevust"
 
 #: qtquick/qml/private/EntryCommentDelegate.qml:103
@@ -836,7 +801,7 @@ msgctxt "Title for a dialog box which shows error messages"
 msgid "An Error Occurred"
 msgstr "Tekkis tõrge"
 
-#: qtquick/qml/private/ErrorDisplayer.qml:81
+#: qtquick/qml/private/ErrorDisplayer.qml:82
 #, fuzzy, kde-format
 #| msgid "Please put in a name."
 msgid "Please try again later."
@@ -855,7 +820,7 @@ msgctxt ""
 msgid "(%1/%2)"
 msgstr "(%1/s)"
 
-#: qtquick/qml/UploadPage.qml:50
+#: qtquick/qml/UploadPage.qml:53
 #, fuzzy, kde-format
 #| msgctxt ""
 #| "A placeholder title used in the dialog when there is no better title "
@@ -865,7 +830,7 @@ msgctxt "@knewstuff6"
 msgid "Upload New Stuff: %1"
 msgstr "Uue kraami tõmbamine"
 
-#: qtquick/qml/UploadPage.qml:111
+#: qtquick/qml/UploadPage.qml:114
 #, fuzzy, kde-format
 #| msgid "Billing information:"
 msgctxt ""
@@ -873,21 +838,21 @@ msgctxt ""
 msgid "Updating information…"
 msgstr "Arvestusinfo:"
 
-#: qtquick/qml/UploadPage.qml:126
+#: qtquick/qml/UploadPage.qml:129
 #, fuzzy, kde-format
 #| msgid "&Store"
 msgctxt "The name of the KDE Store"
 msgid "KDE Store"
 msgstr "&Salvesta"
 
-#: qtquick/qml/UploadPage.qml:132
+#: qtquick/qml/UploadPage.qml:135
 #, fuzzy, kde-format
 #| msgid "Provider:"
 msgctxt "An unnamed provider"
 msgid "Your Provider"
 msgstr "Pakkuja:"
 
-#: qtquick/qml/UploadPage.qml:141
+#: qtquick/qml/UploadPage.qml:144
 #, fuzzy, kde-format
 #| msgid ""
 #| "\n"
@@ -904,7 +869,7 @@ msgstr ""
 "Veebilehekülg:\n"
 "%1"
 
-#: qtquick/qml/UploadPage.qml:149
+#: qtquick/qml/UploadPage.qml:152
 #, fuzzy, kde-format
 #| msgid "&Send Email"
 msgctxt ""
@@ -913,7 +878,7 @@ msgctxt ""
 msgid "Send Email To: %1"
 msgstr "&Saada kiri"
 
-#: qtquick/qml/UploadPage.qml:159
+#: qtquick/qml/UploadPage.qml:162
 #, kde-format
 msgctxt "A description of how to upload content to a generic provider"
 msgid ""
@@ -924,7 +889,7 @@ msgid ""
 "system, where you can work on your products."
 msgstr ""
 
-#: qtquick/qml/UploadPage.qml:160
+#: qtquick/qml/UploadPage.qml:163
 #, kde-format
 msgctxt "A description of how to upload content to the KDE Store specifically"
 msgid ""
@@ -936,18 +901,18 @@ msgid ""
 "content added."
 msgstr ""
 
-#: qtquick/quickengine.cpp:54 qtquick/quickengine.cpp:134
-#: qtquick/quickengine.cpp:142
+#: qtquick/quickengine.cpp:82 qtquick/quickengine.cpp:168
+#: qtquick/quickengine.cpp:176
 #, kde-format
 msgid "Loading data"
 msgstr "Andmete laadimine"
 
-#: qtquick/quickengine.cpp:138
+#: qtquick/quickengine.cpp:172
 #, kde-format
 msgid "Installing"
 msgstr "Paigaldamine"
 
-#: qtquick/quickengine.cpp:193
+#: qtquick/quickengine.cpp:227
 #, kde-format
 msgctxt ""
 "An informational message which is shown to inform the user they are not "
@@ -959,7 +924,7 @@ msgstr ""
 "Sul puuduvad õigused hankida uut kuuma kraami. Kui arvad, et see ei peaks "
 "nii olema, võta ühendust isikuga, kes sinu õigustega tegeleb."
 
-#: qtquick/searchpresetmodel.cpp:44
+#: qtquick/searchpresetmodel.cpp:46
 #, fuzzy, kde-format
 #| msgctxt "@action"
 #| msgid "Back"
@@ -967,20 +932,20 @@ msgctxt "Knewstuff5"
 msgid "Back"
 msgstr "Tagasi"
 
-#: qtquick/searchpresetmodel.cpp:46
+#: qtquick/searchpresetmodel.cpp:48
 #, kde-format
 msgctxt "Knewstuff5"
 msgid "Popular"
 msgstr ""
 
-#: qtquick/searchpresetmodel.cpp:48
+#: qtquick/searchpresetmodel.cpp:50
 #, fuzzy, kde-format
 #| msgid "Saturday"
 msgctxt "Knewstuff5"
 msgid "Featured"
 msgstr "laupäev"
 
-#: qtquick/searchpresetmodel.cpp:50
+#: qtquick/searchpresetmodel.cpp:52
 #, fuzzy, kde-format
 #| msgctxt "@action:button Restart find & replace"
 #| msgid "Restart"
@@ -988,7 +953,7 @@ msgctxt "Knewstuff5"
 msgid "Restart"
 msgstr "Jätka"
 
-#: qtquick/searchpresetmodel.cpp:52
+#: qtquick/searchpresetmodel.cpp:54
 #, fuzzy, kde-format
 #| msgctxt "@action"
 #| msgid "New"
@@ -996,7 +961,7 @@ msgctxt "Knewstuff5"
 msgid "New"
 msgstr "Uus"
 
-#: qtquick/searchpresetmodel.cpp:54
+#: qtquick/searchpresetmodel.cpp:56
 #, fuzzy, kde-format
 #| msgctxt "keyboard-key-name"
 #| msgid "Home"
@@ -1004,13 +969,13 @@ msgctxt "Knewstuff5"
 msgid "Home"
 msgstr "Home"
 
-#: qtquick/searchpresetmodel.cpp:56
+#: qtquick/searchpresetmodel.cpp:58
 #, kde-format
 msgctxt "Knewstuff5"
 msgid "Shelf"
 msgstr ""
 
-#: qtquick/searchpresetmodel.cpp:58
+#: qtquick/searchpresetmodel.cpp:60
 #, fuzzy, kde-format
 #| msgctxt "keyboard-key-name"
 #| msgid "Up"
@@ -1018,7 +983,7 @@ msgctxt "Knewstuff5"
 msgid "Up"
 msgstr "Nool üles"
 
-#: qtquick/searchpresetmodel.cpp:60
+#: qtquick/searchpresetmodel.cpp:62
 #, fuzzy, kde-format
 #| msgctxt "dictionary variant"
 #| msgid "extended"
@@ -1026,7 +991,7 @@ msgctxt "Knewstuff5"
 msgid "Recommended"
 msgstr "laiendatud"
 
-#: qtquick/searchpresetmodel.cpp:62
+#: qtquick/searchpresetmodel.cpp:64
 #, fuzzy, kde-format
 #| msgctxt "@action"
 #| msgid "Subscript"
@@ -1034,20 +999,20 @@ msgctxt "Knewstuff5"
 msgid "Subscriptions"
 msgstr "Alakiri"
 
-#: qtquick/searchpresetmodel.cpp:64
+#: qtquick/searchpresetmodel.cpp:66
 #, fuzzy, kde-format
 #| msgid "&Show All Entries"
 msgctxt "Knewstuff5"
 msgid "All Entries"
 msgstr "&Näita kõiki kirjeid"
 
-#: qtquick/searchpresetmodel.cpp:66
+#: qtquick/searchpresetmodel.cpp:70
 #, kde-format
 msgctxt "Knewstuff5"
 msgid "Search Preset: %1"
 msgstr ""
 
-#: tools/knewstuff-dialog/main.cpp:29
+#: tools/knewstuff-dialog/main.cpp:30
 #, kde-format
 msgid ""
 "The KNSRC file you want to show. If none is passed, you will be presented "
@@ -1055,7 +1020,7 @@ msgid ""
 "into the systemwide knsrc file location"
 msgstr ""
 
-#: tools/knewstuff-dialog/main.cpp:33
+#: tools/knewstuff-dialog/main.cpp:34
 #, kde-format
 msgid ""
 "A kns url to show information from. The format for a kns url is kns://"
@@ -1080,6 +1045,117 @@ msgstr ""
 msgctxt "@action"
 msgid "Download New Stuff…"
 msgstr "Uue kraami tõmbamine"
+
+#~ msgid "Comments and Reviews:"
+#~ msgstr "Kommentaarid ja ülevaated:"
+
+#, fuzzy
+#~| msgctxt "List option which will set the filter to show everything"
+#~| msgid "Everything"
+#~ msgid "Everything"
+#~ msgstr "Kõik"
+
+#, fuzzy
+#~| msgid "&Show All Entries"
+#~ msgctxt "List option which will set the filter to show everything"
+#~ msgid "Show All Entries"
+#~ msgstr "&Näita kõiki kirjeid"
+
+#, fuzzy
+#~| msgid "&Show All Entries"
+#~ msgctxt ""
+#~ "List option which will set the filter so only installed items are shown"
+#~ msgid "Show Only Installed Entries"
+#~ msgstr "&Näita kõiki kirjeid"
+
+#, fuzzy
+#~| msgid "&Show All Entries"
+#~ msgctxt ""
+#~ "List option which will set the filter so only installed items with "
+#~ "updates available are shown"
+#~ msgid "Show Only Updateable Entries"
+#~ msgstr "&Näita kõiki kirjeid"
+
+#, fuzzy
+#~| msgctxt "QAccel"
+#~| msgid "Percent"
+#~ msgid "Recent"
+#~ msgstr "Protsent"
+
+#, fuzzy
+#~| msgctxt ""
+#~| "List option which will set the sort order to be alphabetical based on "
+#~| "the name"
+#~| msgid "Sort alphabetically"
+#~ msgid "Alphabetical"
+#~ msgstr "Sorteerimine tähestiku järgi"
+
+#, fuzzy
+#~| msgctxt ""
+#~| "List option which will set the sort order to based on when items were "
+#~| "most recently updated"
+#~| msgid "Show most recent first"
+#~ msgctxt ""
+#~ "List option which will set the sort order to based on when items were "
+#~ "most recently updated"
+#~ msgid "Show Most Recent First"
+#~ msgstr "Uusimate näitamine esimesena"
+
+#, fuzzy
+#~| msgctxt ""
+#~| "List option which will set the sort order to be alphabetical based on "
+#~| "the name"
+#~| msgid "Sort alphabetically"
+#~ msgctxt ""
+#~ "List option which will set the sort order to be alphabetical based on the "
+#~ "name"
+#~ msgid "Sort Alphabetically By Name"
+#~ msgstr "Sorteerimine tähestiku järgi"
+
+#, fuzzy
+#~| msgctxt ""
+#~| "List option which will set the sort order to based on user ratings"
+#~| msgid "Show highest rated first"
+#~ msgctxt "List option which will set the sort order to based on user ratings"
+#~ msgid "Show Highest Rated First"
+#~ msgstr "Kõige hinnatumate näitamine esimesena"
+
+#, fuzzy
+#~| msgctxt ""
+#~| "List option which will set the sort order to based on number of downloads"
+#~| msgid "Show most downloaded first"
+#~ msgctxt ""
+#~ "List option which will set the sort order to based on number of downloads"
+#~ msgid "Show Most Downloaded First"
+#~ msgstr "Kõige enam alla laaditute näitamine esimesena"
+
+#, fuzzy
+#~| msgid "&Tile"
+#~ msgid "Tiles"
+#~ msgstr "&Paanidena"
+
+#~ msgid "Icons"
+#~ msgstr "Ikoonid"
+
+#, fuzzy
+#~| msgid "Previews"
+#~ msgid "Preview"
+#~ msgstr "Eelvaatlused"
+
+#, fuzzy
+#~| msgid "Detailed Tree View"
+#~ msgid "Detailed Tiles View Mode"
+#~ msgstr "Detailne puuvaade"
+
+#, fuzzy
+#~| msgid "Icons view mode"
+#~ msgid "Icons Only View Mode"
+#~ msgstr "Ikoonivaate režiim"
+
+#, fuzzy
+#~| msgid "Preview view mode"
+#~ msgid "Large Preview View Mode"
+#~ msgstr "Eelvaatluse režiim"
 
 #~ msgid "Download New Stuff..."
 #~ msgstr "Laadi alla uut kraami..."
@@ -1813,9 +1889,6 @@ msgstr "Uue kraami tõmbamine"
 #~ msgctxt "EMAIL OF TRANSLATORS"
 #~ msgid "Your emails"
 #~ msgstr "bald@smail.ee"
-
-#~ msgid "Name"
-#~ msgstr "Nimi"
 
 #~ msgid "Host"
 #~ msgstr "Masin"
@@ -9817,9 +9890,6 @@ msgstr "Uue kraami tõmbamine"
 #~ msgid "Highest Rated"
 #~ msgstr "Kõige hinnatumad"
 
-#~ msgid "Most Downloads"
-#~ msgstr "Kõige tõmmatumad"
-
 #~ msgid "Add Rating"
 #~ msgstr "Lisa hinnang"
 
@@ -13450,9 +13520,6 @@ msgstr "Uue kraami tõmbamine"
 #~ msgid "New Folder..."
 #~ msgstr "Uus kataloog..."
 
-#~ msgid "Sorting"
-#~ msgstr "Sorteerimine"
-
 #~ msgid "By Name"
 #~ msgstr "Nime järgi"
 
@@ -14072,9 +14139,6 @@ msgstr "Uue kraami tõmbamine"
 #~ msgid "Welcome"
 #~ msgstr "Tere tulemast"
 
-#~ msgid "Release Date"
-#~ msgstr "Väljalaske kuupäev"
-
 #~ msgid ""
 #~ "Name: %1\n"
 #~ "Author: %2\n"
@@ -14653,9 +14717,6 @@ msgstr "Uue kraami tõmbamine"
 
 #~ msgid "Unknown type"
 #~ msgstr "Tundmatu tüüp"
-
-#~ msgid "All"
-#~ msgstr "Kõik"
 
 #~ msgid "Frequent"
 #~ msgstr "Sagedane"
@@ -15364,9 +15425,6 @@ msgstr "Uue kraami tõmbamine"
 
 #~ msgid "Name Prefix"
 #~ msgstr "Nime eesliide"
-
-#~ msgid "First Name"
-#~ msgstr "Eesnimi"
 
 #~ msgid "Middle Name"
 #~ msgstr "Keskmine nimi"

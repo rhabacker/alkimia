@@ -7,7 +7,7 @@
 #ifndef OPDSPROVIDER_H
 #define OPDSPROVIDER_H
 
-#include "provider.h"
+#include "providerbase_p.h"
 #include "xmlloader_p.h"
 #include <QMap>
 #include <memory>
@@ -35,7 +35,7 @@
  * - No Sorting
  *
  * Would-be-nice, but requires a lot of rewiring in knewstuff:
- * - We could get authenticated feeds going by using basic http authentiation(in spec), or have bearer token uris (oauth bearcaps).
+ * - We could get authenticated feeds going by using basic http authentication(in spec), or have bearer token uris (oauth bearcaps).
  * - Autodiscovery or protocol based discovery of opds catalogs, this does not gel with the provider xml system used by knewstuff.
  *
  * @since 5.83
@@ -44,12 +44,10 @@
 namespace KNSCore
 {
 class OPDSProviderPrivate;
-class OPDSProvider : public Provider
+class OPDSProvider : public ProviderBase
 {
     Q_OBJECT
 public:
-    typedef QList<Provider *> List;
-
     OPDSProvider();
     ~OPDSProvider() override;
 
@@ -62,7 +60,13 @@ public:
     // Feed icon
     QUrl icon() const override;
 
-    void loadEntries(const KNSCore::Provider::SearchRequest &request) override;
+    [[nodiscard]] QString version() override;
+    [[nodiscard]] QUrl website() override;
+    [[nodiscard]] QUrl host() override;
+    [[nodiscard]] QString contactEmail() override;
+    [[nodiscard]] bool supportsSsl() override;
+
+    void loadEntries(const KNSCore::SearchRequest &request) override;
     void loadEntryDetails(const KNSCore::Entry &entry) override;
     void loadPayloadLink(const KNSCore::Entry &entry, int linkNumber) override;
 

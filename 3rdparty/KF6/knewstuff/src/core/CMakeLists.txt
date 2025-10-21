@@ -26,7 +26,16 @@ set(KNewStuffCore_SRCS
     questionmanager.cpp
     questionlistener.cpp
 
+    providercore.cpp
+    providerbase.cpp
+    categorymetadata.cpp
+    searchrequest.cpp
+    searchpreset.cpp
+    cache2.cpp
+    providerbubblewrap.cpp
+
     ../attica/atticaprovider.cpp
+    ../attica/atticarequester.cpp
     ../staticxml/staticxmlprovider.cpp
 )
 if(KF6Syndication_FOUND)
@@ -47,7 +56,7 @@ target_sources(knscore_jobs_static PRIVATE
     jobs/httpworker.cpp
 )
 target_link_libraries(knscore_jobs_static PUBLIC Qt6::Network KF6::I18n KF6::CoreAddons KF6::Package)
-target_include_directories(knscore_jobs_static PRIVATE ${PROJECT_BINARY_DIR})
+target_include_directories(knscore_jobs_static PRIVATE ${CMAKE_BINARY_DIR})
 # Needed to link this static lib to shared libs
 set_property(TARGET knscore_jobs_static PROPERTY POSITION_INDEPENDENT_CODE ON)
 
@@ -78,13 +87,12 @@ ecm_generate_export_header(KF6NewStuffCore
     VERSION_BASE_NAME KNewStuff
     DEPRECATED_BASE_VERSION 0
     EXCLUDE_DEPRECATED_BEFORE_AND_AT ${EXCLUDE_DEPRECATED_BEFORE_AND_AT}
-    DEPRECATION_VERSIONS
+    DEPRECATION_VERSIONS 6.9
 )
 
 set(KNewStuffCore_BUILD_INCLUDE_DIRS
     ${KNewStuff_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${PROJECT_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src
 )
 
 target_include_directories(KF6NewStuffCore
@@ -132,9 +140,13 @@ ecm_generate_headers(KNewStuffCore_CamelCase_HEADERS
   ResultsStream
   TagsFilterChecker
   Transaction
+  SearchRequest
+  ProviderCore
+  CategoryMetadata
+  SearchPreset
 
+  SHARED_PREFIX KNSCore
   REQUIRED_HEADERS KNewStuffCore_HEADERS
-  OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/KNSCore
 )
 
 install(TARGETS KF6NewStuffCore EXPORT KF6NewStuffCoreTargets ${KF_INSTALL_TARGETS_DEFAULT_ARGS})
@@ -149,27 +161,4 @@ install(
     COMPONENT Devel
 )
 
-if(BUILD_QCH)
-    ecm_add_qch(
-        KF6NewStuffCore_QCH
-        NAME KNewStuffCore
-        BASE_NAME KF6NewStuffCore
-        VERSION ${KF_VERSION}
-        ORG_DOMAIN org.kde
-        SOURCES ${KNewStuffCore_HEADERS}
-        LINK_QCHS
-            KF6Attica_QCH
-            KF6CoreAddons_QCH
-        INCLUDE_DIRS
-            ${KNewStuffCore_BUILD_INCLUDE_DIRS}
-        BLANK_MACROS
-            KNEWSTUFFCORE_EXPORT
-            KNEWSTUFFCORE_DEPRECATED
-            KNEWSTUFFCORE_DEPRECATED_EXPORT
-            "KNEWSTUFFCORE_DEPRECATED_VERSION(x, y, t)"
-        TAGFILE_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
-        QCH_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
-        COMPONENT Devel
-    )
-endif()
-
+ecm_generate_qdoc(KF6NewStuffCore knewstuffcore.qdocconf)

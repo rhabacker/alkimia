@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: KDE Contributors
 # SPDX-License-Identifier: BSD-2-Clause
 
+add_subdirectory(private)
+
 add_library(knewstuff_qml_STATIC STATIC)
 target_sources(knewstuff_qml_STATIC PRIVATE
     quickengine.cpp
@@ -71,7 +73,6 @@ ecm_target_qml_sources(newstuffqmlplugin PRIVATE PATH private SOURCES
 ecm_target_qml_sources(newstuffqmlplugin PRIVATE PATH private/entrygriddelegates SOURCES
     qml/private/entrygriddelegates/BigPreviewDelegate.qml
     qml/private/entrygriddelegates/FeedbackOverlay.qml
-    qml/private/entrygriddelegates/ThumbDelegate.qml
     qml/private/entrygriddelegates/TileDelegate.qml
 )
 
@@ -79,10 +80,4 @@ target_link_libraries (newstuffqmlplugin PRIVATE knewstuff_qml_STATIC)
 
 ecm_finalize_qml_module(newstuffqmlplugin DESTINATION ${KDE_INSTALL_QMLDIR})
 
-add_library(knewstuff STATIC)
-target_sources(knewstuff PRIVATE
-    author.cpp
-    downloadlinkinfo.cpp
-)
-
-target_link_libraries (knewstuff PUBLIC knewstuff_qml_STATIC)
+ecm_generate_qdoc(newstuffqmlplugin knewstuffqml.qdocconf)

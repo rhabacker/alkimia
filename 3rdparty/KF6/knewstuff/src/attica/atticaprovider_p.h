@@ -14,7 +14,7 @@
 #include <attica/provider.h>
 #include <attica/providermanager.h>
 
-#include "provider.h"
+#include "providerbase_p.h"
 
 namespace Attica
 {
@@ -35,7 +35,7 @@ namespace KNSCore
  *
  * @internal
  */
-class AtticaProvider : public Provider
+class /* for autotest: */ KNEWSTUFFCORE_EXPORT AtticaProvider : public ProviderBase
 {
     Q_OBJECT
 public:
@@ -52,13 +52,12 @@ public:
     bool isInitialized() const override;
     void setCachedEntries(const KNSCore::Entry::List &cachedEntries) override;
 
-    void loadEntries(const KNSCore::Provider::SearchRequest &request) override;
+    void loadEntries(const KNSCore::SearchRequest &request) override;
     void loadEntryDetails(const KNSCore::Entry &entry) override;
     void loadPayloadLink(const Entry &entry, int linkId) override;
 
     void loadComments(const KNSCore::Entry &entry, int commentsPerPage, int page) override;
     void loadPerson(const QString &username) override;
-    void loadBasics() override;
 
     bool userCanVote() override
     {
@@ -77,28 +76,29 @@ public:
         return &m_provider;
     }
 
+    [[nodiscard]] QString name() const override;
+    [[nodiscard]] QUrl icon() const override;
+    [[nodiscard]] QString version() override;
+    [[nodiscard]] QUrl website() override;
+    [[nodiscard]] QUrl host() override;
+    [[nodiscard]] QString contactEmail() override;
+    [[nodiscard]] bool supportsSsl() override;
+
 private Q_SLOTS:
     void providerLoaded(const Attica::Provider &provider);
     void listOfCategoriesLoaded(Attica::BaseJob *);
-    void categoryContentsLoaded(Attica::BaseJob *job);
     void downloadItemLoaded(Attica::BaseJob *job);
     void accountBalanceLoaded(Attica::BaseJob *job);
     void onAuthenticationCredentialsMissing(const Attica::Provider &);
     void votingFinished(Attica::BaseJob *);
     void becomeFanFinished(Attica::BaseJob *job);
-    void detailsLoaded(Attica::BaseJob *job);
     void loadedComments(Attica::BaseJob *job);
     void loadedPerson(Attica::BaseJob *job);
     void loadedConfig(Attica::BaseJob *job);
 
 private:
-    void checkForUpdates();
-    Entry::List installedEntries() const;
     bool jobSuccess(Attica::BaseJob *job);
-
-    Attica::Provider::SortMode atticaSortMode(SortMode sortMode);
-
-    Entry entryFromAtticaContent(const Attica::Content &);
+    void updateOnFirstBasicsGet();
 
     // the attica categories we are interested in (e.g. Wallpaper, Application, Vocabulary File...)
     QMultiHash<QString, Attica::Category> mCategoryMap;
@@ -114,16 +114,19 @@ private:
     // when the result is there.
     QHash<Attica::BaseJob *, QPair<Entry, int>> mDownloadLinkJobs;
 
-    // keep track of the current request
-    QPointer<Attica::BaseJob> mEntryJob;
-    Provider::SearchRequest mCurrentRequest;
-
-    QSet<Attica::BaseJob *> m_updateJobs;
-
     bool mInitialized;
     QString m_providerId;
+    bool m_basicsGot = false;
+    QString m_name;
+    QUrl m_icon;
+    QString m_version;
+    QUrl m_website;
+    QUrl m_host;
+    QString m_contactEmail;
+    bool m_supportsSsl = true;
 
     Q_DISABLE_COPY(AtticaProvider)
+    friend class AtticaRequester;
 };
 
 }

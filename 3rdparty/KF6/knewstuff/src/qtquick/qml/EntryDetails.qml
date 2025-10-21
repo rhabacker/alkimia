@@ -5,14 +5,6 @@
     SPDX-License-Identifier: LGPL-2.1-only OR LGPL-3.0-only OR LicenseRef-KDE-Accepted-LGPL
 */
 
-/**
- * @brief A Kirigami.Page component used for displaying the details for a single entry
- *
- * This component is equivalent to the details view in the old DownloadDialog
- * @see KNewStuff::DownloadDialog
- * @since 5.63
- */
-
 import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
@@ -23,10 +15,21 @@ import org.kde.newstuff as NewStuff
 
 import "private" as Private
 
+/*!
+   \qmltype EntryDetails
+   \inqmlmodule org.kde.newstuff
+  
+   \brief A Kirigami.Page component used for displaying the details for a single entry.
+  
+   This component is equivalent to the details view in the old DownloadDialog
+   \sa KNewStuff::DownloadDialog
+   \since 5.63
+ */
+
 KCMUtils.SimpleKCM {
     id: component
 
-    property QtObject newStuffModel
+    property NewStuff.ItemsModel newStuffModel
     property var entry
 
     property string name
@@ -85,9 +88,9 @@ KCMUtils.SimpleKCM {
         parent: component.QQC2.Overlay.overlay
 
         onItemPicked: (entry, downloadItemId, downloadName) => {
-            const entryName = newStuffModel.data(newStuffModel.index(entryId, 0), NewStuff.ItemsModel.NameRole);
+            const entryName = component.newStuffModel.data(component.newStuffModel.index(downloadItemId, 0), NewStuff.ItemsModel.NameRole);
             applicationWindow().showPassiveNotification(i18ndc("knewstuff6", "A passive notification shown when installation of an item is initiated", "Installing %1 from %2", downloadName, entryName), 1500);
-            newStuffModel.engine.install(component.entry, downloadItemId);
+            component.newStuffModel.engine.installLinkId(component.entry, downloadItemId);
         }
     }
 
@@ -114,7 +117,7 @@ KCMUtils.SimpleKCM {
             icon.name: "install"
             onTriggered: source => {
                 if (component.downloadLinks.length === 1) {
-                    newStuffModel.engine.install(component.entry, NewStuff.ItemsModel.FirstLinkId);
+                    newStuffModel.engine.installLinkId(component.entry, NewStuff.ItemsModel.FirstLinkId);
                 } else {
                     downloadItemsSheet.downloadLinks = component.downloadLinks;
                     downloadItemsSheet.entry = component.index;
@@ -210,17 +213,18 @@ KCMUtils.SimpleKCM {
         Kirigami.FormLayout {
             Layout.fillWidth: true
 
-            Kirigami.LinkButton {
-                Kirigami.FormData.label: i18nd("knewstuff6", "Comments and Reviews:")
-                enabled: component.commentsCount > 0
-                text: i18ndc("knewstuff6", "A link which, when clicked, opens a new sub page with comments (comments with or without ratings) for this entry", "%1 Reviews and Comments", component.commentsCount)
-                onClicked: mouse => pageStack.push(commentsPage)
-            }
-
             Private.Rating {
                 id: ratingsItem
                 Kirigami.FormData.label: i18nd("knewstuff6", "Rating:")
                 rating: component.rating
+            }
+
+            QQC2.Button {
+                Layout.alignment: Qt.AlignHCenter
+                visible: component.commentsCount > 0
+                icon.name: "edit-comment-symbolic"
+                text: i18ndc("knewstuff6", "@action:button Opens a new sub-page with comments for this entry", "See %1 Reviews and Comments", component.commentsCount)
+                onClicked: pageStack.push(commentsPage)
             }
 
             Kirigami.UrlButton {

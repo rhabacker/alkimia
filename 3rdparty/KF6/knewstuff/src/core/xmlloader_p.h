@@ -12,6 +12,7 @@
 #define KNEWSTUFF3_XMLLOADER_P_H
 
 #include "provider.h"
+#include "searchrequest.h"
 #include <QNetworkReply>
 #include <QObject>
 #include <QString>
@@ -26,7 +27,7 @@ QDomElement addElement(QDomDocument &doc, QDomElement &parent, const QString &ta
 
 /**
  * KNewStuff xml loader.
- * This class loads an xml document from a kurl and returns the
+ * This class loads an xml document from a qurl and returns the
  * resulting domdocument once completed.
  * It should probably not be used directly by the application.
  *
@@ -49,7 +50,7 @@ public:
      */
     void load(const QUrl &url);
 
-    void setFilter(Provider::Filter filter)
+    void setFilter(Filter filter)
     {
         m_filter = filter;
     }
@@ -59,7 +60,7 @@ public:
         m_searchTerm = searchTerm;
     }
 
-    Provider::Filter filter() const
+    Filter filter() const
     {
         return m_filter;
     }
@@ -90,7 +91,7 @@ protected Q_SLOTS:
 
 private:
     QByteArray m_jobdata;
-    Provider::Filter m_filter;
+    Filter m_filter;
     QString m_searchTerm;
 };
 

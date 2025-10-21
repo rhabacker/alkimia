@@ -51,8 +51,12 @@ target_link_libraries(KF6NewStuffWidgets
     Qt6::QuickWidgets
 )
 
+target_link_libraries(KF6NewStuffWidgets PRIVATE
+        KF6::I18nQml
+)
+
 target_include_directories(KF6NewStuffWidgets
-    PUBLIC "$<BUILD_INTERFACE:${KNewStuff_BINARY_DIR};${CMAKE_CURRENT_BINARY_DIR}>"
+    PUBLIC "$<BUILD_INTERFACE:${KNewStuff_BINARY_DIR}>"
     INTERFACE
         "$<INSTALL_INTERFACE:${KNEWSTUFFWIDGETS_INSTALL_INCLUDEDIR}>"
         "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KNewStuff>" # module version header
@@ -64,8 +68,8 @@ ecm_generate_headers(KNewStuffWidgets_CamelCase_HEADERS
   Button
   Dialog
 
+  SHARED_PREFIX KNSWidgets
   REQUIRED_HEADERS KNewStuffWidgets_HEADERS
-  OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/KNSWidgets
 )
 
 install(
@@ -99,26 +103,4 @@ if (BUILD_DESIGNERPLUGIN)
     )
 endif()
 
-if(BUILD_QCH)
-    ecm_add_qch(
-        KF6NewStuffWidgets_QCH
-        NAME KNewStuffWidgets
-        BASE_NAME KF6NewStuffWidgets
-        VERSION ${KF_VERSION}
-        ORG_DOMAIN org.kde
-        SOURCES ${KNewStuffWidgets_HEADERS}
-        LINK_QCHS
-            KF6NewStuffCore_QCH
-            KF6NewStuff_QCH
-        INCLUDE_DIRS
-            ${CMAKE_CURRENT_BINARY_DIR}
-            ${KNewStuff_BINARY_DIR}
-        BLANK_MACROS
-            KNEWSTUFFWIDGETS_EXPORT
-            "KNEWSTUFFWIDGETS_DEPRECATED_VERSION(x, y, t)"
-        TAGFILE_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
-        QCH_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
-        COMPONENT Devel
-    )
-endif()
-
+ecm_generate_qdoc(KF6NewStuffWidgets knewstuffwidgets.qdocconf)

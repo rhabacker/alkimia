@@ -21,7 +21,7 @@
 namespace KNSCore
 {
 class CachePrivate;
-class KNEWSTUFFCORE_EXPORT Cache : public QObject
+class KNEWSTUFFCORE_EXPORT KNEWSTUFFCORE_DEPRECATED_VERSION(6, 9, "Do not use the cache directly.") Cache : public QObject
 {
     Q_OBJECT
 
