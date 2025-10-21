@@ -56,7 +56,7 @@ target_sources(knscore_jobs_static PRIVATE
     jobs/httpworker.cpp
 )
 target_link_libraries(knscore_jobs_static PUBLIC Qt6::Network KF6::I18n KF6::CoreAddons KF6::Package)
-target_include_directories(knscore_jobs_static PRIVATE ${CMAKE_BINARY_DIR})
+target_include_directories(knscore_jobs_static PRIVATE ${PROJECT_BINARY_DIR})
 # Needed to link this static lib to shared libs
 set_property(TARGET knscore_jobs_static PROPERTY POSITION_INDEPENDENT_CODE ON)
 
@@ -92,7 +92,7 @@ ecm_generate_export_header(KF6NewStuffCore
 
 set(KNewStuffCore_BUILD_INCLUDE_DIRS
     ${KNewStuff_BINARY_DIR}
-    ${CMAKE_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src
 )
 
 target_include_directories(KF6NewStuffCore

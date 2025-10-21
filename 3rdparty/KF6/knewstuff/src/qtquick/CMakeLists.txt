@@ -81,3 +81,11 @@ target_link_libraries (newstuffqmlplugin PRIVATE knewstuff_qml_STATIC)
 ecm_finalize_qml_module(newstuffqmlplugin DESTINATION ${KDE_INSTALL_QMLDIR})
 
 ecm_generate_qdoc(newstuffqmlplugin knewstuffqml.qdocconf)
+
+add_library(knewstuff STATIC)
+target_sources(knewstuff PRIVATE
+    author.cpp
+    downloadlinkinfo.cpp
+)
+
+target_link_libraries (knewstuff PUBLIC knewstuff_qml_STATIC)
