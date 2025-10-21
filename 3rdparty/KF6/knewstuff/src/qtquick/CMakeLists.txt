@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: KDE Contributors
 # SPDX-License-Identifier: BSD-2-Clause
 
+if(BUILD_QML)
 add_subdirectory(private)
 
 add_library(knewstuff_qml_STATIC STATIC)
@@ -31,6 +32,7 @@ target_link_libraries(knewstuff_qml_STATIC PUBLIC
     KF6::I18n
     KF6::NewStuffCore
 )
+
 
 ecm_add_qml_module(newstuffqmlplugin URI "org.kde.newstuff" VERSION 1.0)
 
@@ -81,11 +83,44 @@ target_link_libraries (newstuffqmlplugin PRIVATE knewstuff_qml_STATIC)
 ecm_finalize_qml_module(newstuffqmlplugin DESTINATION ${KDE_INSTALL_QMLDIR})
 
 ecm_generate_qdoc(newstuffqmlplugin knewstuffqml.qdocconf)
+endif()
 
 add_library(knewstuff STATIC)
 target_sources(knewstuff PRIVATE
+    quickengine.cpp
+    quicksettings.cpp
+    quickitemsmodel.cpp
+    quickquestionlistener.cpp
+    searchpresetmodel.cpp
+    categoriesmodel.cpp
+    commentsmodel.cpp
     author.cpp
     downloadlinkinfo.cpp
 )
 
-target_link_libraries (knewstuff PUBLIC knewstuff_qml_STATIC)
+target_include_directories(knewstuff
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/src/core
+)
+
+ecm_qt_declare_logging_category(knewstuff
+    HEADER knewstuffquick_debug.h
+    IDENTIFIER KNEWSTUFFQUICK
+    CATEGORY_NAME kf.newstuff.quick
+    OLD_CATEGORY_NAMES org.kde.knewstuff.quick
+    DESCRIPTION "knewstuff (qtquick)"
+    EXPORT KNEWSTUFF
+)
+
+set_property(TARGET knewstuff PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(knewstuff PUBLIC
+    Qt6::Core
+    Qt6::Gui # QImage
+    Qt6::Qml
+    KF6::ConfigCore
+    KF6::I18n
+    KF6::NewStuffCore
+)
+
+#target_link_libraries (knewstuff PUBLIC knewstuff_qml_STATIC)

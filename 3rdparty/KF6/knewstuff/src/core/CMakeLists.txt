@@ -113,7 +113,7 @@ target_link_libraries(KF6NewStuffCore
     KF6::ConfigCore
     KF6::Package
     Qt6::Xml
-    knscore_jobs_static
+    #knscore_jobs_static
 )
 
 if(KF6Syndication_FOUND)

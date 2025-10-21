@@ -4,10 +4,12 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(KF_VERSION "6.20.0") # handled by release scripts
-set(KF_DEP_VERSION "6.19.0") # handled by release scripts
+set(KF_DEP_VERSION "6.18.0") # handled by release scripts
 project(KNewStuff VERSION ${KF_VERSION})
 
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(BUILD_SHARED_LIBS OFF)
 
 include(FeatureSummary)
 find_package(ECM 6.19.0 NO_MODULE)
