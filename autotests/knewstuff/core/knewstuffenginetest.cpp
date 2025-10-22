@@ -25,6 +25,7 @@ private Q_SLOTS:
     void initTestCase();
     void testPropertiesReading();
     void testProviderFileLoading();
+    void testProviderUpdate();
 };
 
 void EngineTest::initTestCase()
@@ -65,6 +66,74 @@ void EngineTest::testProviderFileLoading()
     engine->setSearchTerm(QStringLiteral("Entry 4"));
     QSignalSpy spy(engine, &Engine::signalEntriesLoaded);
     QVERIFY(spy.wait());
+    QCOMPARE(list.size(), 1);
+    QCOMPARE(list.constFirst().name(), QStringLiteral("Entry 4 (ghns included)"));
+}
+
+void EngineTest::testProviderUpdate()
+{
+    Engine *engine = new Engine(this);
+    QVERIFY(engine->init(dataDir + "enginetest.knsrc"));
+
+    KNSCore::EntryInternal::List list;
+    connect(
+        engine,
+        &Engine::signalEntriesLoaded,
+        this,
+        [&list](const KNSCore::EntryInternal::List &loaded) {
+            list = loaded;
+        },
+        Qt::DirectConnection);
+
+    engine->setSearchTerm(QStringLiteral("Entry 4"));
+    QSignalSpy spy(engine, &Engine::signalEntriesLoaded);
+    spy.wait();
+
+    QSignalSpy spyInstall(engine, &Engine::busyStateChanged);
+    engine->install(list.constFirst());
+    QVERIFY(spyInstall.wait());
+    list.clear();
+
+    qDebug() << "update";
+
+    const QString updateDataDir = dataDir + "update/";
+    Engine *engine2 = new Engine(this);
+    QVERIFY(engine2->init(updateDataDir + "enginetest.knsrc"));
+
+    connect(
+        engine2,
+        &Engine::signalEntriesLoaded,
+        this,
+        [&list](const KNSCore::EntryInternal::List &loaded) {
+            list = loaded;
+        },
+        Qt::DirectConnection);
+
+    connect(
+        engine2,
+        &Engine::signalUpdateableEntriesLoaded,
+        this,
+        [&list](const KNSCore::EntryInternal::List &loaded) {
+            list = loaded;
+        },
+        Qt::DirectConnection);
+
+    QCOMPARE(engine2->busyState(), Engine::BusyOperation::LoadingData);
+    QSignalSpy providersLoaded(engine2, &Engine::signalProvidersLoaded);
+    QVERIFY(providersLoaded.wait());
+    QCOMPARE(engine2->busyState(), Engine::BusyState());
+
+    QSignalSpy spy2(engine2, &Engine::signalEntriesLoaded);
+    engine2->checkForInstalled();
+    QVERIFY(spy2.wait());
+
+    //engine->setSearchTerm(QStringLiteral("Entry 4"));
+    QSignalSpy spyUpdates(engine2, &Engine::signalUpdateableEntriesLoaded);
+
+    engine2->checkForUpdates();
+
+    QVERIFY(spyUpdates.wait());
+    qDebug() << "1";
     QCOMPARE(list.size(), 1);
     QCOMPARE(list.constFirst().name(), QStringLiteral("Entry 4 (ghns included)"));
 }

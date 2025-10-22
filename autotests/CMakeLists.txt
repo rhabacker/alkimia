@@ -132,13 +132,13 @@ ecm_add_test(
 macro(knewstuff_unit_tests)
     ecm_add_tests(
         ${ARGN}
-        ENV ${TEST_ENV}
-        COMPILER_FLAGS -DDATA_DIR=\"${DATA_DIR}\"
+        ENV "LANG=C"
+        COMPILE_DEFINITIONS -DDATA_DIR=\"${DATA_DIR}\"
         LINK_LIBRARIES ${TEST_LIB} ${KF_NEWSTUFF_LIB}
     )
 endmacro()
 
-add_subdirectory(knewstuff)
+add_subdirectory(knewstuff/core)
 
 #
 # cmake install test
