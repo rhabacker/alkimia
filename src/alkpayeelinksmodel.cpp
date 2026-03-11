@@ -64,6 +64,7 @@ Qt::ItemFlags AlkPayeeLinksModel::flags(const QModelIndex &index) const
     case IdPattern:
     case UrlTemplate:
     case TestPattern:
+    case SearchReplacePattern:
         flags |= Qt::ItemIsEditable;
         return flags;
     }
@@ -72,7 +73,7 @@ Qt::ItemFlags AlkPayeeLinksModel::flags(const QModelIndex &index) const
 
 QVariant AlkPayeeLinksModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal)
+    if (true || orientation == Qt::Horizontal)
         switch (role) {
         case Qt::DisplayRole:
             switch (section) {

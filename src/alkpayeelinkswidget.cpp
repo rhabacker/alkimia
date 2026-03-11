@@ -19,6 +19,97 @@
 #include <QUrl>
 #include <QUuid>
 
+#include <QStyledItemDelegate>
+#include <QLineEdit>
+#include <QPainter>
+#include <QVBoxLayout>
+#include <QWidget>
+
+class VerticalEditorDelegate : public QStyledItemDelegate {
+    Q_OBJECT
+public:
+    explicit VerticalEditorDelegate(QObject *parent = nullptr)
+        : QStyledItemDelegate(parent) {}
+
+    QWidget *createEditor(QWidget *parent,
+                          const QStyleOptionViewItem &,
+                          const QModelIndex &index) const override
+    {
+        // We'll create one editor for the *row*, not per cell
+        QWidget *editor = new QWidget(parent);
+        QVBoxLayout *layout = new QVBoxLayout(editor);
+        layout->setContentsMargins(2, 2, 2, 2);
+
+        // 6 fields stacked vertically
+        for (int i = 0; i < 6; ++i) {
+            QLineEdit *lineEdit = new QLineEdit(editor);
+            lineEdit->setObjectName(QString("field%1").arg(i));
+            layout->addWidget(lineEdit);
+        }
+        return editor;
+    }
+
+    void setEditorData(QWidget *editor, const QModelIndex &index) const override
+    {
+        QAbstractItemModel *model = const_cast<QAbstractItemModel *>(index.model());
+        int row = index.row();
+
+        // Fill all 6 QLineEdits from the model’s columns
+        for (int col = 0; col < 6; ++col) {
+            QLineEdit *lineEdit = editor->findChild<QLineEdit *>(QString("field%1").arg(col));
+            if (lineEdit)
+                lineEdit->setText(model->data(model->index(row, col)).toString());
+        }
+    }
+
+    void setModelData(QWidget *editor, QAbstractItemModel *model,
+                      const QModelIndex &index) const override
+    {
+        int row = index.row();
+
+        // Write back to all 6 columns
+        for (int col = 0; col < 6; ++col) {
+            QLineEdit *lineEdit = editor->findChild<QLineEdit *>(QString("field%1").arg(col));
+            if (lineEdit)
+                model->setData(model->index(row, col), lineEdit->text());
+        }
+    }
+
+    void updateEditorGeometry(QWidget *editor,
+                              const QStyleOptionViewItem &option,
+                              const QModelIndex &) const override
+    {
+        editor->setGeometry(option.rect);
+    }
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override
+    {
+        painter->save();
+        QRect rect = option.rect;
+
+        // Draw border
+        painter->drawRect(rect);
+
+        // Get row data (6 columns)
+        QAbstractItemModel *model = const_cast<QAbstractItemModel *>(index.model());
+        int row = index.row();
+
+        int y = rect.top() + 4;
+        for (int col = 0; col < 6; ++col) {
+            QString text = model->data(model->index(row, col)).toString();
+            painter->drawText(rect.left() + 4, y, rect.width() - 8, 16, Qt::AlignLeft, text);
+            y += 18;
+        }
+
+        painter->restore();
+    }
+
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override {
+        return QSize(150, 6 * 18 + 8); // enough space for 6 lines
+    }
+};
+
 class AlkPayeeLinksWidget::Private : public QWidget, public Ui::AlkPayeeLinksListWidget
 {
     Q_OBJECT
@@ -50,27 +141,33 @@ public:
         proxyModel->setSourceModel(m_model);
         m_sourcesList->setModel(proxyModel);
 
-        m_addReferenceButton->setVisible(false);
         m_installButton->setVisible(false);
         m_uploadButton->setVisible(false);
         m_resetButton->setVisible(false);
 
         QFontMetrics fm(QApplication::font());
         const int rowHeight = fm.height();
-        m_sourcesList->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-        m_sourcesList->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-        m_sourcesList->verticalHeader()->setDefaultSectionSize(rowHeight);
-        m_sourcesList->verticalHeader()->setVisible(false);
-        m_sourcesList->setShowGrid(false);
-        m_sourcesList->horizontalHeader()->setVisible(true);
-        m_sourcesList->setSortingEnabled(true);
+        m_sourcesDetails->setModel(m_model);
+        m_sourcesDetails->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        m_sourcesDetails->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+        m_sourcesDetails->verticalHeader()->setDefaultSectionSize(rowHeight);
+        m_sourcesDetails->verticalHeader()->setVisible(false);
+        m_sourcesDetails->setShowGrid(false);
+        m_sourcesDetails->horizontalHeader()->setVisible(true);
+        m_sourcesDetails->setSortingEnabled(true);
+
+        // VerticalEditorDelegate *delegate = new VerticalEditorDelegate(m_sourcesDetails);
+        // m_sourcesDetails->setItemDelegate(delegate);
+
+        m_sourcesList->setAlternatingRowColors(true);
+        //m_sourcesList->setContextMenuPolicy(Qt::CustomContextMenu);
+        m_sourcesList->setModelColumn(AlkPayeeLinksModel::Columns::Name);
         m_sourcesList->setSelectionMode(QAbstractItemView::SingleSelection);
         m_sourcesList->setSelectionBehavior(QAbstractItemView::SelectRows);
         connect(m_sourcesList, SIGNAL(clicked(QModelIndex)), this, SLOT(slotLoadSource(QModelIndex)));
 
         m_checkResultLabel->setText(QString());
 
-        connect(m_addReferenceButton, SIGNAL(clicked()), this, SLOT(slotAddReferenceButton()));
         connect(m_deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteEntry()));
         connect(m_newButton, SIGNAL(clicked()), this, SLOT(slotNewEntry()));
         connect(m_resetButton, SIGNAL(clicked()), this, SLOT(slotResetList()));
@@ -126,6 +223,7 @@ public Q_SLOTS:
 
     void slotLoadSource(const QModelIndex &index)
     {
+        m_sourcesDetails->setCurrentIndex(index);
         m_checkIdPatternInput->setText(m_model->data(index, AlkPayeeLinksModel::NameRole).value<AlkPayeeReferenceLinkData>().testPattern);
     }
 

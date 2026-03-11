@@ -7,6 +7,13 @@ set(TEST_LIB
     alkimia
 )
 
+add_executable(test-alklinkmodel
+    test-alklinkmodel.cpp
+    ../src/alklinkmodel.cpp
+    ../src/alklinkmodel.h
+)
+target_link_libraries(test-alklinkmodel ${TEST_LIB})
+
 add_executable(qmlalkonlinequotetest
     qmlalkonlinequotetest.cpp
 )
