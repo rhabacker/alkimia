@@ -12,6 +12,7 @@
 #include "alkwebpage.h"
 
 #include <QEventLoop>
+#include <QLayout>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
@@ -43,6 +44,16 @@ void AlkWebView::load(const QUrl &url)
         triggerPageAction(QWebEnginePage::Reload);
 }
 
+void AlkWebView::setOpenLinks(bool enable)
+{
+    webPage()->setOpenLinks(enable);
+}
+
+bool AlkWebView::openLinks() const
+{
+    return qobject_cast<const AlkWebPage *>(page())->openLinks();
+}
+
 void AlkWebView::setWebInspectorEnabled(bool state)
 {
     s_webInspectorEnabled = state;
@@ -59,7 +70,17 @@ bool AlkWebView::webInspectorEnabled()
 
 void AlkWebView::setWebPage(AlkWebPage *webPage)
 {
+    if (auto oldPage = AlkWebView::webPage())
+        disconnect(oldPage, nullptr, this, nullptr);
+
     setPage(dynamic_cast<QWebEnginePage*>(webPage));
+
+    connect(webPage, &AlkWebPage::linkClicked,
+            this, &AlkWebView::linkClicked,
+            Qt::UniqueConnection);
+    connect(webPage, &AlkWebPage::loadRedirectedTo,
+            this, &AlkWebView::loadRedirectedTo,
+            Qt::UniqueConnection);
 }
 
 AlkWebPage *AlkWebView::webPage()
@@ -125,6 +146,16 @@ AlkWebView::~AlkWebView()
 {
 }
 
+void AlkWebView::setOpenLinks(bool enable)
+{
+    webPage()->setOpenLinks(enable);
+}
+
+bool AlkWebView::openLinks() const
+{
+    return qobject_cast<const AlkWebPage *>(page())->openLinks();
+}
+
 void AlkWebView::setWebInspectorEnabled(bool enable)
 {
     page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enable);
@@ -141,7 +172,17 @@ bool AlkWebView::webInspectorEnabled()
 
 void AlkWebView::setWebPage(AlkWebPage *webPage)
 {
+    if (auto oldPage = AlkWebView::webPage())
+        disconnect(oldPage, nullptr, this, nullptr);
+
     setPage(dynamic_cast<QWebPage*>(webPage));
+
+    connect(webPage, &AlkWebPage::linkClicked,
+            this, &AlkWebView::linkClicked,
+            Qt::UniqueConnection);
+    connect(webPage, &AlkWebPage::loadRedirectedTo,
+            this, &AlkWebView::loadRedirectedTo,
+            Qt::UniqueConnection);
 }
 
 AlkWebPage *AlkWebView::webPage()
@@ -152,10 +193,8 @@ AlkWebPage *AlkWebView::webPage()
 #else
 
 AlkWebView::AlkWebView(QWidget *parent)
-    : QTextBrowser(parent)
+    : QWidget(parent)
 {
-    setOpenExternalLinks(false);
-    setOpenLinks(false);
 }
 
 AlkWebView::~AlkWebView()
@@ -164,20 +203,24 @@ AlkWebView::~AlkWebView()
 
 void AlkWebView::load(const QUrl &url)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
-    setSource(url, QTextDocument::HtmlResource);
-#else
-    setSource(url);
-#endif
-    if (source() == url)
-        reload();
-    Q_EMIT loadStarted();
+    webPage()->load(url, QString());
 }
 
 void AlkWebView::setHtml(const QString &data, const QUrl &baseUrl)
 {
     Q_UNUSED(baseUrl);
-    QTextBrowser::setHtml(data);
+
+    webPage()->setHtml(data);
+}
+
+void AlkWebView::setOpenLinks(bool enable)
+{
+    webPage()->setOpenLinks(enable);
+}
+
+bool AlkWebView::openLinks() const
+{
+    return m_page->openLinks();
 }
 
 void AlkWebView::setWebInspectorEnabled(bool enable)
@@ -192,49 +235,37 @@ bool AlkWebView::webInspectorEnabled()
 
 void AlkWebView::setWebPage(AlkWebPage *webPage)
 {
+    if (m_page == webPage)
+        return;
+
+    if (m_page)
+        disconnect(m_page, nullptr, this, nullptr);
+
+    auto *layout = qobject_cast<QGridLayout *>(this->layout());
+    if (!layout) {
+        layout = new QGridLayout(this);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(0);
+    }
+
+    if (m_page)
+        layout->removeWidget(m_page);
+
     m_page = webPage;
+    layout->addWidget(webPage);
+
+    connect(webPage, &AlkWebPage::loadFinished, this, &AlkWebView::loadFinished, Qt::UniqueConnection);
+    connect(webPage, &AlkWebPage::linkClicked,
+            this, &AlkWebView::linkClicked,
+            Qt::UniqueConnection);
+    connect(webPage, &AlkWebPage::loadRedirectedTo,
+            this, &AlkWebView::loadRedirectedTo,
+            Qt::UniqueConnection);
+    connect(webPage, &AlkWebPage::loadStarted, this, &AlkWebView::loadStarted, Qt::UniqueConnection);
 }
 
 AlkWebPage *AlkWebView::webPage()
 {
     return m_page;
 }
-
-QVariant AlkWebView::loadResource(int type, const QUrl &name)
-{
-    switch(type) {
-    case QTextDocument::HtmlResource:
-    case QTextDocument::StyleSheetResource:
-        QNetworkAccessManager networkManager;
-        QNetworkRequest request;
-        QUrl url = name;
-        QNetworkReply* reply;
-        int counts = 3;
-        while(--counts > 0) {
-            request.setUrl(url);
-            reply = networkManager.get(request);
-            QEventLoop loop;
-            connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-            connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), &loop, SLOT(quit()));
-            loop.exec();
-            if (reply->error() == QNetworkReply::NoError) {
-                url = reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-                if (!url.isEmpty() && url != reply->url()) {
-                    Q_EMIT loadRedirectedTo(reply->url().resolved(url));
-                } else {
-                    break;
-                }
-            } else {
-                alkDebug() << reply->error();
-                return QString();
-            }
-        }
-        QString data = reply->readAll();
-        Q_EMIT loadFinished(true);
-        return data;
-    }
-
-    return QVariant();
-}
-
 #endif

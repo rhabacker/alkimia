@@ -32,6 +32,9 @@ public:
 
     void load(const QUrl &url);
 
+    void setOpenLinks(bool enable);
+    bool openLinks() const;
+
     static void setWebInspectorEnabled(bool state);
     static bool webInspectorEnabled();
 
@@ -40,6 +43,7 @@ public:
 
 Q_SIGNALS:
     void loadRedirectedTo(const QUrl &url);
+    void linkClicked(const QUrl &url);
 
 protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
@@ -64,6 +68,9 @@ public:
     explicit AlkWebView(QWidget *parent = nullptr);
     virtual ~AlkWebView();
 
+    void setOpenLinks(bool enable);
+    bool openLinks() const;
+
     void setWebInspectorEnabled(bool enable);
     bool webInspectorEnabled();
 
@@ -72,11 +79,12 @@ public:
 
 Q_SIGNALS:
     void loadRedirectedTo(const QUrl &url);
+    void linkClicked(const QUrl &url);
 };
 
 #else
 
-#include <QTextBrowser>
+#include <QWidget>
 
 class AlkWebPage;
 
@@ -86,7 +94,7 @@ class AlkWebPage;
  *
  * @author Ralf Habacker ralf.habacker @freenet.de
  */
-class ALK_EXPORT AlkWebView : public QTextBrowser
+class ALK_EXPORT AlkWebView : public QWidget
 {
     Q_OBJECT
 public:
@@ -96,6 +104,9 @@ public:
     void load(const QUrl &url);
     void setHtml(const QString &data, const QUrl &baseUrl);
     void setUrl(const QUrl &url);
+
+    void setOpenLinks(bool enable);
+    bool openLinks() const;
 
     void setWebInspectorEnabled(bool enable);
     bool webInspectorEnabled();
@@ -107,10 +118,10 @@ Q_SIGNALS:
     void loadStarted();
     void loadFinished(bool);
     void loadRedirectedTo(const QUrl &to);
+    void linkClicked(const QUrl &url);
 
 private:
     AlkWebPage *m_page{nullptr};
-    QVariant loadResource(int type, const QUrl &name) override;
 };
 #endif
 

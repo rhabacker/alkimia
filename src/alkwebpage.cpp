@@ -32,6 +32,7 @@ class AlkWebPage::Private : public QObject
 public:
     AlkWebPage *q;
     int timeout{-1}; // msec
+    bool openLinks{false};
 
     explicit Private(AlkWebPage *_q)
         : q(_q)
@@ -80,6 +81,16 @@ QString AlkWebPage::getFirstElement(const QString &symbol)
     return QString();
 }
 
+void AlkWebPage::setOpenLinks(bool enable)
+{
+    d->openLinks = enable;
+}
+
+bool AlkWebPage::openLinks() const
+{
+    return d->openLinks;
+}
+
 void AlkWebPage::setTimeout(int timeout)
 {
     d->timeout = timeout;
@@ -94,6 +105,11 @@ bool AlkWebPage::acceptNavigationRequest(const QUrl &url, QWebEnginePage::Naviga
 {
     if (type == QWebEnginePage::NavigationTypeRedirect && isMainFrame)
         Q_EMIT loadRedirectedTo(url);
+    else if (type == QWebEnginePage::NavigationTypeLinkClicked) {
+        Q_EMIT linkClicked(url);
+        if (!openLinks())
+           return false;
+    }
     return QWebEnginePage::acceptNavigationRequest(url, type, isMainFrame);
 }
 
@@ -111,6 +127,8 @@ class AlkWebPage::Private
 public:
     AlkWebPage *p;
     QNetworkAccessManager *networkAccessManager;
+    bool openLinks{false};
+
     explicit Private(AlkWebPage *parent)
         : p(parent)
         , networkAccessManager(new QNetworkAccessManager)
@@ -191,6 +209,28 @@ QString AlkWebPage::getFirstElement(const QString &symbol)
     return element.toPlainText();
 }
 
+void AlkWebPage::setOpenLinks(bool enable)
+{
+    d->openLinks = enable;
+}
+
+bool AlkWebPage::openLinks() const
+{
+    return d->openLinks;
+}
+
+bool AlkWebPage::acceptNavigationRequest(QWebFrame *frame,
+                                         const QNetworkRequest &request,
+                                         NavigationType type)
+{
+    if (type == QWebPage::NavigationTypeLinkClicked) {
+        const QUrl url = request.url();
+        Q_EMIT linkClicked(url);
+        if (!openLinks())
+            return false;
+    }
+    return QWebPage::acceptNavigationRequest(frame, request, type);
+}
 #else
 
 #include <QEventLoop>
@@ -209,7 +249,9 @@ AlkWebPage::AlkWebPage(QWidget *parent)
 {
     setOpenExternalLinks(false);
     setOpenLinks(false);
+
     connect(this, SIGNAL(sourceChanged(QUrl)), SIGNAL(loadRedirectedTo(QUrl)));
+    connect(this, &QTextBrowser::anchorClicked, this, &AlkWebPage::linkClicked);
 }
 
 AlkWebPage::~AlkWebPage()
