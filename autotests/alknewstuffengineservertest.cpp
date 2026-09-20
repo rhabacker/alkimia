@@ -41,11 +41,6 @@
 #include <QTextStream>
 #include <QUrl>
 
-// Required so the AlkNewStuffEntryList carried by the updatesAvailable() signal
-// can be stored in a QVariant / QSignalSpy.
-Q_DECLARE_METATYPE(AlkNewStuffEntry)
-Q_DECLARE_METATYPE(AlkNewStuffEntryList)
-
 class AlkNewStuffEngineServerTest : public QObject
 {
     Q_OBJECT
