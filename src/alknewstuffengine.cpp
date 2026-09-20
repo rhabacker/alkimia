@@ -17,6 +17,7 @@
 #include <KNSCore/Provider>
 #include <KNSCore/ResultsStream>
 #include <KNSCore/SearchRequest>
+#include <KNSCore/Transaction>
 #elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <KNSCore/Cache>
 #include <knewstuff_version.h>
@@ -70,6 +71,7 @@ public:
     bool uninstall(const AlkNewStuffEntry &entry);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    bool waitForTransaction(KNSCore::Transaction *transaction, KNSCore::Entry::Status expectedStatus, int timeout);
 #else
     bool performOperation(const KNSCore::EntryInternal &entry, std::function<void()> operation, KNS3::Entry::Status expectedStatus, int milliSecondsTimeout);
 #endif
@@ -256,6 +258,36 @@ void AlkNewStuffEngine::Private::slotUpdatesAvailable(const KNS3::Entry::List &e
 }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+bool AlkNewStuffEngine::Private::waitForTransaction(KNSCore::Transaction *transaction, KNSCore::Entry::Status expectedStatus, int timeout)
+{
+    bool success = false;
+    QEventLoop loop;
+
+    connect(transaction, &KNSCore::Transaction::signalEntryEvent, &loop, [&](const KNSCore::Entry &entry, KNSCore::Entry::EntryEvent event) {
+        if (event == KNSCore::Entry::StatusChangedEvent && entry.status() == expectedStatus) {
+            success = true;
+            loop.quit();
+        }
+    });
+
+    connect(transaction, &KNSCore::Transaction::signalErrorCode, &loop, [&](KNSCore::ErrorCode::ErrorCode, const QString &message, const QVariant &) {
+        qDebug() << "KNewStuff transaction failed:" << message;
+        loop.quit();
+    });
+
+    QTimer timer;
+    timer.setSingleShot(true);
+
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+    timer.start(timeout);
+
+    if (!transaction->isFinished()) {
+        loop.exec();
+    }
+
+    return success;
+}
 #elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 bool AlkNewStuffEngine::Private::performOperation(const KNSCore::EntryInternal &entry,
                                                   std::function<void()> operation,
@@ -302,6 +334,9 @@ bool AlkNewStuffEngine::Private::install(const AlkNewStuffEntry &entry)
         }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto *transaction = KNSCore::Transaction::installLatest(m_engine, e);
+
+        return waitForTransaction(transaction, KNSCore::Entry::Installed, 5000);
 #else
         if (!performOperation(
                 e,
@@ -328,6 +363,9 @@ bool AlkNewStuffEngine::Private::uninstall(const AlkNewStuffEntry &entry)
         }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto *transaction = KNSCore::Transaction::uninstall(m_engine, e);
+
+        return waitForTransaction(transaction, KNSCore::Entry::Deleted, 10000);
 #else
         if (!performOperation(
                 e,
@@ -391,20 +429,18 @@ bool AlkNewStuffEngine::uninstall(const AlkNewStuffEntry &entry)
 
 void AlkNewStuffEngine::setProviderId(const QString &name, const QString &providerId)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    alkDebug() << "FIXME Qt6: mussing implementation for provider id setup";
-#elif QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     for (const auto &e : d->m_cache->registry()) {
         if (name == e.name()) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            KNSCore::Entry entry(e);
+#else
             KNSCore::EntryInternal entry(e);
+#endif
             entry.setProviderId(providerId);
             d->m_cache->registerChangedEntry(entry);
             d->m_cache->writeRegistry();
         }
     }
-#else
-    alkDebug() << "FIXME: mussing implementation for provider id setup";
-#endif
 }
 
 const char *toString(AlkNewStuffEntry::Status status)
