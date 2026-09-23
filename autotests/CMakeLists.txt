@@ -1,6 +1,6 @@
 
 option(TEST_DEVELOP_HOST "Use development host for testing" OFF)
-set(TEST_DOWNLOAD_HOST_LOCAL "http://dev.kmymoney.org")
+set(TEST_DOWNLOAD_HOST_LOCAL "http://127.0.0.1")
 set(TEST_DOWNLOAD_HOST_REMOTE "https://kmymoney.org")
 
 set(TEST_DOWNLOAD_HOST_OCS_LOCAL "${TEST_DOWNLOAD_HOST_LOCAL}:8080")
@@ -136,7 +136,7 @@ function(add_newstuffengine_test variant host)
             -DTEST_DOWNLOAD_HOST_OCS="${host}"
         ENV
             ${TEST_ENV}
-            #QT_LOGGING_RULES=kf.*.debug=true
+            QT_LOGGING_RULES="qt.network.ssl.debug=true;qt.network.http2.debug=true;qt.network.access.debug=true;kf.*.debug=true"
         LINK_LIBRARIES
             alkimia
             alkimia-internal

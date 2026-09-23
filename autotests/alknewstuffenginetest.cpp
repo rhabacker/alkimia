@@ -116,8 +116,12 @@ void AlkNewStuffEngineTest::installDownloadableEntry()
 
     qDebug() << "entry" << entry << "installed";
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     qDebug() << "provider id" << entry.providerId;
-    engine.setProviderId(entry.name, TEST_DOWNLOAD_HOST_OCS "/ocs/v2/");
+    QString providerId(QStringLiteral(TEST_DOWNLOAD_HOST_OCS "/ocs/v2/"));
+    engine.setProviderId(entry.name, providerId);
+    qDebug() << "set provider id to" << providerId;
+#endif
 }
 
 void AlkNewStuffEngineTest::updatesAvailable()

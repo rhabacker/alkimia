@@ -8,7 +8,7 @@
 # add timestamps
 export PS4='[$(date "+%T.%3N")]'" $PS4"
 
-set -euo pipefail
+#set -euo pipefail
 set -x
 
 # kill kde and x session

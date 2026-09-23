@@ -25,7 +25,7 @@
 
 $uri    = $_SERVER['REQUEST_URI'];
 $path = parse_url($uri, PHP_URL_PATH);
-$host = $_SERVER['HTTP_HOST'];
+$host = $_SERVER['SERVER_NAME'];
 $method = $_SERVER['REQUEST_METHOD'];
 
 // 1. Compatibility with the embedded php server (php -S)
@@ -53,7 +53,7 @@ if (strpos($path, '/providers.xml') !== false) {
     echo '<?xml version="1.0"?>
     <providers>
       <provider>
-        <id>alkimia-test-store</id>
+        <id>'.$host.'</id>
         <location>' . $baseUrl . '/ocs/v' . $versionNumber . '/</location>
         <name>Alkimia Local Test Store</name>
         <termsofuse>' . $baseUrl . '/</termsofuse>
